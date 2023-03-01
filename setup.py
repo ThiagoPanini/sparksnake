@@ -1,5 +1,8 @@
 """
 Arquivo de configuração da biblioteca.
+
+Aqui são consolidadas todas as informações refentes ao pacote
+publicado e disponibilizado no PyPI
 """
 # Importando bibliotecas
 from setuptools import setup, find_packages
