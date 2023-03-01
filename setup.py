@@ -29,7 +29,7 @@ setup(
     zip_safe=False,
     classifiers=[
         "Programming Language :: Python :: 3",
-        "Development Status :: 3 - Alpha",
+        "Development Status :: 1 - Planning",
         "Intended Audience :: Developers",
         "Natural Language :: Portuguese (Brazilian)",
         "License :: OSI Approved :: MIT License",
