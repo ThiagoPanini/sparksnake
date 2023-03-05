@@ -35,6 +35,10 @@
   
   <img src="https://img.shields.io/github/actions/workflow/status/ThiagoPanini/gluesnake/ci-main.yml?label=ci" alt="Shield github CI workflow">
 
+  <a href="https://codecov.io/gh/ThiagoPanini/gluesnake" > 
+  <img src="https://codecov.io/gh/ThiagoPanini/gluesnake/branch/main/graph/badge.svg?token=zSdFO9jkD8"/> 
+  </a>
+
 </div>
 
 ___
