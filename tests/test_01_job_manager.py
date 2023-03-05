@@ -14,7 +14,7 @@ import pytest
 from tests.helpers.user_input import FAKE_ARGV_LIST
 
 
-@pytest.mark("glue_job_manager")
+@pytest.mark.glue_job_manager
 def test_atributos_args_contem_um_dicionario_de_argumentos_do_job(
     job_manager
 ):
@@ -28,7 +28,7 @@ def test_atributos_args_contem_um_dicionario_de_argumentos_do_job(
     assert type(job_manager.args) is dict
 
 
-@pytest.mark("glue_job_manager")
+@pytest.mark.glue_job_manager
 def test_atributos_args_contem_argumentos_definidos_pelo_usuario(
     job_manager
 ):
