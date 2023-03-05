@@ -1,3 +1,2 @@
 build
 flake8
-pydocstyle
