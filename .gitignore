@@ -1,3 +1,6 @@
+# Arquivos temporários
+tmp/
+
 # Notebooks e arquivos ipynb
 notebooks/
 **ipynb
