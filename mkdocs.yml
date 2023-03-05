@@ -1,0 +1,95 @@
+# Informações do projeto
+site_name: gluesnake
+site_url: https://github.com/ThiagoPanini/gluesnake
+site_author: Thiago Panini
+site_description: >-
+  Componentes e elementos criados para facilitar a jornada de
+  construção de jobs Glue na AWS
+
+# Repositório
+repo_name: ThiagoPanini/gluesnake
+repo_url: https://github.com/ThiagoPanini/gluesnake
+
+# Copyright
+copyright: |
+  Copyright &copy; 2023 <a href="https://github.com/ThiagoPanini"  target="_blank" rel="noopener">ThiagoPanini</a>
+
+# Definindo diretório de páginas em markdown
+docs_dir: docs/mkdocs
+
+# Configuração do tema
+theme:
+  name: material
+
+  # Apontando diretório adicional para customizações
+  custom_dir: docs/assets
+
+  # Definindo paleta de cores nas versões "Dia" e "Noite"
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-sunny
+        name: Clique para alterar para modo noturno
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: deep purple
+      accent: deep purple
+      toggle:
+        icon: material/weather-night
+        name: Clique para alterar para modo claro
+
+  # Definindo features do template
+  features:
+    - navigation.tabs
+    - navigation.top
+    - navigation.instant
+    - navigation.footer
+    - navigation.indexes
+    - content.tabs.link
+    - content.tooltips
+    - search.share
+    - search.highlight
+    - search.suggest
+    - content.code.copy
+
+# Configurando navegação
+nav:
+  - Home:
+    - Gluesnake: index.md
+  - Documentação Oficial:
+    - Organização dos Módulos: mkdocstrings/organizacao.md
+    - A Classe GlueJobManager: mkdocstrings/manager-gluejobmanager.md
+
+# Extensões do MkDocs
+markdown_extensions:
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.emoji
+  - pymdownx.mark
+  - pymdownx.tilde
+  - pymdownx.highlight
+  - pymdownx.superfences
+  - pymdownx.details
+  - footnotes
+  - markdown.extensions.tables
+  - markdown.extensions.footnotes
+  - attr_list
+  - toc:
+      permalink: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
+      options:
+        custom_icons:
+          - overrides/.icons
+
+# Definindo customizações personalizadas
+extra_css:
+  - stylesheets/extra.css
+
+# Definindo plugins
+plugins:
+  - mkdocstrings
