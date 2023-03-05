@@ -1,2 +1,7 @@
 build
 flake8
+moto
+boto3
+pandas
+pytest
+pytest-cov
