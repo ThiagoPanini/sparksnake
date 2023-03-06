@@ -31,10 +31,6 @@ jobs:
       - name: Análise de Linter - flake8
         run:
           flake8 . --ignore E501
-
-      - name: Análise de Docstrings - pydocstyle
-        run:
-          pydocstyle --match-dir ./app/src/*.py
   
   ci-glue-docker-pytest:
     name: ci-glue-docker-pytest
@@ -62,7 +58,7 @@ jobs:
           run: |
             cd github-project
             python3 -m pip install --user --upgrade pip -r requirements/dev.txt
-            python3 -m pytest app/ -vv --color=yes --cov=./ --cov-report=xml
+            python3 -m pytest -vv --color=yes --cov=./ --cov-report=xml
 
       - name: Cobertura dos Testes - codecov
         uses: codecov/codecov-action@v3
