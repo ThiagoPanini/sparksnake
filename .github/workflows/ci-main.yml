@@ -52,6 +52,7 @@ jobs:
             -e DISABLE_SSL=true
             -e AWS_ACCESS_KEY_ID="a-fake-access-key-id"
             -e AWS_SECRET_ACCESS_KEY="a-secret-access-key"
+            -e AWS_REGION="us-east-1"
             --rm
             -p 4040:4040 -p 18080:18080
             --name github-project
