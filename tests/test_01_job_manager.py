@@ -164,7 +164,7 @@ def test_metodo_de_inicializacao_do_job_gera_contexto_e_sessao(job_manager):
     """
 
     # Executando método de inicialização do job
-    _ = job_manager.init_job()
+    job_manager.init_job()
 
     # Coletando atributos da classe e definindo lista de validação
     class_attribs = job_manager.__dict__
@@ -181,10 +181,19 @@ def test_metodo_de_inicializacao_do_job_gera_contexto_e_sessao(job_manager):
 
 @pytest.mark.glue_job_manager
 @pytest.mark.init_job
-def test_metodo_de_inicializacao_do_job_retorna_tipo_job(job_manager):
+def test_metodo_de_inicializacao_do_job_gera_atributo_do_tipo_job(job_manager):
     """
     G: dado que deseja-se inicializar um job Glue pela classe GlueJobManager
     W: quando o método init_job() for chamado
-    T: então o retorno deve ser um objeto do tipo awsglue.job.Job
+    T: então deve existir um atributo "job" do tipo awsglue.job.Job no objeto
+       da classe
     """
-    assert type(job_manager.init_job()) == Job
+
+    # Executando método de inicialização do job
+    job_manager.init_job()
+
+    # Coletando atributos da classe
+    class_attribs = job_manager.__dict__
+
+    assert "job" in class_attribs.keys()
+    assert type(class_attribs["job"]) is Job
