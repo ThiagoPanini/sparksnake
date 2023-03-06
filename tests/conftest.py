@@ -12,7 +12,7 @@ import pytest
 
 from gluesnake.manager import GlueJobManager
 
-from tests.helpers.user_input import FAKE_ARGV_LIST, FAKE_DATA_DICT
+from tests.helpers.user_inputs import FAKE_ARGV_LIST, FAKE_DATA_DICT
 
 
 # Objeto pré configurado da classe GlueJobManager
