@@ -148,7 +148,7 @@ class GlueJobManager():
         seus respectivos valores.
         """
         try:
-            args_formatted = "".join([f'--{k}: "{v}"\n'
+            args_formatted = "".join([f'--{k}="{v}"\n'
                                       for k, v in self.args.items()])
             logger.info(f"Argumentos do job:\n\n{args_formatted}")
             sleep(0.01)
