@@ -147,15 +147,12 @@ class GlueJobManager():
         de log, todos os argumentos utilizados no referido job e
         seus respectivos valores.
         """
-        try:
-            args_formatted = "".join([f'--{k}="{v}"\n'
-                                      for k, v in self.args.items()])
-            logger.info(f"Argumentos do job:\n\n{args_formatted}")
-            sleep(0.01)
-        except Exception as e:
-            logger.error("Erro ao retornar argumentos do job dentro da "
-                         f"lista informada. Exception: {e}")
-            raise e
+
+        # Formatando e logando argumentos do job
+        args_formatted = "".join([f'--{k}="{v}"\n'
+                                  for k, v in self.args.items()])
+        logger.info(f"Argumentos do job:\n\n{args_formatted}")
+        sleep(0.01)
 
     def get_context_and_session(self) -> None:
         """
@@ -169,7 +166,7 @@ class GlueJobManager():
         self.glueContext = GlueContext(self.sc)
         self.spark = self.glueContext.spark_session
 
-    def init_job(self) -> Job:
+    def init_job(self):
         """
         Inicializando objeto de job a partir de contexto do Glue.
 
@@ -179,10 +176,6 @@ class GlueJobManager():
         deste método, o usuário poderá ter uma porta única de entrada
         para todos os processos relativamente burocráticos de configuração
         de um job do Glue.
-
-        Returns:
-            Elemento do tipo awsglue.job.Job para consolidar ações\
-            relacionadas à processos de jobs do Glue
         """
         # Obtendo argumentos e consolidando mensagens de log
         self.job_initial_log_message()
@@ -192,7 +185,5 @@ class GlueJobManager():
         self.get_context_and_session()
 
         # Inicializando objeto de Job do Glue
-        job = Job(self.glueContext)
-        job.init(self.args['JOB_NAME'], self.args)
-
-        return job
+        self.job = Job(self.glueContext)
+        self.job.init(self.args['JOB_NAME'], self.args)
