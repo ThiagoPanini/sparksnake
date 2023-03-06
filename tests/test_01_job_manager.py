@@ -11,7 +11,9 @@ ___
 
 # Importando bibliotecas
 import pytest
-from tests.helpers.user_input import FAKE_ARGV_LIST
+import logging
+
+from tests.helpers.user_inputs import FAKE_ARGV_LIST
 
 
 @pytest.mark.glue_job_manager
@@ -44,3 +46,33 @@ def test_atributos_args_contem_argumentos_definidos_pelo_usuario(
     job_arg_names = list(job_manager.args.keys())
 
     assert all(a in job_arg_names for a in FAKE_ARGV_LIST)
+
+
+@pytest.mark.glue_job_manager
+@pytest.mark.job_inital_log_message
+def test_mensagem_inicial_de_log_esperada_ao_executar_metodo(
+    job_manager, caplog
+):
+    """
+    G: dado que o usuário deseja iniciar um job Glue na AWS
+    W: quando o método job_initial_message() for executado a
+       partir de um objeto da classe GlueJobManager ou de outro
+       objeto que herde suas funcionalidades
+    T: então a mensagem de log capturada deve condizer com as
+       características das origens definidas no atributo data_dict
+       da classe
+    """
+
+    # Definindo mensagem de log esperada do método
+    expected_log_msg = "Iniciando execução de job a-fake-arg-value. "\
+        "Origens presentes no processo de ETL:\n\n"\
+        "Tabela some-fake-database.orders-fake-table sem push down predicate "\
+        "definido\n"\
+        "Tabela some-fake-database.customers-fake-table com push down "\
+        "predicate definido por anomesdia=20221201\n"
+
+    # Executando método para escrita de mensagem de log
+    with caplog.at_level(logging.INFO):
+        job_manager.job_initial_log_message()
+
+    assert caplog.records[-1].message == expected_log_msg
