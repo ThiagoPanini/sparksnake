@@ -24,6 +24,10 @@ theme:
   # Apontando diretório adicional para customizações
   custom_dir: docs/assets
 
+  # Definindo ícone customizado no header
+  icon:
+    logo: custom/custom-icon
+
   # Definindo paleta de cores nas versões "Dia" e "Noite"
   palette:
     - media: "(prefers-color-scheme: light)"
@@ -59,9 +63,11 @@ theme:
 nav:
   - Home:
     - Gluesnake: index.md
+    - Motivação: motivacao.md
+  - Features:
+    - Organização: features/organizacao.md
   - Documentação Oficial:
-    - Organização dos Módulos: mkdocstrings/organizacao.md
-    - A Classe GlueJobManager: mkdocstrings/manager-gluejobmanager.md
+    - A Classe GlueJobManager: mkdocstrings/gluejobmanager.md
 
 # Extensões do MkDocs
 markdown_extensions:
