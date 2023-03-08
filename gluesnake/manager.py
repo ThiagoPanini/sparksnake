@@ -692,7 +692,7 @@ class GlueETLManager(GlueJobManager):
 
     def extract_aggregate_statistics(self, df: DataFrame,
                                      numeric_col: str,
-                                     group_by: str | list,
+                                     group_by: str or list,
                                      round_result: bool = False,
                                      n_round: int = 2,
                                      **kwargs) -> DataFrame:
@@ -1098,7 +1098,7 @@ class GlueETLManager(GlueJobManager):
 
     def write_data_to_catalog(
             self,
-            df: DataFrame | DynamicFrame,
+            df: DataFrame or DynamicFrame,
             s3_table_uri: str,
             output_database_name: str,
             output_table_name: str,
