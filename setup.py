@@ -14,11 +14,13 @@ with open("README.md", "r", encoding='utf-8') as f:
 # Criando setup
 setup(
     name='gluesnake',
-    version='0.0.3',
+    version='0.0.4',
     author='Thiago Panini',
     author_email='panini.development@gmail.com',
     packages=find_packages(),
-    install_requires=[],
+    install_requires=[
+        "pyspark"
+    ],
     license='MIT',
     description='Funcionalidades Spark para facilitar a criação de jobs Glue na AWS',
     long_description=__long_description__,
