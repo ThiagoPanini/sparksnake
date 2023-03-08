@@ -56,10 +56,10 @@ Por outro lado, usuários avançados que conhecem cada detalhe destas classes e 
 
     ```python
     # Importando bibliotecas
-    from gluesnake.manager import GlueJobManager
+    from gluesnake.manager import GlueETLManager
 
     # Inicializando objeto da classe e job Glue
-    glue_manager = GlueJobManager(argv_list=["JOB_NAME"], data_dict={})
+    glue_manager = GlueETLManager(argv_list=["JOB_NAME"], data_dict={})
     glue_manager.init_job()
     ```
 
