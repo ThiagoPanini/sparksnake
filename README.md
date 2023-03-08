@@ -13,8 +13,8 @@
   <br>
 
   ![CI workflow](https://img.shields.io/github/actions/workflow/status/ThiagoPanini/gluesnake/ci-main.yml?label=ci)
-  [![codecov](https://codecov.io/gh/ThiagoPanini/gluesnake/branch/main/graph/badge.svg?token=zSdFO9jkD8)](https://codecov.io/gh/ThiagoPanini/gluesnake)
   [![Documentation Status](https://readthedocs.org/projects/gluesnake/badge/?version=latest)](https://gluesnake.readthedocs.io/pt/latest/?badge=latest)
+  [![codecov](https://codecov.io/gh/ThiagoPanini/gluesnake/branch/main/graph/badge.svg?token=zSdFO9jkD8)](https://codecov.io/gh/ThiagoPanini/gluesnake)
 
 </div>
 
