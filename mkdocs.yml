@@ -68,6 +68,7 @@ nav:
     - Organização: features/organizacao.md
   - Documentação Oficial:
     - A Classe GlueJobManager: mkdocstrings/gluejobmanager.md
+    - A Classe GlueETLManager: mkdocstrings/glueetlmanager.md
 
 # Extensões do MkDocs
 markdown_extensions:
