@@ -18,11 +18,30 @@
 
 </div>
 
+## Table of content
+
+- [Table of content](#table-of-content)
+- [O que é a biblioteca gluesnake?](#o-que-é-a-biblioteca-gluesnake)
+- [Funcionalidades](#funcionalidades)
+- [Contatos](#contatos)
+- [Referências](#referências)
+
+
+## O que é a biblioteca gluesnake?
+
+A biblioteca gluesnake proporciona uma forma fácil, rápida e eficiente para o desenvolvimento de aplicações Spark a serem submetidas como jobs Glue na AWS. Consolidando uma série de funcionalidades envolvendo ambas as ferramentas, gluesnake centraliza classes, métodos e funções codificadas em pyspark que visam simplificar ao máximo a jornada de imersão em jobs Glue.
+
+> **Note**
+> Agora a biblioteca *gluesnake* possui uma **documentação oficial** no readthedocs! Acesse o [seguinte link](https://gluesnake.readthedocs.io/pt/latest/) e confira detalhes técnicos de usabilidade, exemplos práticos e muito mais!
+
 
 ## Funcionalidades
 
-> **Note**
-> Trabalho em construção
+- 🤖 Simplificação de construção de aplicações Spark através de classes e métodos já codificados
+- 🌟 Consolidação de funcionalidades mais comuns envolvendo processos de ETL em pyspark
+- ⚙️ Abstração do todo o processo de *setup* de um *job* Glue através de uma linha de código
+- 👁️‍🗨️ Aprimoramento do *observability* da aplicação através de mensagens detalhadas de log no CloudWatch
+- 🛠️ Tratamento de exceções já embutidos nos métodos da biblioteca
 
 ___
 

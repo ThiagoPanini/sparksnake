@@ -5,3 +5,4 @@ boto3
 pandas
 pytest
 pytest-cov
+pyspark
