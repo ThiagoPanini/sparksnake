@@ -14,7 +14,7 @@ with open("README.md", "r", encoding='utf-8') as f:
 # Criando setup
 setup(
     name='gluesnake',
-    version='0.1.0',
+    version='0.1.1',
     author='Thiago Panini',
     author_email='panini.development@gmail.com',
     packages=find_packages(),
@@ -22,7 +22,8 @@ setup(
         "pyspark"
     ],
     license='MIT',
-    description='Funcionalidades Spark para facilitar a criação de jobs Glue na AWS',
+    description="Funcionalidades Spark criadas para facilitar a criação de "
+                "jobs Glue na AWS",
     long_description=__long_description__,
     long_description_content_type="text/markdown",
     url='https://github.com/ThiagoPanini/gluesnake',
@@ -31,7 +32,7 @@ setup(
     zip_safe=False,
     classifiers=[
         "Programming Language :: Python :: 3",
-        "Development Status :: 1 - Planning",
+        "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",
         "Natural Language :: Portuguese (Brazilian)",
         "License :: OSI Approved :: MIT License",

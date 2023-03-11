@@ -66,6 +66,7 @@ nav:
     - Motivação: motivacao.md
   - Features:
     - Organização: features/organizacao.md
+    - Exemplos Práticos: features/exemplos.md
   - Documentação Oficial:
     - A Classe GlueJobManager: mkdocstrings/gluejobmanager.md
     - A Classe GlueETLManager: mkdocstrings/glueetlmanager.md
