@@ -87,6 +87,7 @@ class GlueJobManager():
         sobre os push down predicates (se utilizados) em cada
         processo de leitura de dados.
         """
+
         # Definindo strings iniciais para composição da mensagem
         welcome_msg = f"Iniciando execução de job {self.args['JOB_NAME']}. "\
                       "Origens presentes no processo de ETL:\n\n"
@@ -112,8 +113,7 @@ class GlueJobManager():
         logger.info(welcome_msg + initial_msg)
 
     def print_args(self) -> None:
-        """
-        Obtendo e logando argumentos do job.
+        """Obtendo e logando argumentos do job.
 
         Método responsável por mostrar ao usuário, como uma mensagem
         de log, todos os argumentos utilizados no referido job e
@@ -127,8 +127,7 @@ class GlueJobManager():
         sleep(0.01)
 
     def get_context_and_session(self) -> None:
-        """
-        Obtendo elementos de contexto e sessão da aplicação.
+        """Obtendo elementos de contexto e sessão da aplicação.
 
         Método responsável por criar e associar atributos da classe
         para os elementos SparkContext, GlueContext e SparkSession.
@@ -139,8 +138,7 @@ class GlueJobManager():
         self.spark = self.glueContext.spark_session
 
     def init_job(self):
-        """
-        Inicializando objeto de job a partir de contexto do Glue.
+        """Inicializando objeto de job a partir de contexto do Glue.
 
         Método criado para consolidar todas as etapas de inicialização
         de um job do Glue a partir da visualização dos argumentos e
@@ -149,6 +147,7 @@ class GlueJobManager():
         para todos os processos relativamente burocráticos de configuração
         de um job do Glue.
         """
+
         # Obtendo argumentos e consolidando mensagens de log
         self.job_initial_log_message()
         self.print_args()
@@ -285,10 +284,6 @@ class GlueETLManager(GlueJobManager):
         # Herdando atributos de classe de gerenciamento de job
         GlueJobManager.__init__(self, argv_list=self.argv_list,
                                 data_dict=self.data_dict)
-
-        # Gerando URI de tabela no s3 caso existam alguns argumentos
-        self.s3_table_uri = f"s3://{self.args['OUTPUT_BUCKET']}/"\
-            f"{self.args['OUTPUT_TABLE']}"
 
     def generate_dynamicframes_dict(self) -> dict:
         """
@@ -1096,7 +1091,7 @@ class GlueETLManager(GlueJobManager):
 
         return df_repartitioned
 
-    def write_data_to_catalog(
+    def write_and_catalog_data(
             self,
             df: DataFrame or DynamicFrame,
             s3_table_uri: str,
