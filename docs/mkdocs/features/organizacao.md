@@ -9,5 +9,7 @@ De início, é importante citar que, atualmente, a biblioteca *gluesnake* conta 
 
 ## Exemplos Práticos
 
-???+ warning "Demonstrações de funcionalidades"
-    Futuramente, serão proporcionados vídeos de demonstração de funcionalidades aos usuários para que estes tenham uma clara noção sobre as principais vantagens de uso da biblioteca *gluesnake*!
+???+ tip "Uma jornada completa de consumo da biblioteca"
+    Para visualizar o poder da biblioteca *gluesnake* na prática, uma **jornada completa** de consumo foi fornecida por meio de gravações e demonstrações práticas de suas funcionalidades.
+
+    Não deixe de acessar a [página de exemplos](exemplos.md) para ter acesso a todo este rico acervo de demonstrações!

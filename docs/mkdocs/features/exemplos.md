@@ -377,6 +377,7 @@ Em alguns fluxos de trabalho, pensar em maneiras de otimizar o armazenamento dos
 ## Escrevendo e Catalogando Dados
 
 Por fim, vamos supor agora que o usuário da biblioteca tenha a missão de escrever e catalogar os resultados das transformações codificadas. No Glue, de maneira nativa, os métodos necessários a serem chamados são:
+
 - `.getSink()`
 - `.setCatalogInfo()`
 - `.writeFrame()`

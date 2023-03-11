@@ -247,7 +247,7 @@ class GlueETLManager(GlueJobManager):
             de dados utilizadas nos processos de transformação
             consolidados no job.
 
-    Note: Sobre as possibilidades de configuração do dicionário data_dict
+    Tip: Sobre as possibilidades de configuração do dicionário data_dict
         O dicionário data_dict, passado como parâmetro de inicialização
         da classe `GlueETLManager` (e também da classe `GlueJobManager`),
         por natureza, deve ser definido de acordo com algumas premissas.
@@ -300,12 +300,8 @@ class GlueETLManager(GlueJobManager):
         cada origem de dados do job, possibilitando que o usuário apenas
         acesse cada uma das suas origens através de uma indexação.
 
-        Example: Exemplo de aplicação do método
+        Examples:
             ```python
-            # Importando classe e inicializando objeto
-            from gluesnake.manager import GlueETLManager
-            glue_manager = GlueETLManager(argv_list, data_dict)
-
             # Obtendo lista de dynamicframes Glue
             dyfs_dict = glue_manager.generate_dynamicframes_dict()
 
@@ -319,7 +315,7 @@ class GlueETLManager(GlueJobManager):
             origens configuradas no atributo self.data_dict e seus\
             respectivos objetos do tipo DynamicFrame.
 
-        Note: Detalhes sobre o dicionário de DynamicFrames resultante
+        Tip: Detalhes sobre o dicionário de DynamicFrames resultante
             Para proporcionar uma visão clara sobre o retorno deste método,
             considere, como exemplo, a seguinte configuração para o atributo
             `self.data_dict` utilizado na inicialização da classe:
@@ -441,12 +437,8 @@ class GlueETLManager(GlueJobManager):
         o método `.toDF()` para transformação de tais objetos em objetos
         do tipo DataFrame Spark.
 
-        Example: Exemplo de aplicação do método
+        Examples
             ```python
-            # Importando classe e inicializando objeto
-            from gluesnake.manager import GlueETLManager
-            glue_manager = GlueETLManager(argv_list, data_dict)
-
             # Obtendo lista de DataFrames Spark
             dfs_dict = glue_manager.generate_dataframes_dict()
 
@@ -460,7 +452,7 @@ class GlueETLManager(GlueJobManager):
             origens configuradas no atributo self.data_dict e seus\
             respectivos objetos do tipo DataFrame.
 
-        Note: Detalhes sobre o dicionário de DataFrames resultante
+        Tip: Detalhes sobre o dicionário de DataFrames resultante
             Para proporcionar uma visão clara sobre o retorno deste método,
             considere, como exemplo, a seguinte configuração para o atributo
             `self.data_dict` utilizado na inicialização da classe:
@@ -577,14 +569,8 @@ class GlueETLManager(GlueJobManager):
         os usuários podem enriquecer seus DataFrames Spark com novos atributos
         relevantes para seus respectivos processos analíticos.
 
-        Example: Exemplo de aplicação do método
+        Examples:
             ```python
-            # Importando classe
-            from gluesnake.manager import GlueETLManager
-
-            # Inicializando objeto da classe
-            glue_manager = GlueETLManager(argv_list, data_dict)
-
             # Extraindo atributos temporais de uma coluna de data em um df
             df_date_prep = glue_manager.extract_date_attributes(
                 df=df_raw,
@@ -699,18 +685,8 @@ class GlueETLManager(GlueJobManager):
         Com esta funcionalidade, os usuários podem obter uma série de atributos
         estatísticos enriquecidos em um DataFrame para futuras análises.
 
-        Example: Exemplo de aplicação do método:
+        Examples:
             ```python
-            # Importando classe
-            from gluesnake.manager import GlueETLManager
-
-            # Inicializando objeto da classe
-            glue_manager = GlueETLManager(argv_list, data_dict)
-
-            # Lendo e desempacotando DataFrames
-            dfs_dict = glue_manager.generate_dataframes_dict()
-            df_orders = dfs_dict["orders"]
-
             # Gerando estatísticas
             df_stats = glue_manager.extract_aggregate_statistics(
                 df=df_orders,
@@ -846,14 +822,8 @@ class GlueETLManager(GlueJobManager):
         Para o processo de eliminação física dos arquivos, o método
         `purge_s3_path` do glueContext é utilizado.
 
-        Example: Exemplo de aplicação do método:
+        Examples:
             ```python
-            # Importando classe
-            from gluesnake.manager import GlueETLManager
-
-            # Inicializando objeto da classe
-            glue_manager = GlueETLManager(argv_list, data_dict)
-
             # Eliminando partição física do S3
             partition_uri = "s3://some-bucket/some-table/anomesdia=20230101/"
             glue_manager.drop_partition(partition_uri)
@@ -897,19 +867,8 @@ class GlueETLManager(GlueJobManager):
         considerando um nome de atributo (partition_name) e seu respectivo
         valor (partition_value).
 
-        Example: Exemplo de aplicação do método:
+        Examples
             ```python
-            # Importando classe
-            from gluesnake.manager import GlueETLManager
-            from datetime import datetime
-
-            # Inicializando objeto da classe
-            glue_manager = GlueETLManager(argv_list, data_dict)
-
-            # Lendo e desempacotando DataFrames
-            dfs_dict = glue_manager.generate_dataframes_dict()
-            df_orders = dfs_dict["orders"]
-
             # Definindo informações de partição de data da tabela final
             partition_name = "anomesdia"
             partition_value = int(datetime.strftime('%Y%m%d'))
@@ -978,19 +937,8 @@ class GlueETLManager(GlueJobManager):
             operação é realizada e o DataFrame original é retornado
             intacto ao usuário.
 
-        Example: Exemplo de aplicação do método:
+        Examples:
             ```python
-            # Importando classe
-            from gluesnake.manager import GlueETLManager
-            from datetime import datetime
-
-            # Inicializando objeto da classe
-            glue_manager = GlueETLManager(argv_list, data_dict)
-
-            # Lendo e desempacotando DataFrames
-            dfs_dict = glue_manager.generate_dataframes_dict()
-            df_orders = dfs_dict["orders"]
-
             # Reparticionando DataFrame para otimizar armazenamento
             df_repartitioned = glue_manager.repartition_dataframe(
                 df=df_orders,
@@ -1091,7 +1039,7 @@ class GlueETLManager(GlueJobManager):
 
         return df_repartitioned
 
-    def write_and_catalog_data(
+    def write_data(
             self,
             df: DataFrame or DynamicFrame,
             s3_table_uri: str,
@@ -1116,21 +1064,10 @@ class GlueETLManager(GlueJobManager):
         2. Faz um sink com o catálogo de dado
         3. Escreve dados no s3 e atualiza catálogo de dados
 
-        Example: Exemplo de aplicação do método:
+        Examples:
             ```python
-            # Importando classe
-            from gluesnake.manager import GlueETLManager
-            from datetime import datetime
-
-            # Inicializando objeto da classe
-            glue_manager = GlueETLManager(argv_list, data_dict)
-
-            # Lendo e desempacotando DataFrames
-            dfs_dict = glue_manager.generate_dataframes_dict()
-            df_orders = dfs_dict["orders"]
-
             # Escrevendo e catalogando dados
-            glue_manager.write_data_to_catalog(
+            glue_manager.write_data(
                 df=df_orders,
                 s3_table_uri="s3://some-bucket/some-table",
                 output_database_name="db_corp_business_inteligence",
