@@ -10,7 +10,7 @@ ___
 import sys
 import pytest
 
-from gluesnake.manager import GlueJobManager
+from snakespark.manager import GlueJobManager
 
 from tests.helpers.user_inputs import FAKE_ARGV_LIST, FAKE_DATA_DICT
 

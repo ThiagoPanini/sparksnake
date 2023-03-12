@@ -9,7 +9,7 @@ Para proporcionar uma jornada de consumo extremamente detalhada, esta seção in
 A primeira etapa dessa jornada envolve a importação da principal classe da biblioteca que funciona como um **ponto central** para todas as funcionalidades existentes. Trata-se da classe `GlueETLManager` presente no módulo `manager`.
 
 ??? example "Importando a classe GlueETLManager no script de aplicação"
-    ![](https://raw.githubusercontent.com/ThiagoPanini/gluesnake/feature/gluesnake-module/docs/assets/gifs/gluesnake-setup-import.gif)
+    ![](https://raw.githubusercontent.com/ThiagoPanini/gluesnake/main/docs/assets/gifs/gluesnake-setup-import.gif)
 
 
 Na sequência, como pré requisito de inicialização de um objeto da classe `GlueETLManager`, é preciso definir duas variáveis extremamente importantes:
@@ -20,17 +20,17 @@ Na sequência, como pré requisito de inicialização de um objeto da classe `Gl
 Os nomes acima referenciados são agnósticos. Isto significa que o usuário pode escolher qualquer nome de variável para as duas estruturas citadas, desde que seus respectivos conteúdos e contextos sejam mantidos.
 
 ??? example "Definindo variável ARGV_LIST com argumentos do job"
-    ![](https://raw.githubusercontent.com/ThiagoPanini/gluesnake/feature/gluesnake-module/docs/assets/gifs/gluesnake-setup-argvlist.gif)
+    ![](https://raw.githubusercontent.com/ThiagoPanini/gluesnake/main/docs/assets/gifs/gluesnake-setup-argvlist.gif)
 
-    ???+ note "Nota importante sobre a lista de argumentos do job"
+    ??? tip "Sobre a lista de argumentos do job (ARGV_LIST)"
         Os elementos definidos na variável de exemplo `ARGV_LIST` necessariamente precisam ser exatamente iguais aos argumentos configurados para o job. Em outras palavras, se o usuário está utilizando alguma ferramenta de IaC (Terraform ou CloudFormation, por exemplo) e, nela, há algum tipo de bloco definindo argumentos para o job, então estes mesmos argumentos devem estar contidos na lista `ARGV_LIST`.
 
         Se existem argumentos ou parâmetros configurados para o job e que não estejam contidos em `ARGV_LIST`, então o Glue irá retornar um erro ao inicializar um job.
 
 ??? example "Definindo variável DATA_DICT para mapear origens de dados do job"
-    ![](https://raw.githubusercontent.com/ThiagoPanini/gluesnake/feature/gluesnake-module/docs/assets/gifs/gluesnake-setup-datadict.gif)
+    ![](https://raw.githubusercontent.com/ThiagoPanini/gluesnake/main/docs/assets/gifs/gluesnake-setup-datadict.gif)
 
-    ???+ note "Nota importante sobre o dicionário de origens do job"
+    ??? tip "Sobre o dicionário de mapeamento de origens de um job"
         A grande ideia de definir um dicionário de mapeamento de origens como atributo das classes do *gluesnake* é a de proporcionar um local único e centralizado para que o usuário possa coordenar todas as particularidades das origens utilizadas em seu job.
 
         Isto significa que todos que precisarem observar o código fonte de um job criado neste formado poderão facilmente compreender detalhes sobre as origens logo no início do script, facilitando *troubleshooting* e possíveis alterações de escopo.
@@ -40,7 +40,7 @@ Os nomes acima referenciados são agnósticos. Isto significa que o usuário pod
 Por fim, um objeto da classe `GlueETLManager` pode ser instanciado.
 
 ??? example "Instanciando um objeto da classe `GlueETLManager`"
-    ![](https://raw.githubusercontent.com/ThiagoPanini/gluesnake/feature/gluesnake-module/docs/assets/gifs/gluesnake-setup-glue_manager.gif)
+    ![](https://raw.githubusercontent.com/ThiagoPanini/gluesnake/main/docs/assets/gifs/gluesnake-setup-glue_manager.gif)
 
 :star:{ .heart } Daqui em diante, demonstrações de algumas das principais funcionalidades da classe `GlueETLManager` serão fornecidas aos usuários. Tudo parte do objeto `glue_manager` devidamente instanciado e configurado de acordo com as exemplificações acima. Seus métodos aplicados proporcionam uma série de vantagens aos usuários que pretendem construir jobs Glue da melhor forma possível!
 
@@ -55,7 +55,7 @@ Lembra dos elementos `glueContext`, `SparkContext` e `session`? Com o método `i
 ??? example "Inicializando e obtendo todos os insumos de um job Glue"
     :clapper: **Demonstração:**
 
-    ![](https://raw.githubusercontent.com/ThiagoPanini/gluesnake/feature/gluesnake-module/docs/assets/gifs/gluesnake-init_job.gif)
+    ![](https://raw.githubusercontent.com/ThiagoPanini/gluesnake/main/docs/assets/gifs/gluesnake-init_job.gif)
 
     ___
 
@@ -83,7 +83,7 @@ Lembra dos elementos `glueContext`, `SparkContext` e `session`? Com o método `i
     ??? tip "Opcional: analisando insumos do job obtidos como atributos da classe"
         Como mencionado, o método `init_job()` é responsável por coletar e associar os insumos de contexto Spark, contexto Glue e sessão Spark como atributos da classe instanciada. Estes três elementos formam a base de execução de funcionalidades do Glue ao longo de um job.
 
-        ![](https://raw.githubusercontent.com/ThiagoPanini/gluesnake/feature/gluesnake-module/docs/assets/gifs/gluesnake-opt-contexto-sessao.gif)
+        ![](https://raw.githubusercontent.com/ThiagoPanini/gluesnake/main/docs/assets/gifs/gluesnake-opt-contexto-sessao.gif)
 
 
 ## Lendo Múltiplos DataFrames Spark
@@ -93,7 +93,7 @@ Em sequência à jornada de consumo, após todo o processo de *setup* e, mais re
 ??? example "Obtendo dicionário de DataFrames Spark"
     :clapper: **Demonstração:**
 
-    ![](https://raw.githubusercontent.com/ThiagoPanini/gluesnake/feature/gluesnake-module/docs/assets/gifs/gluesnake-generate_dataframes_dict.gif)
+    ![](https://raw.githubusercontent.com/ThiagoPanini/gluesnake/main/docs/assets/gifs/gluesnake-generate_dataframes_dict.gif)
 
     ___
 
@@ -122,7 +122,7 @@ Em sequência à jornada de consumo, após todo o processo de *setup* e, mais re
     ??? tip "Opcional: analisando dicionário resultante e desempacotando DataFrames"
         Após a execução do método `generate_dataframes_dict()`, o usuário tem em mãos um dicionário que mapeia chaves da variável `DATA_DICT` à objetos do tipo DataFrames Spark. Para obter os DataFrames individualmente na aplicação, é preciso "desempacotar" o dicionário resultante da seguinte maneira:
 
-        ![](https://raw.githubusercontent.com/ThiagoPanini/gluesnake/feature/gluesnake-module/docs/assets/gifs/gluesnake-opt-generate_dataframes_dict.gif)
+        ![](https://raw.githubusercontent.com/ThiagoPanini/gluesnake/main/docs/assets/gifs/gluesnake-opt-generate_dataframes_dict.gif)
 
 
 ## Interlúdio: o que fazer agora?
@@ -139,14 +139,14 @@ Para visualizar esta funcionalidade na prática, vamos criar uma versão simplif
 
 ??? tip "Preparação: criando versão simplificada do DataFrame df_orders"
 
-    ![](https://raw.githubusercontent.com/ThiagoPanini/gluesnake/feature/gluesnake-module/docs/assets/gifs/gluesnake-prep-df_orders_simp.gif)
+    ![](https://raw.githubusercontent.com/ThiagoPanini/gluesnake/main/docs/assets/gifs/gluesnake-prep-df_orders_simp.gif)
 
 Assim, o DataFrame alvo da demonstração desta funcionalidade de extração de atributos temporais contém apenas duas colunas: order_id e dt_compra. O objetivo final será obter uma série de atributos temporais com base na variável dt_compra.
 
 ??? example "Enriquecendo um DataFrame Spark com atributos temporais"
     :clapper: **Demonstração:**
 
-    ![](https://raw.githubusercontent.com/ThiagoPanini/gluesnake/feature/gluesnake-module/docs/assets/gifs/gluesnake-extract_date_attributes.gif)
+    ![](https://raw.githubusercontent.com/ThiagoPanini/gluesnake/main/docs/assets/gifs/gluesnake-extract_date_attributes.gif)
 
     ___
 
@@ -190,7 +190,7 @@ Assim, o DataFrame alvo da demonstração desta funcionalidade de extração de 
     ??? tip "Opcional: extração de todos os atributos possíveis de data"
         Para trazer uma visão completa da funcionalidade em seu total poder, a demonstração abaixo utiliza todos os flags de atributos temporais existentes no método para enriquecer um DataFrame com todas as possibilidades disponíveis.
 
-        ![](https://raw.githubusercontent.com/ThiagoPanini/gluesnake/feature/gluesnake-module/docs/assets/gifs/gluesnake-opt-extract_date_attributes.gif)
+        ![](https://raw.githubusercontent.com/ThiagoPanini/gluesnake/main/docs/assets/gifs/gluesnake-opt-extract_date_attributes.gif)
 
 
 ## Extraindo Atributos Estatísticos
@@ -200,14 +200,14 @@ Uma outra funcionalidade extremamente interessante encapsulada no *gluesnake* es
 Para a demonstração proposta, vamos utilizar um DataFrame alternativo que contempla dados de pagamentos realizados em pedidos online.
 
 ??? tip "Preparação: visualizando DataFrame de exemplo"
-    ![](https://raw.githubusercontent.com/ThiagoPanini/gluesnake/feature/gluesnake-module/docs/assets/gifs/gluesnake-prep-df_payments.gif)
+    ![](https://raw.githubusercontent.com/ThiagoPanini/gluesnake/main/docs/assets/gifs/gluesnake-prep-df_payments.gif)
 
 As colunas dispostas indicam uma possibilidade analítica interessante relacionada aos valores de pagamentos realizados para cada categoria diferente. Seria interessante analisar a soma, a média, os valores mínimos e máximo, por exemplo, de pagamentos realizados em cartões de crédito e nas demais categorias. Vamos fazer isso com uma única chamada de método!
 
 ??? example "Enriquecendo DataFrame com atributos estatísticos"
     :clapper: **Demonstração:**
 
-    ![](https://raw.githubusercontent.com/ThiagoPanini/gluesnake/feature/gluesnake-module/docs/assets/gifs/gluesnake-extract_aggregate_statistics.gif)
+    ![](https://raw.githubusercontent.com/ThiagoPanini/gluesnake/main/docs/assets/gifs/gluesnake-extract_aggregate_statistics.gif)
 
     ___
 
@@ -253,7 +253,7 @@ Para demonstrar essa funcionalidade, uma nova aba de uma conta AWS será aberta 
 ??? example "Eliminando partições físicas no S3"
     :clapper: **Demonstração:**
 
-    ![](https://raw.githubusercontent.com/ThiagoPanini/gluesnake/feature/gluesnake-module/docs/assets/gifs/gluesnake-drop_partition.gif)
+    ![](https://raw.githubusercontent.com/ThiagoPanini/gluesnake/main/docs/assets/gifs/gluesnake-drop_partition.gif)
 
     ___
 
@@ -286,7 +286,7 @@ Em processos ETL, é comum ter operações que geram conjuntos de dados particio
 ??? example "Adicionando coluna de partição em um DataFrame Spark"
     :clapper: **Demonstração:**
 
-    ![](https://raw.githubusercontent.com/ThiagoPanini/gluesnake/feature/gluesnake-module/docs/assets/gifs/gluesnake-add_partition.gif)
+    ![](https://raw.githubusercontent.com/ThiagoPanini/gluesnake/main/docs/assets/gifs/gluesnake-add_partition.gif)
 
     ___
 
@@ -325,7 +325,7 @@ Em alguns fluxos de trabalho, pensar em maneiras de otimizar o armazenamento dos
 ??? example "Modificando o número de partições físicas de um DataFrame"
     :clapper: **Demonstração:**
 
-    ![](https://raw.githubusercontent.com/ThiagoPanini/gluesnake/feature/gluesnake-module/docs/assets/gifs/gluesnake-repartition.gif)
+    ![](https://raw.githubusercontent.com/ThiagoPanini/gluesnake/main/docs/assets/gifs/gluesnake-repartition.gif)
 
     ___
 
@@ -372,7 +372,7 @@ Em alguns fluxos de trabalho, pensar em maneiras de otimizar o armazenamento dos
 
         Para maiores detalhes, consulte a seguinte [thread no Stack Overflow](https://stackoverflow.com/questions/31610971/spark-repartition-vs-coalesce) onde ambos os métodos são comparados em termos de operações *under the hood*.
 
-        ![](https://raw.githubusercontent.com/ThiagoPanini/gluesnake/feature/gluesnake-module/docs/assets/gifs/gluesnake-opt-repartition.gif)
+        ![](https://raw.githubusercontent.com/ThiagoPanini/gluesnake/main/docs/assets/gifs/gluesnake-opt-repartition.gif)
 
 ## Escrevendo e Catalogando Dados
 
