@@ -163,7 +163,7 @@ Assim, o DataFrame alvo da demonstração desta funcionalidade de extração de 
     :snake: **Código utilizado:**
     
     ```python
-    # Criando versão simplificada de DataFrame de pedidos
+    # Criando versão simplificada do DataFrame de pedidos
     df_orders_simp = df_orders.selectExpr(
         "order_id",
         "order_purchase_timestamp AS dt_compra"
