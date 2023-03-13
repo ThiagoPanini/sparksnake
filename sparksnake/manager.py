@@ -13,7 +13,7 @@ from time import sleep
 from sparksnake.utils.log import log_config
 from sparksnake.glue import GlueJobManager
 
-from pyspark.sql import SparkSession, DataFrame
+from pyspark.sql import DataFrame
 from pyspark.sql.functions import expr, lit
 
 
@@ -143,7 +143,7 @@ class SparkETLManager(GlueJobManager):
 
         # Validando modo/serviço de execução da classe
         if self.mode == "glue":
-            # Validar 
+            # Validar
             # Coletando argumentos necessários para mode="glue"
             argv_list = kwargs["argv_list"]
             data_dict = kwargs["data_dict"]
@@ -151,6 +151,8 @@ class SparkETLManager(GlueJobManager):
             # Herdando atributos e métodos da classe GlueJobManager
             GlueJobManager.__init__(self, argv_list=argv_list,
                                     data_dict=data_dict)
+
+        # Se for local, instanciar uma sessão Spark como atributo da classe
 
     @staticmethod
     def extract_date_attributes(df: DataFrame,
@@ -278,8 +280,7 @@ class SparkETLManager(GlueJobManager):
                          f'novos atributos de data. Exception: {e}')
             raise e
 
-    @staticmethod
-    def extract_aggregate_statistics(spark: SparkSession,
+    def extract_aggregate_statistics(self,
                                      df: DataFrame,
                                      numeric_col: str,
                                      group_by: str or list,
@@ -411,7 +412,7 @@ class SparkETLManager(GlueJobManager):
                     {group_by}
             """
 
-            return spark.sql(final_query)
+            return self.spark.sql(final_query)
 
         except Exception as e:
             logger.error('Erro ao extrair estatísticas de DataFrame'
