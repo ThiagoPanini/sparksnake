@@ -10,8 +10,8 @@ ___
 # Importando bibliotecas
 from time import sleep
 
-from snakespark.utils.log import log_config
-from snakespark.glue import GlueJobManager
+from sparksnake.utils.log import log_config
+from sparksnake.glue import GlueJobManager
 
 from pyspark.sql import SparkSession, DataFrame
 from pyspark.sql.functions import expr, lit

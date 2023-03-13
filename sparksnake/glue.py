@@ -1,7 +1,7 @@
 # Importando bibliotecas
 import sys
 from time import sleep
-from snakespark.utils.log import log_config
+from sparksnake.utils.log import log_config
 
 from awsglue.utils import getResolvedOptions
 from awsglue.context import GlueContext
