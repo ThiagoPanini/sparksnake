@@ -1,26 +1,28 @@
-# Exemplos Práticos de Funcionalidades
+# Jornada de Utilização: AWS Glue
 
-Bem-vindos à página de demonstrações das funcionalidades da biblioteca *gluesnake*! Apenas como um *disclaimer*, a ideia desta página é apresentar exemplos práticos dentro de uma **jornada lógica** de consumo da biblioteca.
+Bem-vindos à página de demonstrações das funcionalidades da biblioteca *sparksnake* com seu modo de operação voltado para aplicações Spark criadas para serem utilizadas e implantadas como *jobs* Glue na AWS!
 
 ## Setup Inicial
 
-Para proporcionar uma jornada de consumo extremamente detalhada, esta seção inicial irá comportar um passo a passo bem didático sobre os primeiros passos relacionados ao uso das funcionalidades da bibioteca *gluesnake*. Para usuários que possuem pouca experiência no desenvolvimento de códigos Python, as demonstrações aqui consolidadas podem ajudar a esclarecer diferentes pontos e particularidades do referido pacote.
+Para proporcionar uma jornada de consumo extremamente detalhada, esta seção inicial irá comportar um passo a passo altamente didático sobre os primeiros passos relacionados ao uso das funcionalidades da bibioteca *sparksnake*. Para usuários que possuem pouca experiência no desenvolvimento de códigos Python, as demonstrações aqui consolidadas podem ajudar a esclarecer diferentes pontos e particularidades do referido pacote.
 
-A primeira etapa dessa jornada envolve a importação da principal classe da biblioteca que funciona como um **ponto central** para todas as funcionalidades existentes. Trata-se da classe `GlueETLManager` presente no módulo `manager`.
+A primeira etapa dessa jornada envolve a importação da principal classe da biblioteca que funciona como um **ponto central** para todas as funcionalidades existentes. Trata-se da classe `SparkETLManager` presente no módulo `manager`.
 
-??? example "Importando a classe GlueETLManager no script de aplicação"
-    ![](https://raw.githubusercontent.com/ThiagoPanini/gluesnake/main/docs/assets/gifs/gluesnake-setup-import.gif)
+??? example "Importando a classe SparkETLManager no script de aplicação"
+    ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/feature/lib-full-refactor/docs/assets/gifs/sparksnake-setup-import.gif)
 
 
-Na sequência, como pré requisito de inicialização de um objeto da classe `GlueETLManager`, é preciso definir duas variáveis extremamente importantes:
+Na sequência, como pré requisito de inicialização de um objeto da classe `SparkETLManager` para criação de *jobs* Glue na AWS, é preciso definir duas variáveis extremamente importantes:
 
-- `ARGV_LIST`: Lista de argumentos/parâmetros utilizados no job.
-- `DATA_DICT`: Dicionário contendo um mapeamento das origens do catálogo de dados a serem lidas no job.
+- `argv_list`: Lista de argumentos/parâmetros utilizados no job Glue.
+- `data_dict`: Dicionário contendo um mapeamento das origens do catálogo de dados a serem lidas no job Glue.
 
-Os nomes acima referenciados são agnósticos. Isto significa que o usuário pode escolher qualquer nome de variável para as duas estruturas citadas, desde que seus respectivos conteúdos e contextos sejam mantidos.
+Os atributos `argv_list` e `data_dict` são exigências presentes na classe `GlueJobManager` que, por sua vez, é a classe da biblioteca *sparksnake* criada para centralizar funcionalidades específicas presentes no serviço AWS Glue. Já que a jornada aqui exemplificada considera este cenário, então a classe central `SparkETLManager` precisa receber os dois atributos obrigatórios para que a herança entre classes possa ocorrer da menria adequada.
+
+Para que o usuário se sinta extremamente confortável nesta jornada específica de uso das funcionalidades vinculadas ao Glue, exemplos de definição dos atributos serão fornecidos logo abaixo.
 
 ??? example "Definindo variável ARGV_LIST com argumentos do job"
-    ![](https://raw.githubusercontent.com/ThiagoPanini/gluesnake/main/docs/assets/gifs/gluesnake-setup-argvlist.gif)
+    ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/feature/lib-full-refactor/docs/assets/gifs/sparksnake-setup-argvlist.gif)
 
     ??? tip "Sobre a lista de argumentos do job (ARGV_LIST)"
         Os elementos definidos na variável de exemplo `ARGV_LIST` necessariamente precisam ser exatamente iguais aos argumentos configurados para o job. Em outras palavras, se o usuário está utilizando alguma ferramenta de IaC (Terraform ou CloudFormation, por exemplo) e, nela, há algum tipo de bloco definindo argumentos para o job, então estes mesmos argumentos devem estar contidos na lista `ARGV_LIST`.
@@ -28,21 +30,21 @@ Os nomes acima referenciados são agnósticos. Isto significa que o usuário pod
         Se existem argumentos ou parâmetros configurados para o job e que não estejam contidos em `ARGV_LIST`, então o Glue irá retornar um erro ao inicializar um job.
 
 ??? example "Definindo variável DATA_DICT para mapear origens de dados do job"
-    ![](https://raw.githubusercontent.com/ThiagoPanini/gluesnake/main/docs/assets/gifs/gluesnake-setup-datadict.gif)
+    ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/feature/lib-full-refactor/docs/assets/gifs/sparksnake-setup-datadict.gif)
 
     ??? tip "Sobre o dicionário de mapeamento de origens de um job"
-        A grande ideia de definir um dicionário de mapeamento de origens como atributo das classes do *gluesnake* é a de proporcionar um local único e centralizado para que o usuário possa coordenar todas as particularidades das origens utilizadas em seu job.
+        A grande ideia de definir um dicionário de mapeamento de origens como atributo das classes do *sparksnake* é a de proporcionar um local único e centralizado para que o usuário possa coordenar todas as particularidades das origens utilizadas em seu job.
 
         Isto significa que todos que precisarem observar o código fonte de um job criado neste formado poderão facilmente compreender detalhes sobre as origens logo no início do script, facilitando *troubleshooting* e possíveis alterações de escopo.
 
-        Para maiores detalhes sobre especificidades envolvendo a definição da variável `DATA_DICT`, consulte a [documentação oficial da classe `GlueETLManager`](./../mkdocstrings/glueetlmanager.md).
+        Para maiores detalhes sobre especificidades envolvendo a definição da variável `DATA_DICT`, consulte a [documentação oficial da classe `SparkETLManager`](./../mkdocstrings/SparkETLManager.md).
 
-Por fim, um objeto da classe `GlueETLManager` pode ser instanciado.
+Por fim, um objeto da classe `SparkETLManager` pode ser instanciado.
 
-??? example "Instanciando um objeto da classe `GlueETLManager`"
-    ![](https://raw.githubusercontent.com/ThiagoPanini/gluesnake/main/docs/assets/gifs/gluesnake-setup-glue_manager.gif)
+??? example "Instanciando um objeto da classe `SparkETLManager`"
+    ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/feature/lib-full-refactor/docs/assets/gifs/sparksnake-setup-spark_manager.gif)
 
-:star:{ .heart } Daqui em diante, demonstrações de algumas das principais funcionalidades da classe `GlueETLManager` serão fornecidas aos usuários. Tudo parte do objeto `glue_manager` devidamente instanciado e configurado de acordo com as exemplificações acima. Seus métodos aplicados proporcionam uma série de vantagens aos usuários que pretendem construir jobs Glue da melhor forma possível!
+:star:{ .heart } Daqui em diante, demonstrações de algumas das principais funcionalidades da classe `SparkETLManager` serão fornecidas aos usuários. Tudo parte do objeto `spark_manager` devidamente instanciado e configurado de acordo com as exemplificações acima. Seus métodos aplicados proporcionam uma série de vantagens aos usuários que pretendem construir jobs Glue da melhor forma possível!
 
 ___
 
@@ -55,7 +57,7 @@ Lembra dos elementos `glueContext`, `SparkContext` e `session`? Com o método `i
 ??? example "Inicializando e obtendo todos os insumos de um job Glue"
     :clapper: **Demonstração:**
 
-    ![](https://raw.githubusercontent.com/ThiagoPanini/gluesnake/main/docs/assets/gifs/gluesnake-init_job.gif)
+    ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/feature/lib-full-refactor/docs/assets/gifs/sparksnake-init_job.gif)
 
     ___
 
@@ -71,19 +73,19 @@ Lembra dos elementos `glueContext`, `SparkContext` e `session`? Com o método `i
     
     ```python
     # Inicializando e obtendo todos os insumos de um job Glue
-    glue_manager.init_job()
+    spark_manager.init_job()
     ```
 
     ___
 
-    :thinking: Saiba mais em [GlueJobManager.init_job()](../../mkdocstrings/gluejobmanager/#gluesnake.manager.GlueJobManager.init_job)
+    :thinking: Saiba mais em [GlueJobManager.init_job()](../../mkdocstrings/gluejobmanager/#sparksnake.manager.GlueJobManager.init_job)
 
     ___
 
     ??? tip "Opcional: analisando insumos do job obtidos como atributos da classe"
         Como mencionado, o método `init_job()` é responsável por coletar e associar os insumos de contexto Spark, contexto Glue e sessão Spark como atributos da classe instanciada. Estes três elementos formam a base de execução de funcionalidades do Glue ao longo de um job.
 
-        ![](https://raw.githubusercontent.com/ThiagoPanini/gluesnake/main/docs/assets/gifs/gluesnake-opt-contexto-sessao.gif)
+        ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/feature/lib-full-refactor/docs/assets/gifs/sparksnake-opt-contexto-sessao.gif)
 
 
 ## Lendo Múltiplos DataFrames Spark
@@ -93,7 +95,7 @@ Em sequência à jornada de consumo, após todo o processo de *setup* e, mais re
 ??? example "Obtendo dicionário de DataFrames Spark"
     :clapper: **Demonstração:**
 
-    ![](https://raw.githubusercontent.com/ThiagoPanini/gluesnake/main/docs/assets/gifs/gluesnake-generate_dataframes_dict.gif)
+    ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/feature/lib-full-refactor/docs/assets/gifs/sparksnake-generate_dataframes_dict.gif)
 
     ___
 
@@ -110,26 +112,26 @@ Em sequência à jornada de consumo, após todo o processo de *setup* e, mais re
     
     ```python
     # Lendo múltiplos DataFrames Spark de uma vez
-    dfs_dict = glue_manager.generate_dataframes_dict()
+    dfs_dict = spark_manager.generate_dataframes_dict()
     ```
 
     ___
 
-    :thinking: Saiba mais em [GlueETLManager.generate_dataframes_dict()](../../mkdocstrings/glueetlmanager/#gluesnake.manager.GlueETLManager.generate_dataframes_dict)
+    :thinking: Saiba mais em [SparkETLManager.generate_dataframes_dict()](../../mkdocstrings/SparkETLManager/#sparksnake.manager.SparkETLManager.generate_dataframes_dict)
 
     ___
 
     ??? tip "Opcional: analisando dicionário resultante e desempacotando DataFrames"
         Após a execução do método `generate_dataframes_dict()`, o usuário tem em mãos um dicionário que mapeia chaves da variável `DATA_DICT` à objetos do tipo DataFrames Spark. Para obter os DataFrames individualmente na aplicação, é preciso "desempacotar" o dicionário resultante da seguinte maneira:
 
-        ![](https://raw.githubusercontent.com/ThiagoPanini/gluesnake/main/docs/assets/gifs/gluesnake-opt-generate_dataframes_dict.gif)
+        ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/feature/lib-full-refactor/docs/assets/gifs/sparksnake-opt-generate_dataframes_dict.gif)
 
 
 ## Interlúdio: o que fazer agora?
 
 Uma vez obtidos os DataFrames Spark (ou DynamicFrames Glue) na aplicação, um mar de possibilidades é aberto. Neste momento, o usuário pode aplicar seus próprios métodos de transformação, queries em SparkSQL ou qualquer outra operação que faça sentido dentro das suas próprias regras de negócio.
 
-:material-alert-decagram:{ .mdx-pulse .warning } O *gluesnake*, como biblioteca, não possui a pretensão de encapsular toda e qualquer regra de negócio existente dentro de um *job* do Glue. Isto seria virtualmente impossível. Entretanto, uma das vantagens do *gluesnake* é possibilitar algumas funcionalidades comuns que podem ser extremamente úteis dentro da jornada de desenvolvimento de código e aplicação de regras de negócio.
+:material-alert-decagram:{ .mdx-pulse .warning } O *sparksnake*, como biblioteca, não possui a pretensão de encapsular toda e qualquer regra de negócio existente dentro de um *job* do Glue. Isto seria virtualmente impossível. Entretanto, uma das vantagens do *sparksnake* é possibilitar algumas funcionalidades comuns que podem ser extremamente úteis dentro da jornada de desenvolvimento de código e aplicação de regras de negócio.
 
 ## Extraindo Atributos de Data
 
@@ -139,14 +141,14 @@ Para visualizar esta funcionalidade na prática, vamos criar uma versão simplif
 
 ??? tip "Preparação: criando versão simplificada do DataFrame df_orders"
 
-    ![](https://raw.githubusercontent.com/ThiagoPanini/gluesnake/main/docs/assets/gifs/gluesnake-prep-df_orders_simp.gif)
+    ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/feature/lib-full-refactor/docs/assets/gifs/sparksnake-prep-df_orders_simp.gif)
 
 Assim, o DataFrame alvo da demonstração desta funcionalidade de extração de atributos temporais contém apenas duas colunas: order_id e dt_compra. O objetivo final será obter uma série de atributos temporais com base na variável dt_compra.
 
 ??? example "Enriquecendo um DataFrame Spark com atributos temporais"
     :clapper: **Demonstração:**
 
-    ![](https://raw.githubusercontent.com/ThiagoPanini/gluesnake/main/docs/assets/gifs/gluesnake-extract_date_attributes.gif)
+    ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/feature/lib-full-refactor/docs/assets/gifs/sparksnake-extract_date_attributes.gif)
 
     ___
 
@@ -168,7 +170,7 @@ Assim, o DataFrame alvo da demonstração desta funcionalidade de extração de 
     )
 
     # Extraindo atributos temporais para enriquecimento de DataFrame
-    df_orders_date = glue_manager.extract_date_attributes(
+    df_orders_date = spark_manager.extract_date_attributes(
         df=df_orders_simp,
         date_col="dt_compra",
         convert_string_to_date=False,
@@ -183,31 +185,31 @@ Assim, o DataFrame alvo da demonstração desta funcionalidade de extração de 
 
     ___
 
-    :thinking: Saiba mais em [GlueETLManager.extract_date_attributes()](../../mkdocstrings/glueetlmanager/#gluesnake.manager.GlueETLManager.extract_date_attributes)
+    :thinking: Saiba mais em [SparkETLManager.extract_date_attributes()](../../mkdocstrings/SparkETLManager/#sparksnake.manager.SparkETLManager.extract_date_attributes)
 
     ___
 
     ??? tip "Opcional: extração de todos os atributos possíveis de data"
         Para trazer uma visão completa da funcionalidade em seu total poder, a demonstração abaixo utiliza todos os flags de atributos temporais existentes no método para enriquecer um DataFrame com todas as possibilidades disponíveis.
 
-        ![](https://raw.githubusercontent.com/ThiagoPanini/gluesnake/main/docs/assets/gifs/gluesnake-opt-extract_date_attributes.gif)
+        ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/feature/lib-full-refactor/docs/assets/gifs/sparksnake-opt-extract_date_attributes.gif)
 
 
 ## Extraindo Atributos Estatísticos
 
-Uma outra funcionalidade extremamente interessante encapsulada no *gluesnake* está relacionada à extração de uma série de atributos estatísticos de uma coluna numérica presente em um DataFrame Spark. Com apenas uma chamada de método, o usuário poderá aplicar um complexo processo de agrupamento para enriquecer seus dados com atributos relevantes dentro de seu processo analítico.
+Uma outra funcionalidade extremamente interessante encapsulada no *sparksnake* está relacionada à extração de uma série de atributos estatísticos de uma coluna numérica presente em um DataFrame Spark. Com apenas uma chamada de método, o usuário poderá aplicar um complexo processo de agrupamento para enriquecer seus dados com atributos relevantes dentro de seu processo analítico.
 
 Para a demonstração proposta, vamos utilizar um DataFrame alternativo que contempla dados de pagamentos realizados em pedidos online.
 
 ??? tip "Preparação: visualizando DataFrame de exemplo"
-    ![](https://raw.githubusercontent.com/ThiagoPanini/gluesnake/main/docs/assets/gifs/gluesnake-prep-df_payments.gif)
+    ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/feature/lib-full-refactor/docs/assets/gifs/sparksnake-prep-df_payments.gif)
 
 As colunas dispostas indicam uma possibilidade analítica interessante relacionada aos valores de pagamentos realizados para cada categoria diferente. Seria interessante analisar a soma, a média, os valores mínimos e máximo, por exemplo, de pagamentos realizados em cartões de crédito e nas demais categorias. Vamos fazer isso com uma única chamada de método!
 
 ??? example "Enriquecendo DataFrame com atributos estatísticos"
     :clapper: **Demonstração:**
 
-    ![](https://raw.githubusercontent.com/ThiagoPanini/gluesnake/main/docs/assets/gifs/gluesnake-extract_aggregate_statistics.gif)
+    ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/feature/lib-full-refactor/docs/assets/gifs/sparksnake-extract_aggregate_statistics.gif)
 
     ___
 
@@ -223,7 +225,7 @@ As colunas dispostas indicam uma possibilidade analítica interessante relaciona
     :snake: **Código utilizado:**
     
     ```python
-    df_payments_stats = glue_manager.extract_aggregate_statistics(
+    df_payments_stats = spark_manager.extract_aggregate_statistics(
         df=df_payments,
         numeric_col="payment_value",
         group_by="payment_type",
@@ -242,7 +244,7 @@ As colunas dispostas indicam uma possibilidade analítica interessante relaciona
 
     ___
 
-    :thinking: Saiba mais em [GlueETLManager.extract_aggregate_statistics()](../../mkdocstrings/glueetlmanager/#gluesnake.manager.GlueETLManager.extract_aggregate_statistics)
+    :thinking: Saiba mais em [SparkETLManager.extract_aggregate_statistics()](../../mkdocstrings/SparkETLManager/#sparksnake.manager.SparkETLManager.extract_aggregate_statistics)
 
 ## Dropando Partições no S3
 
@@ -253,7 +255,7 @@ Para demonstrar essa funcionalidade, uma nova aba de uma conta AWS será aberta 
 ??? example "Eliminando partições físicas no S3"
     :clapper: **Demonstração:**
 
-    ![](https://raw.githubusercontent.com/ThiagoPanini/gluesnake/main/docs/assets/gifs/gluesnake-drop_partition.gif)
+    ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/feature/lib-full-refactor/docs/assets/gifs/sparksnake-drop_partition.gif)
 
     ___
 
@@ -272,12 +274,12 @@ Para demonstrar essa funcionalidade, uma nova aba de uma conta AWS será aberta 
     partition_uri = "s3://some-bucket-name/some-table-name/some-partition-prefix/"
 
     # Eliminando fisicamente a partição do S3
-    glue_manager.drop_partition(partition_uri)
+    spark_manager.drop_partition(partition_uri)
     ```
 
     ___
 
-    :thinking: Saiba mais em [GlueETLManager.drop_partition()](../../mkdocstrings/glueetlmanager/#gluesnake.manager.GlueETLManager.drop_partition)
+    :thinking: Saiba mais em [SparkETLManager.drop_partition()](../../mkdocstrings/SparkETLManager/#sparksnake.manager.SparkETLManager.drop_partition)
 
 ## Adicionando Partições à DataFrames
 
@@ -286,7 +288,7 @@ Em processos ETL, é comum ter operações que geram conjuntos de dados particio
 ??? example "Adicionando coluna de partição em um DataFrame Spark"
     :clapper: **Demonstração:**
 
-    ![](https://raw.githubusercontent.com/ThiagoPanini/gluesnake/main/docs/assets/gifs/gluesnake-add_partition.gif)
+    ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/feature/lib-full-refactor/docs/assets/gifs/sparksnake-add_partition.gif)
 
     ___
 
@@ -304,7 +306,7 @@ Em processos ETL, é comum ter operações que geram conjuntos de dados particio
     from datetime import datetime
 
     # Adicionando partição de anomesdia ao DataFrame
-    df_payments_partitioned = glue_manager.add_partition(
+    df_payments_partitioned = spark_manager.add_partition(
         df=df_payments,
         partition_name="anomesdia",
         partition_value=int(datetime.now().strftime("%Y%m%d"))
@@ -316,16 +318,16 @@ Em processos ETL, é comum ter operações que geram conjuntos de dados particio
 
     ___
 
-    :thinking: Saiba mais em [GlueETLManager.add_partition()](../../mkdocstrings/glueetlmanager/#gluesnake.manager.GlueETLManager.add_partition)
+    :thinking: Saiba mais em [SparkETLManager.add_partition()](../../mkdocstrings/SparkETLManager/#sparksnake.manager.SparkETLManager.add_partition)
 
 ## Reparticionando um DataFrame
 
-Em alguns fluxos de trabalho, pensar em maneiras de otimizar o armazenamento dos conjuntos distribuídos é essencial para garantir a eficiência e promover melhores práticas de consumo dos produtos de dados gerados no processo. Aplicar métodos de reparticionamento de DataFrames Spark contribuem para uma série de fatores positivos em fluxos de ETL e, na biblioteca *gluesnake*, o método `repartition_dataframe()` foi criado para auxiliar o usuário neste processo. Basta fornecer um número alvo de partições e a própria funcionalidade irá gerenciar qual método do Spark é mais adequado para o caso (`coalesce()` o `repartition()`).
+Em alguns fluxos de trabalho, pensar em maneiras de otimizar o armazenamento dos conjuntos distribuídos é essencial para garantir a eficiência e promover melhores práticas de consumo dos produtos de dados gerados no processo. Aplicar métodos de reparticionamento de DataFrames Spark contribuem para uma série de fatores positivos em fluxos de ETL e, na biblioteca *sparksnake*, o método `repartition_dataframe()` foi criado para auxiliar o usuário neste processo. Basta fornecer um número alvo de partições e a própria funcionalidade irá gerenciar qual método do Spark é mais adequado para o caso (`coalesce()` o `repartition()`).
 
 ??? example "Modificando o número de partições físicas de um DataFrame"
     :clapper: **Demonstração:**
 
-    ![](https://raw.githubusercontent.com/ThiagoPanini/gluesnake/main/docs/assets/gifs/gluesnake-repartition.gif)
+    ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/feature/lib-full-refactor/docs/assets/gifs/sparksnake-repartition.gif)
 
     ___
 
@@ -345,7 +347,7 @@ Em alguns fluxos de trabalho, pensar em maneiras de otimizar o armazenamento dos
     df_orders.rdd.getNumPartitions()
 
     # Diminuindo número de partições do DataFrame
-    df_orders_partitioned = glue_manager.repartition_dataframe(
+    df_orders_partitioned = spark_manager.repartition_dataframe(
         df=df_orders,
         num_partitions=5
     )
@@ -355,7 +357,7 @@ Em alguns fluxos de trabalho, pensar em maneiras de otimizar o armazenamento dos
     ```
     ___
 
-    :thinking: Saiba mais em [GlueETLManager.repartition_dataframe()](../../mkdocstrings/glueetlmanager/#gluesnake.manager.GlueETLManager.repartition_dataframe)
+    :thinking: Saiba mais em [SparkETLManager.repartition_dataframe()](../../mkdocstrings/SparkETLManager/#sparksnake.manager.SparkETLManager.repartition_dataframe)
 
     ___
 
@@ -372,7 +374,7 @@ Em alguns fluxos de trabalho, pensar em maneiras de otimizar o armazenamento dos
 
         Para maiores detalhes, consulte a seguinte [thread no Stack Overflow](https://stackoverflow.com/questions/31610971/spark-repartition-vs-coalesce) onde ambos os métodos são comparados em termos de operações *under the hood*.
 
-        ![](https://raw.githubusercontent.com/ThiagoPanini/gluesnake/main/docs/assets/gifs/gluesnake-opt-repartition.gif)
+        ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/feature/lib-full-refactor/docs/assets/gifs/sparksnake-opt-repartition.gif)
 
 ## Escrevendo e Catalogando Dados
 
@@ -405,7 +407,7 @@ Na visão do usuário, seria muito fácil se um único método pudesse ser execu
     # Definindo URI de tabela de saída
     s3_output_uri = "s3://some-bucket-name/some-table-name"
 
-    glue_manager.write_data_to_catalog(
+    spark_manager.write_data_to_catalog(
         df=df_payments_partitioned,
         s3_table_uri=s3_output_uri,
         output_database_name="ra8",
@@ -415,5 +417,5 @@ Na visão do usuário, seria muito fácil se um único método pudesse ser execu
     ```
     ___
 
-    :thinking: Saiba mais em [GlueETLManager.write_data()](../../mkdocstrings/glueetlmanager/#gluesnake.manager.GlueETLManager.write_data)
+    :thinking: Saiba mais em [SparkETLManager.write_data()](../../mkdocstrings/SparkETLManager/#sparksnake.manager.SparkETLManager.write_data)
 

@@ -1,46 +1,47 @@
-# gluesnake
+# sparksnake
 
 ## Visão Geral
 
-A biblioteca *gluesnake* proporciona uma forma fácil, rápida e eficiente para o desenvolvimento de aplicações Spark a serem submetidas como jobs Glue na AWS. Consolidando uma série de funcionalidades envolvendo ambas as ferramentas, *gluesnake* centraliza classes, métodos e funções codificadas em [pyspark](https://spark.apache.org/docs/latest/api/python/#:~:text=PySpark%20is%20an%20interface%20for,data%20in%20a%20distributed%20environment.) que visam simplificar ao máximo a jornada de imersão em jobs Glue.
+A biblioteca *sparksnake* proporciona uma forma fácil, rápida e eficiente para utilizar funcionalidades Spark através de serviços de *analytics* na AWS. Com ela, é possível se servir de classes, métodos e funções codificadas em pyspark que visam simplificar, ao máximo, a jornada de uso deste *framework* através das particularidades encontradas em serviços AWS, como o Glue e o EMR, por exemplo.
+
 
 <div align="center">
-    <br><img src="https://github.com/ThiagoPanini/gluesnake/blob/feature/gluesnake-module/docs/assets/imgs/logo.png?raw=true" alt="gluesnake-logo" width=200 height=200>
+    <br><img src="https://github.com/ThiagoPanini/sparksnake/blob/feature/lib-full-refactor/docs/assets/imgs/logo.png?raw=true" alt="sparksnake-logo" width=200 height=200>
 </div>
 
 <div align="center">
-    <i>gluesnake<br>
+    <i>sparksnake<br>
     Python Library</i>
 </div>
 
 <div align="center">  
   <br>
-  <a href="https://pypi.org/project/gluesnake/">
-    <img src="https://img.shields.io/pypi/v/gluesnake?color=purple" alt="Shield gluesnake PyPI version">
+  <a href="https://pypi.org/project/sparksnake/">
+    <img src="https://img.shields.io/pypi/v/sparksnake?color=purple" alt="Shield sparksnake PyPI version">
   </a>
 
-  <a href="https://pypi.org/project/gluesnake/">
-    <img src="https://img.shields.io/pypi/dm/gluesnake?color=purple" alt="Shield gluesnake PyPI downloads">
+  <a href="https://pypi.org/project/sparksnake/">
+    <img src="https://img.shields.io/pypi/dm/sparksnake?color=purple" alt="Shield sparksnake PyPI downloads">
   </a>
 
-  <a href="https://pypi.org/project/gluesnake/">
-    <img src="https://img.shields.io/pypi/status/gluesnake?color=purple" alt="Shield gluesnake PyPI status">
+  <a href="https://pypi.org/project/sparksnake/">
+    <img src="https://img.shields.io/pypi/status/sparksnake?color=purple" alt="Shield sparksnake PyPI status">
   </a>
   
-  <img src="https://img.shields.io/github/commit-activity/m/ThiagoPanini/gluesnake?color=purple" alt="Shield github commit activity">
+  <img src="https://img.shields.io/github/commit-activity/m/ThiagoPanini/sparksnake?color=purple" alt="Shield github commit activity">
   
-  <img src="https://img.shields.io/github/last-commit/ThiagoPanini/gluesnake?color=purple" alt="Shield github last commit">
+  <img src="https://img.shields.io/github/last-commit/ThiagoPanini/sparksnake?color=purple" alt="Shield github last commit">
 
   <br>
   
-  <img src="https://img.shields.io/github/actions/workflow/status/ThiagoPanini/gluesnake/ci-main.yml?label=ci" alt="Shield github CI workflow">
+  <img src="https://img.shields.io/github/actions/workflow/status/ThiagoPanini/sparksnake/ci-main.yml?label=ci" alt="Shield github CI workflow">
 
-  <a href='https://gluesnake.readthedocs.io/pt/latest/?badge=latest'>
-    <img src='https://readthedocs.org/projects/gluesnake/badge/?version=latest' alt='Documentation Status' />
+  <a href='https://sparksnake.readthedocs.io/pt/latest/?badge=latest'>
+    <img src='https://readthedocs.org/projects/sparksnake/badge/?version=latest' alt='Documentation Status' />
   </a>
 
-  <a href="https://codecov.io/gh/ThiagoPanini/gluesnake" > 
-    <img src="https://codecov.io/gh/ThiagoPanini/gluesnake/branch/main/graph/badge.svg?token=zSdFO9jkD8"/> 
+  <a href="https://codecov.io/gh/ThiagoPanini/sparksnake" > 
+    <img src="https://codecov.io/gh/ThiagoPanini/sparksnake/branch/main/graph/badge.svg?token=zSdFO9jkD8"/> 
   </a>
 
 </div>
@@ -58,10 +59,10 @@ ___
 
 ## Instalação
 
-A última versão da biblioteca *gluesnake* já está publicada no [PyPI](https://pypi.org/project/gluesnake/) e disponível para uso totalmente gratuito por qualquer um interessado em aprimorar a construção de suas aplicações Spark utilizando o serviço Glue. Para iniciar sua jornada de uso, basta realizar sua instalação através do seguinte comando:
+A última versão da biblioteca *sparksnake* já está publicada no [PyPI](https://pypi.org/project/sparksnake/) e disponível para uso totalmente gratuito por qualquer um interessado em aprimorar a construção de suas aplicações Spark utilizando serviços AWS como Glue e EMR, por exemplo. Para iniciar sua jornada de uso, basta realizar sua instalação através do seguinte comando:
 
 ```bash
-pip install gluesnake
+pip install sparksnake
 ```
 
 ??? tip "Sobre ambientes virtuais Python"

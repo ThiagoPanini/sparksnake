@@ -1,6 +1,6 @@
-# Documentação da classe GlueETLManager
+# Documentação da classe SparkETLManager
 
-::: gluesnake.manager.GlueETLManager
+::: sparksnake.manager.SparkETLManager
     default_handler: python
     options:
         show_source: true
