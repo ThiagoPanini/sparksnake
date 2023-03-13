@@ -90,7 +90,7 @@ Lembra dos elementos `glueContext`, `SparkContext` e `session`? Com o método `i
 
 ## Lendo Múltiplos DataFrames Spark
 
-Em sequência à jornada de consumo, após todo o processo de *setup* e, mais recente, de inicialização e obtenção dos insumos do job, é chegado o momento de utilizar as informações definidas na variável `DATA_DICT` para realizar a leitura de objetos do tipo DataFrame Spark.
+Em sequência à jornada de consumo, após todo o processo de *setup* e de inicialização e obtenção dos insumos do job, é chegado o momento de utilizar as informações definidas no atributo `data_dict` para realizar a leitura de objetos do tipo DataFrame Spark.
 
 ??? example "Obtendo dicionário de DataFrames Spark"
     :clapper: **Demonstração:**

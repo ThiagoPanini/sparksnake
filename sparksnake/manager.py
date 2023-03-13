@@ -143,6 +143,7 @@ class SparkETLManager(GlueJobManager):
 
         # Validando modo/serviço de execução da classe
         if self.mode == "glue":
+            # Validar 
             # Coletando argumentos necessários para mode="glue"
             argv_list = kwargs["argv_list"]
             data_dict = kwargs["data_dict"]
