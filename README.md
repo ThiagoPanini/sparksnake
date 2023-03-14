@@ -1,5 +1,5 @@
 <div align="center">
-    <br><img src="https://github.com/ThiagoPanini/snakespark/blob/feature/lib-full-refactor/docs/assets/imgs/header-readme.png?raw=true" alt="snakespark-logo">
+    <br><img src="https://github.com/ThiagoPanini/snakespark/blob/main/docs/assets/imgs/header-readme.png?raw=true" alt="snakespark-logo">
 </div>
 
 <div align="center">  

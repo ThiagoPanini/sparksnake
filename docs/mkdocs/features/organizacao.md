@@ -15,7 +15,7 @@ De início, é importante citar que o principal ponto de interação entre os us
 
 Em termos visuais, a jornada de uso da biblioteca pode ser simplificada nas três etapas abaixo:
 
-![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/feature/lib-full-refactor/docs/assets/imgs/sparksnake-draw.png)
+![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/main/docs/assets/imgs/sparksnake-draw.png)
 
 Para ilustrar essa dinâmica através de linhas de código (eu sei que vocês gostam), o trecho abaixo ilustra como a classe `SparkETLManager` pode ser utilizada para centralizar o uso do Spark em diferentes serviços AWS.
 

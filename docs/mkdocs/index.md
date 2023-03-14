@@ -6,7 +6,7 @@ A biblioteca *sparksnake* proporciona uma forma fácil, rápida e eficiente para
 
 
 <div align="center">
-    <br><img src="https://github.com/ThiagoPanini/sparksnake/blob/feature/lib-full-refactor/docs/assets/imgs/logo.png?raw=true" alt="sparksnake-logo" width=200 height=200>
+    <br><img src="https://github.com/ThiagoPanini/sparksnake/blob/main/docs/assets/imgs/logo.png?raw=true" alt="sparksnake-logo" width=200 height=200>
 </div>
 
 <div align="center">
