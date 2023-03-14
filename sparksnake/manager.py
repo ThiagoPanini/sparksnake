@@ -24,22 +24,25 @@ logger = log_config(logger_name=__file__)
 # Classe para o gerenciamento de transformações Spark em um job
 class SparkETLManager(GlueJobManager):
     """
-    Gerenciamento de métodos úteis para transformações no Glue.
+    Disponibilização de funcionalidades codificadas em pyspark.
 
-    Classe responsável por gerenciar e fornecer métodos típicos
-    de transformação de um job do Glue a serem detalhadamente
-    adaptados por seus usuários para que as operações nos dados
-    possam ser aplicadas de acordo com as necessidades exigidas.
+    Classe responsável por fornecer métodos capazes de serem utilizados em
+    aplicações Spark visando facilitar a jornada de desenvolvimento do
+    usuário através de blocos de códigos prontos contendo funcionalidades
+    relevantes dentro da jornada de codificação
 
-    Considerando a relação de herança entre as classes estabelecidas,
-    o usuário final poderá utilizar apenas a classe SparkETLManager
-    para toda e qualquer operação utilizando as funcionalidades
-    da biblioteca gluesnake.
+    Esta classe pode ser configurada utilizando seu atributo "mode" que,
+    por sua vez, guia os processos de herança de outras classes da biblioteca
+    de modo a enriquecer esta classe com atributos e métodos característicos
+    do ambiente alvo de desenvolvimento e implantação da aplicação Spark.
+
+    Assim, o usuário poderá utilizar funcionalidades relevantes em Spark,
+    seja desenvolvimento jobs no Glue, no EMR ou até mesmo localmente.
 
     Example: Exemplo básico de utilização da classe `SparkETLManager`
         ```python
         # Importando classe
-        from gluesnake.manager import SparkETLManager
+        from sparksnake.manager import SparkETLManager
 
         # Definindo argumentos do job
         ARGV_LIST = ["JOB_NAME", "S3_OUTPUT_PATH"]
@@ -64,78 +67,45 @@ class SparkETLManager(GlueJobManager):
         }
 
         # Instanciando classe e inicializando job
-        glue_manager = SparkETLManager(ARGV_LIST, DATA_DICT)
-        glue_manager.init_job()
+        spark_manager = SparkETLManager(ARGV_LIST, DATA_DICT)
+        spark_manager.init_job()
 
         # Obtendo DataFrames Spark com base em dicionário DATA_DICT mapeado
-        dfs_dict = glue_manager.generate_dataframes_dict()
+        dfs_dict = spark_manager.generate_dataframes_dict()
 
         # Desempacotando DataFrames através de dicionário obtido
         df_orders = dfs_dict["orders"]
 
         # Eliminando partição de data (caso existente)
-        glue_manager.drop_partition(
-            partition_name="anomesdia",
-            partition_value="20230101"
+        spark_manager.drop_partition(
+            s3_partition_uri="s3://some-bucket-name/some-table-name/partition/"
         )
 
         # Adicionando coluna de partição ao DataFrame
-        df_orders_partitioned = glue_manager.add_partition(
+        df_orders_partitioned = spark_manager.add_partition_column(
             partition_name="anomesdia",
             partition_value="20230101"
         )
 
         # Reparticionando DataFrame para otimizar armazenamento
-        df_orders_repartitioned = glue_manager.repartition_dataframe(
+        df_orders_repartitioned = spark_manager.repartition_dataframe(
             df=df_orders_partitioned,
             num_partitions=10
         )
 
         # Escrevendo dados no S3 e catalogando no Data Catalog
-        glue_manager.write_data_to_catalog(df=df_orders_repartitioned)
+        spark_manager.write_data_to_catalog(df=df_orders_repartitioned)
 
         # Commitando job
-        glue_manager.job.commit()
+        spark_manager.job.commit()
         ```
 
     Args:
-        argv_list (list):
-            Lista contendo os nomes dos argumentos utilizados
-            no job.
-
-        data_dict (dict):
-            Dicionário contendo todas as referências de origens
-            de dados utilizadas nos processos de transformação
-            consolidados no job.
-
-    Tip: Sobre as possibilidades de configuração do dicionário data_dict
-        O dicionário data_dict, passado como parâmetro de inicialização
-        da classe `SparkETLManager` (e também da classe `GlueJobManager`),
-        por natureza, deve ser definido de acordo com algumas premissas.
-
-        Sua principal função é proporcionar uma forma única de mapear a leitura
-        de todas as origens utilizadas no job. Dessa forma, sua composição é
-        fundamental para garantir que os processos de leitura de dados sejam
-        realizados com sucesso, independente do formato (DynamicFrame ou
-        DataFrame Spark).
-
-        Dessa forma, o conteúdo do dicionário data_dict está habilitado para
-        suportar toda e qualquer possibilidade presente no método nativo
-        `glueContext.create_dynamic_frame.from_catalog` utilizado pelo Glue
-        para leitura de DynamicFrames.
-
-        :star: Em outras palavras, caso o usuário queira configurar o
-        dicionário data_dict para leitura de uma tabela particionada, a chave
-        push_down_predicate pode ser inclusa no dicionário com o devido valor
-        a ser utilizado na filtragem. E assim, outros parâmetros como, por
-        exemplo, additional_options e catalog_id, podem ser mapeados como
-        chaves do dicionário data_dict para endereçar as mais variadas
-        possibilidades de mapeamento de origens no Glue.
-
-        Caso algum parâmetro aceito pelo método
-        `glueContext.create_dynamic_frame.from_catalog` não seja inserido como
-        chave do dicionário data_dict, seu respectivo valor _default_ será
-        considerado nos processos de leitura internos da classe.
+        mode (string):
+            Modo de operação da classe criado para indicar o ambiente de
+            desenvolvimento e uso da aplicação Spark codificada utilizando
+            as funcionalidades desta classe.
+            Valores aceitáveis: "glue", "emr", "local"
     """
 
     def __init__(self, mode: str, **kwargs) -> None:
@@ -181,7 +151,7 @@ class SparkETLManager(GlueJobManager):
         Examples:
             ```python
             # Extraindo atributos temporais de uma coluna de data em um df
-            df_date_prep = glue_manager.extract_date_attributes(
+            df_date_prep = spark_manager.extract_date_attributes(
                 df=df_raw,
                 date_col="order_date",
                 date_col_type="timestamp",
@@ -298,7 +268,7 @@ class SparkETLManager(GlueJobManager):
         Examples:
             ```python
             # Gerando estatísticas
-            df_stats = glue_manager.extract_aggregate_statistics(
+            df_stats = spark_manager.extract_aggregate_statistics(
                 df=df_orders,
                 numeric_col="order_value",
                 group_by=["order_id", "order_year"],
@@ -439,7 +409,7 @@ class SparkETLManager(GlueJobManager):
             partition_value = int(datetime.strftime('%Y%m%d'))
 
             # Adicionando coluna de partição a um DataFrame
-            df_partitioned = glue_manager.add_partition(
+            df_partitioned = spark_manager.add_partition(
                 df=df_orders,
                 partition_name=partition_name,
                 partition_value=partition_value
@@ -505,7 +475,7 @@ class SparkETLManager(GlueJobManager):
         Examples:
             ```python
             # Reparticionando DataFrame para otimizar armazenamento
-            df_repartitioned = glue_manager.repartition_dataframe(
+            df_repartitioned = spark_manager.repartition_dataframe(
                 df=df_orders,
                 num_partitions=10
             )

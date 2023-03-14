@@ -59,6 +59,35 @@ class GlueJobManager():
         spark (SparkSession):
             Sessão Spark utilizada como ponto central de operações
             realizadas no job
+
+    Tip: Sobre as possibilidades de configuração do dicionário data_dict
+        O dicionário data_dict, passado como parâmetro de inicialização
+        da classe `SparkETLManager` (e também da classe `GlueJobManager`),
+        por natureza, deve ser definido de acordo com algumas premissas.
+
+        Sua principal função é proporcionar uma forma única de mapear a leitura
+        de todas as origens utilizadas no job. Dessa forma, sua composição é
+        fundamental para garantir que os processos de leitura de dados sejam
+        realizados com sucesso, independente do formato (DynamicFrame ou
+        DataFrame Spark).
+
+        Dessa forma, o conteúdo do dicionário data_dict está habilitado para
+        suportar toda e qualquer possibilidade presente no método nativo
+        `glueContext.create_dynamic_frame.from_catalog` utilizado pelo Glue
+        para leitura de DynamicFrames.
+
+        :star: Em outras palavras, caso o usuário queira configurar o
+        dicionário data_dict para leitura de uma tabela particionada, a chave
+        push_down_predicate pode ser inclusa no dicionário com o devido valor
+        a ser utilizado na filtragem. E assim, outros parâmetros como, por
+        exemplo, additional_options e catalog_id, podem ser mapeados como
+        chaves do dicionário data_dict para endereçar as mais variadas
+        possibilidades de mapeamento de origens no Glue.
+
+        Caso algum parâmetro aceito pelo método
+        `glueContext.create_dynamic_frame.from_catalog` não seja inserido como
+        chave do dicionário data_dict, seu respectivo valor _default_ será
+        considerado nos processos de leitura internos da classe.
     """
 
     def __init__(self, argv_list: list, data_dict: dict) -> None:

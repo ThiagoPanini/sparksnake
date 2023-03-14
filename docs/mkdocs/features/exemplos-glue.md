@@ -78,7 +78,7 @@ Lembra dos elementos `glueContext`, `SparkContext` e `session`? Com o método `i
 
     ___
 
-    :thinking: Saiba mais em [GlueJobManager.init_job()](../../mkdocstrings/gluejobmanager/#sparksnake.manager.GlueJobManager.init_job)
+    :thinking: Saiba mais em [GlueJobManager.init_job()](../../mkdocstrings/gluejobmanager/#sparksnake.glue.GlueJobManager.init_job)
 
     ___
 
@@ -117,7 +117,7 @@ Em sequência à jornada de consumo, após todo o processo de *setup* e de inici
 
     ___
 
-    :thinking: Saiba mais em [SparkETLManager.generate_dataframes_dict()](../../mkdocstrings/SparkETLManager/#sparksnake.manager.SparkETLManager.generate_dataframes_dict)
+    :thinking: Saiba mais em [GlueJobManager.generate_dataframes_dict()](../../mkdocstrings/GlueJobManager/#sparksnake.glue.GlueJobManager.generate_dataframes_dict)
 
     ___
 
@@ -279,11 +279,11 @@ Para demonstrar essa funcionalidade, uma nova aba de uma conta AWS será aberta 
 
     ___
 
-    :thinking: Saiba mais em [SparkETLManager.drop_partition()](../../mkdocstrings/SparkETLManager/#sparksnake.manager.SparkETLManager.drop_partition)
+    :thinking: Saiba mais em [GlueJobManager.drop_partition()](../../mkdocstrings/GlueJobManager/#sparksnake.glue.GlueJobManager.drop_partition)
 
 ## Adicionando Partições à DataFrames
 
-Em processos ETL, é comum ter operações que geram conjuntos de dados particionados por atributos já existentes e/ou por atributos de data que referem-se ao instante temporal de execução do *job*. Para casos onde precisa-se adicionar uma ou mais colunas de partição em um DataFrame Spark já existente, o método `add_partition()` encapsula a execução do método `withColumn()` para adicionar uma coluna na coleção distribuída de dados.
+Em processos ETL, é comum ter operações que geram conjuntos de dados particionados por atributos já existentes e/ou por atributos de data que referem-se ao instante temporal de execução do *job*. Para casos onde precisa-se adicionar uma ou mais colunas de partição em um DataFrame Spark já existente, o método `add_partition_column()` encapsula a execução do método `withColumn()` para adicionar uma coluna na coleção distribuída de dados.
 
 ??? example "Adicionando coluna de partição em um DataFrame Spark"
     :clapper: **Demonstração:**
@@ -296,7 +296,7 @@ Em processos ETL, é comum ter operações que geram conjuntos de dados particio
     
     - [x] Abstração do método de adição de coluna em um DataFrame
     - [x] Maior clareza de operações em um fluxo de ETL ao explicitar a "adição de partição" como um método
-    - [x] Possibilidade de combinar os métodos `drop_partition()` e `add_partition()` em um fluxo de carga
+    - [x] Possibilidade de combinar os métodos `drop_partition()` e `add_partition_column()` em um fluxo de carga
 
     ___
 
@@ -318,7 +318,7 @@ Em processos ETL, é comum ter operações que geram conjuntos de dados particio
 
     ___
 
-    :thinking: Saiba mais em [SparkETLManager.add_partition()](../../mkdocstrings/SparkETLManager/#sparksnake.manager.SparkETLManager.add_partition)
+    :thinking: Saiba mais em [SparkETLManager.add_partition_column()](../../mkdocstrings/SparkETLManager/#sparksnake.manager.SparkETLManager.add_partition_column)
 
 ## Reparticionando um DataFrame
 
@@ -384,7 +384,7 @@ Por fim, vamos supor agora que o usuário da biblioteca tenha a missão de escre
 - `.setCatalogInfo()`
 - `.writeFrame()`
 
-Na visão do usuário, seria muito fácil se um único método pudesse ser executado para abstrair e encapsular todos os procedimentos necessários para escrita de um dado no S3 e sua posterior catalogação no Data Catalog da AWS. Para isso, o método `write_data()` se faz presente!
+Na visão do usuário, seria muito fácil se um único método pudesse ser executado para abstrair e encapsular todos os procedimentos necessários para escrita de um dado no S3 e sua posterior catalogação no Data Catalog da AWS. Para isso, o método `write_and_catalog_data()` se faz presente!
 
 ??? example "Escrevendo dados no S3 e catalogando no Data Catalog"
     :clapper: **Demonstração:**
@@ -407,15 +407,17 @@ Na visão do usuário, seria muito fácil se um único método pudesse ser execu
     # Definindo URI de tabela de saída
     s3_output_uri = "s3://some-bucket-name/some-table-name"
 
-    spark_manager.write_data_to_catalog(
+    # Escrevendo dados no S3 e catalogando no Data Catalog
+    spark_manager.write_and_catalog_data(
         df=df_payments_partitioned,
-        s3_table_uri=s3_output_uri,
+        s3_table_uri=s3_table_uri,
         output_database_name="ra8",
         output_table_name="tbl_payments",
-        partition_name="anomesdia"   
+        partition_name="anomesdia",
+        output_data_format="csv"
     )
     ```
     ___
 
-    :thinking: Saiba mais em [SparkETLManager.write_data()](../../mkdocstrings/SparkETLManager/#sparksnake.manager.SparkETLManager.write_data)
+    :thinking: Saiba mais em [GlueJobManager.write_and_catalog_data()](../../mkdocstrings/GlueJobManager/#sparksnake.glue.GlueJobManager.write_and_catalog_data)
 
