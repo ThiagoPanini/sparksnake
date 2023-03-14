@@ -14,7 +14,7 @@ with open("README.md", "r", encoding='utf-8') as f:
 # Criando setup
 setup(
     name='sparksnake',
-    version='0.1.3',
+    version='0.1.4',
     author='Thiago Panini',
     author_email='panini.development@gmail.com',
     packages=find_packages(),
