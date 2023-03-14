@@ -389,7 +389,7 @@ Na visão do usuário, seria muito fácil se um único método pudesse ser execu
 ??? example "Escrevendo dados no S3 e catalogando no Data Catalog"
     :clapper: **Demonstração:**
 
-    - [ ] A realizar gravação
+    ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/feature/lib-full-refactor/docs/assets/gifs/sparksnake-write_and_catalog_data.gif)
 
     ___
 
