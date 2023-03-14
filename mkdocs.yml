@@ -1,14 +1,14 @@
 # Informações do projeto
-site_name: gluesnake
-site_url: https://github.com/ThiagoPanini/gluesnake
+site_name: sparksnake
+site_url: https://github.com/ThiagoPanini/sparksnake
 site_author: Thiago Panini
 site_description: >-
   Componentes e elementos criados para facilitar a jornada de
   construção de jobs Glue na AWS
 
 # Repositório
-repo_name: ThiagoPanini/gluesnake
-repo_url: https://github.com/ThiagoPanini/gluesnake
+repo_name: ThiagoPanini/sparksnake
+repo_url: https://github.com/ThiagoPanini/sparksnake
 
 # Copyright
 copyright: |
@@ -62,14 +62,14 @@ theme:
 # Configurando navegação
 nav:
   - Home:
-    - Gluesnake: index.md
+    - sparksnake: index.md
     - Motivação: motivacao.md
   - Features:
     - Organização: features/organizacao.md
-    - Exemplos Práticos: features/exemplos.md
+    - Jornada de Uso com o Glue: features/exemplos-glue.md
   - Documentação Oficial:
+    - A Classe SparkETLManager: mkdocstrings/sparketlmanager.md
     - A Classe GlueJobManager: mkdocstrings/gluejobmanager.md
-    - A Classe GlueETLManager: mkdocstrings/glueetlmanager.md
 
 # Extensões do MkDocs
 markdown_extensions:

@@ -1,6 +1,6 @@
 # Documentação da classe GlueJobManager
 
-::: gluesnake.manager.GlueJobManager
+::: sparksnake.glue.GlueJobManager
     default_handler: python
     options:
         show_source: true
