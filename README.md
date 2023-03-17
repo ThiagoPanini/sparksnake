@@ -29,7 +29,9 @@
 
 ## What is the sparksnake library?
 
-The *sparksnake* library provides an easy, fast, and efficient way to use Spark features through analytics services on AWS. Through its features, it is possible to use classes, methods and functions developed in pyspark that aim to simplify, as much as possible, the journey of use of this framework through the particularities found in AWS services, such as Glue and EMR, for example.
+The *sparksnake* library provides an easy, fast, and efficient way to use Spark features inside analytics services on AWS. With *sparksnake*, it is possible to use classes, methods and functions developed in pyspark to simplify, as much as possible, the journey of building Spark applications along all the particularities found in AWS services, such as Glue and EMR, for example.
+
+Do you want to take your job Glue or your EMR cluster to the next level? Take a look at *sparksnake*!
 
 > **Note**
 >  Now the *sparksnake* library has an official documentation in readthedocs! Visit the [following link](https://sparksnake.readthedocs.io/pt/latest/) and check out usability technical details, practical examples and more!
