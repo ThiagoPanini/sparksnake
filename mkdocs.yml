@@ -63,7 +63,7 @@ theme:
 nav:
   - Home:
     - sparksnake: index.md
-    - Motivação: motivacao.md
+    - Motivation: motivation.md
   - Features:
     - Organização: features/organizacao.md
     - Jornada de Uso com o Glue: features/exemplos-glue.md
