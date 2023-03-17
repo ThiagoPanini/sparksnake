@@ -21,38 +21,38 @@
 ## Table of content
 
 - [Table of content](#table-of-content)
-- [O que é a biblioteca sparksnake?](#o-que-é-a-biblioteca-sparksnake)
-- [Funcionalidades](#funcionalidades)
-- [Contatos](#contatos)
-- [Referências](#referências)
+- [What is the sparksnake library?](#what-is-the-sparksnake-library)
+- [Features](#features)
+- [Contacts](#contacts)
+- [References](#references)
 
 
-## O que é a biblioteca sparksnake?
+## What is the sparksnake library?
 
-A biblioteca *sparksnake* proporciona uma forma fácil, rápida e eficiente para utilizar funcionalidades Spark através de serviços de *analytics* na AWS. Com ela, é possível se servir de classes, métodos e funções codificadas em pyspark que visam simplificar, ao máximo, a jornada de uso deste *framework* através das particularidades encontradas em serviços AWS, como o Glue e o EMR, por exemplo.
+The *sparksnake* library provides an easy, fast, and efficient way to use Spark features through analytics services on AWS. Through its features, it is possible to use classes, methods and functions developed in pyspark that aim to simplify, as much as possible, the journey of use of this framework through the particularities found in AWS services, such as Glue and EMR, for example.
 
 > **Note**
-> Agora a biblioteca *sparksnake* possui uma **documentação oficial** no readthedocs! Acesse o [seguinte link](https://sparksnake.readthedocs.io/pt/latest/) e confira detalhes técnicos de usabilidade, exemplos práticos e muito mais!
+>  Now the *sparksnake* library has an official documentation in readthedocs! Visit the [following link](https://sparksnake.readthedocs.io/pt/latest/) and check out usability technical details, practical examples and more!
 
 
-## Funcionalidades
+## Features
 
-- 🤖 Simplificação de construção de aplicações Spark através de classes e métodos já codificados
-- 🌟 Consolidação de funcionalidades mais comuns envolvendo processos de ETL em pyspark
-- ⚙️ Abstração do todo o processo de *setup* de um *job* Glue através de uma linha de código
-- 👁️‍🗨️ Aprimoramento do *observability* da aplicação através de mensagens detalhadas de log no CloudWatch
-- 🛠️ Tratamento de exceções já embutidos nos métodos da biblioteca
+- 🤖 Simplification of building Spark applications with already coded classes and methods
+- 🌟 Consolidation of most common functionalities involving ETL processes in pyspark
+- ⚙️ Abstraction of the whole process of setting up a Job Glue with one line of code
+- 👁️‍🗨️ Application observability improvement with detailed log messages in CloudWatch
+- 🛠️ Exception handling processes already embedded in library methods
 
 ___
 
-## Contatos
+## Contacts
 
 - [Thiago Panini - LinkedIn](https://www.linkedin.com/in/thiago-panini/)
 - [paninitechlab @ hashnode](https://panini.hashnode.dev/)
 
 ___
 
-## Referências
+## References
 
 **Python**
 
