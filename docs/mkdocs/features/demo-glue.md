@@ -1,137 +1,141 @@
-# Jornada de Utilização: AWS Glue
+# Usage Journey: Enhancing Glue Jobs Development with sparksnake
 
-Bem-vindos à página de demonstrações das funcionalidades da biblioteca *sparksnake* com seu modo de operação voltado para aplicações Spark criadas para serem utilizadas e implantadas como *jobs* Glue na AWS!
+Welcome to the *sparksnake* library feature demos page with its operation mode focused on Spark applications designed to be used and deployed as Glue jobs on AWS! Fasten your seat belts and let's go code!
 
-## Setup Inicial
+## Initial Setup
 
-Para proporcionar uma jornada de consumo extremamente detalhada, esta seção inicial irá comportar um passo a passo altamente didático sobre os primeiros passos relacionados ao uso das funcionalidades da bibioteca *sparksnake*. Para usuários que possuem pouca experiência no desenvolvimento de códigos Python, as demonstrações aqui consolidadas podem ajudar a esclarecer diferentes pontos e particularidades do referido pacote.
+To provide an extremely detailed consumption journey, this initial section will include a highly didactic step by step on using the *sparksnake* library for the first time ever. For users who have little to none experience developing Python code, this is a really nice beginning section.
 
-A primeira etapa dessa jornada envolve a importação da principal classe da biblioteca que funciona como um **ponto central** para todas as funcionalidades existentes. Trata-se da classe `SparkETLManager` presente no módulo `manager`.
+The first step in this journey goes through importing the library's main class that acts as a central point for all existing functionality. This is the class `SparkETLManager` present in the module `manager`.
 
 ??? example "Importando a classe SparkETLManager no script de aplicação"
     ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/main/docs/assets/gifs/sparksnake-setup-import.gif)
 
 
-Na sequência, como pré requisito de inicialização de um objeto da classe `SparkETLManager` para criação de *jobs* Glue na AWS, é preciso definir duas variáveis extremamente importantes:
+Next, as a prerequisite for initializing a class object for creating Glue jobs on AWS, the user must define two extremely important attributes:
 
-- `argv_list`: Lista de argumentos/parâmetros utilizados no job Glue.
-- `data_dict`: Dicionário contendo um mapeamento das origens do catálogo de dados a serem lidas no job Glue.
+- `argv_list`: List of arguments/parameters used in the Glue job.
+- `data_dict`: Dictionary containing a mapping of the sources on the data catalog to be read in the Glue job.
 
-Os atributos `argv_list` e `data_dict` são exigências presentes na classe `GlueJobManager` que, por sua vez, é a classe da biblioteca *sparksnake* criada para centralizar funcionalidades específicas presentes no serviço AWS Glue. Já que a jornada aqui exemplificada considera este cenário, então a classe central `SparkETLManager` precisa receber os dois atributos obrigatórios para que a herança entre classes possa ocorrer da menria adequada.
+The attributes `argv_list` and `data_dict` are requirements present in the class `GlueJobManager`, which in turn is the *sparksnake* library class created to centralize specific functionality present in the AWS Glue service. Since the journey exemplified here considers this scenario, then the central class `SparkETLManager` needs to receive the two mandatory attributes so that inheritance between classes can occur on the proper way.
 
-Para que o usuário se sinta extremamente confortável nesta jornada específica de uso das funcionalidades vinculadas ao Glue, exemplos de definição dos atributos serão fornecidos logo abaixo.
+In order for the user to feel extremely comfortable in this specific journey of using glue-linked functionality, examples of defining the attributes will be provided below.
 
-??? example "Definindo variável ARGV_LIST com argumentos do job"
+
+??? example "Defining variable ARGV_LIST containing job arguments"
     ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/main/docs/assets/gifs/sparksnake-setup-argvlist.gif)
 
-    ??? tip "Sobre a lista de argumentos do job (ARGV_LIST)"
-        Os elementos definidos na variável de exemplo `ARGV_LIST` necessariamente precisam ser exatamente iguais aos argumentos configurados para o job. Em outras palavras, se o usuário está utilizando alguma ferramenta de IaC (Terraform ou CloudFormation, por exemplo) e, nela, há algum tipo de bloco definindo argumentos para o job, então estes mesmos argumentos devem estar contidos na lista `ARGV_LIST`.
+    ??? tip "About the job argument list"
+        The elements defined in the `ARGV_LIST` variable provided as an example necessarily need to be exactly the same as the arguments configured for the job. In other words, if the user is using some IaC tool (Terraform or CloudFormation, for example) and in its definition the user declare some job parameters, then these same arguments must be contained in the `ARGV_LIST` variable.
+        
+        If arguments or parameters are configured for the job (directly on the console or using an IaC tool) and they are not contained in the `ARGV_LIST` variable, then Glue will return an error when initializing a job.
 
-        Se existem argumentos ou parâmetros configurados para o job e que não estejam contidos em `ARGV_LIST`, então o Glue irá retornar um erro ao inicializar um job.
 
-??? example "Definindo variável DATA_DICT para mapear origens de dados do job"
+??? example "Defining DATA_DICT variable to map job data sources"
     ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/main/docs/assets/gifs/sparksnake-setup-datadict.gif)
 
-    ??? tip "Sobre o dicionário de mapeamento de origens de um job"
-        A grande ideia de definir um dicionário de mapeamento de origens como atributo das classes do *sparksnake* é a de proporcionar um local único e centralizado para que o usuário possa coordenar todas as particularidades das origens utilizadas em seu job.
+    ??? tip "About a job's source mapping dictionary"
+        The great idea about defining a source mapping dictionary as an attribute of *sparksnake* classes is to provide a single, centralized location so that users can coordinate all the particularities of the sources used in their job using one variable.
 
-        Isto significa que todos que precisarem observar o código fonte de um job criado neste formado poderão facilmente compreender detalhes sobre as origens logo no início do script, facilitando *troubleshooting* e possíveis alterações de escopo.
+        This means that anyone who needs to observe the source code of a job created in this form can easily understand details about the sources early in the script, making troubleshooting and possible scope changes easier.
+        
+        For more details on specificities involving variable definition, see the [official documentation of the `SparkETLManager` class](./../mkdocstrings/SparkETLManager.md).
 
-        Para maiores detalhes sobre especificidades envolvendo a definição da variável `DATA_DICT`, consulte a [documentação oficial da classe `SparkETLManager`](./../mkdocstrings/SparkETLManager.md).
 
-Por fim, um objeto da classe `SparkETLManager` pode ser instanciado.
+Finally, an object of the `SparkETLManager` class can be obtained.
 
-??? example "Instanciando um objeto da classe `SparkETLManager`"
+??? example "Obtaining an object from the class `SparkETLManager`"
     ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/main/docs/assets/gifs/sparksnake-setup-spark_manager.gif)
 
-:star:{ .heart } Daqui em diante, demonstrações de algumas das principais funcionalidades da classe `SparkETLManager` serão fornecidas aos usuários. Tudo parte do objeto `spark_manager` devidamente instanciado e configurado de acordo com as exemplificações acima. Seus métodos aplicados proporcionam uma série de vantagens aos usuários que pretendem construir jobs Glue da melhor forma possível!
+:star:{ .heart } From now on, demonstrations on some of the class's key features will be provided to users. Everything takes place from `spark_manager` object as a way for calling methods and attributes that handle the most common operations find on Glue jobs.
 
 ___
 
-## Inicializando um job Glue
+## Initializing a Glue Job
 
-Após a configuração inicial do script e a criação de um objeto central, o passo subsequente da construção da aplicação envolve a inicialização de um job Glue e a obtenção de todos os seus insumos obrigatórios.
+After the initial script setup, the subsequent stesp of building the application involves initializing a Glue job and obtaining all of its required elements.
 
-Lembra dos elementos `glueContext`, `SparkContext` e `session`? Com o método `init_job()` é possível obter todos eles como atributos da classe com uma única linha de código.
+Remember `glueContext`, `SparkContext` e `session`? With the `init_job()` method it's possible to get all of them as class attributes with a single line of code.
 
-??? example "Inicializando e obtendo todos os insumos de um job Glue"
-    :clapper: **Demonstração:**
+??? example "Initializing and getting all the elements required by a Glue job"
+    :clapper: **Demonstration:**
 
     ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/main/docs/assets/gifs/sparksnake-init_job.gif)
 
     ___
 
-    :muscle: **Vantagens e benefícios da funcionalidade:**
+    :muscle: **Advantages and benefits:**
     
-    - [x] Obtenção de todos os insumos para execução de um job Glue
-    - [x] Associação automática dos insumos como atributos da classe (ver demonstração opcional)
-    - [x] Consolidação de mensagem detalhada de log com informações relevantes sobre o job
+    - [x] Obtaining all the elements required to run a Glue job
+    - [x] Automatic association of the elements as class attributes (see optional demo)
+    - [x] Provides a detailed log message with useful information about the job
 
     ___
 
-    :snake: **Código utilizado:**
+    :snake: **Code:**
     
     ```python
-    # Inicializando e obtendo todos os insumos de um job Glue
+    # Initializing and getting all elements required by a Glue job
     spark_manager.init_job()
     ```
 
     ___
 
-    :thinking: Saiba mais em [GlueJobManager.init_job()](../../mkdocstrings/gluejobmanager/#sparksnake.glue.GlueJobManager.init_job)
+    :thinking: Learn more at [GlueJobManager.init_job()](../../mkdocstrings/gluejobmanager/#sparksnake.glue.GlueJobManager.init_job)
 
     ___
 
-    ??? tip "Opcional: analisando insumos do job obtidos como atributos da classe"
-        Como mencionado, o método `init_job()` é responsável por coletar e associar os insumos de contexto Spark, contexto Glue e sessão Spark como atributos da classe instanciada. Estes três elementos formam a base de execução de funcionalidades do Glue ao longo de um job.
+    ??? tip "Optional: analyzing job required elements gotten by the method"
+        As mentioned, the `init_job()` method is responsible for collecting and associating the Spark context, Glue context, and Spark session elements as attributes of the instantiated class. These three elements form the basis for performing Glue features throughout a job.
 
         ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/main/docs/assets/gifs/sparksnake-opt-contexto-sessao.gif)
 
 
-## Lendo Múltiplos DataFrames Spark
+## Reading Multiple Spark DataFrames
 
-Em sequência à jornada de consumo, após todo o processo de *setup* e de inicialização e obtenção dos insumos do job, é chegado o momento de utilizar as informações definidas no atributo `data_dict` para realizar a leitura de objetos do tipo DataFrame Spark.
+Following the demo journey, after the entire process of setting up and initializing and obtaining the job's elements, the time to read the source data has finally come. For that, the `data_dict` attributes will be used on the `generate_dataframes_dict()` method for providing a way to read multiple Spark DataFrames with a single line of code.
 
-??? example "Obtendo dicionário de DataFrames Spark"
-    :clapper: **Demonstração:**
+??? example "Getting a dictionary of Spark DataFrames objects"
+    :clapper: **Demonstration:**
 
     ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/main/docs/assets/gifs/sparksnake-generate_dataframes_dict.gif)
 
     ___
 
-    :muscle: **Vantagens e benefícios da funcionalidade:**
+    :muscle: **Advantages and benefits:**
     
-    - [x] Obtenção de múltiplos DataFrames Spark com uma única linha de código
-    - [x] Melhor observability através de mensagens detalhadas de log
-    - [x] Melhor organização do código a medida que o número de origens cresce
-    - [x] Possibilidade de criação automática de temp views para as origens mapeadas
+    - [x] Obtaining multiple Spark DataFrames with a single line of code
+    - [x] Better observability through detailed log messages
+    - [x] Better code organization as the number of sources grows
+    - [x] Possibility of automatic creation of temp views for mapped data sources
 
     ___
 
-    :snake: **Código utilizado:**
+    :snake: **Code:**
     
     ```python
-    # Lendo múltiplos DataFrames Spark de uma vez
+    # Reading multiple Spark DataFrames at once
     dfs_dict = spark_manager.generate_dataframes_dict()
     ```
 
     ___
 
-    :thinking: Saiba mais em [GlueJobManager.generate_dataframes_dict()](../../mkdocstrings/GlueJobManager/#sparksnake.glue.GlueJobManager.generate_dataframes_dict)
+    :thinking: Learn more at [GlueJobManager.generate_dataframes_dict()](../../mkdocstrings/GlueJobManager/#sparksnake.glue.GlueJobManager.generate_dataframes_dict)
 
     ___
 
-    ??? tip "Opcional: analisando dicionário resultante e desempacotando DataFrames"
-        Após a execução do método `generate_dataframes_dict()`, o usuário tem em mãos um dicionário que mapeia chaves da variável `DATA_DICT` à objetos do tipo DataFrames Spark. Para obter os DataFrames individualmente na aplicação, é preciso "desempacotar" o dicionário resultante da seguinte maneira:
+    ??? tip "Optional: Analyzing the dictionary collected and unpacking DataFrames"
+        After the method `generate_dataframes_dict()` is run, the user has a dictionary that maps variable keys to objects of DataFrame type. To get the DataFrames individually in the application, you must "unpack" the resulting dictionary as follows:
 
         ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/main/docs/assets/gifs/sparksnake-opt-generate_dataframes_dict.gif)
 
 
-## Interlúdio: o que fazer agora?
+## What More Can Be Done?
 
-Uma vez obtidos os DataFrames Spark (ou DynamicFrames Glue) na aplicação, um mar de possibilidades é aberto. Neste momento, o usuário pode aplicar seus próprios métodos de transformação, queries em SparkSQL ou qualquer outra operação que faça sentido dentro das suas próprias regras de negócio.
+Once the Spark DataFrames (or Glue DynamicFrames) has been obtained in the application, a sea of possibilities is opened. At this point, the user can apply their own transformation methods, queries in SparkSQL or any other operation that makes sense within their own business rules.
 
-:material-alert-decagram:{ .mdx-pulse .warning } O *sparksnake*, como biblioteca, não possui a pretensão de encapsular toda e qualquer regra de negócio existente dentro de um *job* do Glue. Isto seria virtualmente impossível. Entretanto, uma das vantagens do *sparksnake* é possibilitar algumas funcionalidades comuns que podem ser extremamente úteis dentro da jornada de desenvolvimento de código e aplicação de regras de negócio.
+:material-alert-decagram:{ .mdx-pulse .warning } The *sparksnake*, as a library, does not claim to encapsulate all existing business rules within a Glue job. This would be virtually impossible. However, one of the advantages of *sparksnake* is to enable some common features that can be extremely useful within the journey of code development and application of business rules. And that's what you will see in the following sections.
+
 
 ## Extraindo Atributos de Data
 

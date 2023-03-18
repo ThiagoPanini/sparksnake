@@ -66,7 +66,7 @@ nav:
     - Motivation: motivation.md
   - Features:
     - Library Structure: features/lib-structure.md
-    - Jornada de Uso com o Glue: features/exemplos-glue.md
+    - Developing Glue Jobs: features/demo-glue.md
   - Documentação Oficial:
     - A Classe SparkETLManager: mkdocstrings/sparketlmanager.md
     - A Classe GlueJobManager: mkdocstrings/gluejobmanager.md
