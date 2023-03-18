@@ -132,48 +132,48 @@ Following the demo journey, after the entire process of setting up and initializ
 
 ## What More Can Be Done?
 
-Once the Spark DataFrames (or Glue DynamicFrames) has been obtained in the application, a sea of possibilities is opened. At this point, the user can apply their own transformation methods, queries in SparkSQL or any other operation that makes sense within their own business rules.
+Now that we initialized a Glue Job and read all data sources as Spark DataFrames in the application, many possibilities are opened. At this point, the user can apply their own transformation methods, queries in SparkSQL or any other operation that makes sense within their own business rules.
 
 :material-alert-decagram:{ .mdx-pulse .warning } The *sparksnake*, as a library, does not claim to encapsulate all existing business rules within a Glue job. This would be virtually impossible. However, one of the advantages of *sparksnake* is to enable some common features that can be extremely useful within the journey of code development and application of business rules. And that's what you will see in the following sections.
 
 
-## Extraindo Atributos de Data
+## Extracting Date Attributes
 
-Uma dessas funcionalidades citadas permite que os usuários enriqueçam um DataFrame Spark com uma série de atributos temporais a partir de uma coluna de data já existente. Em outras palavras, esta é uma forma fácil e eficiente de obter informações como o ano, mês, dia, quadrimestre, dia da semana e uma série de outras características com base em um atributo de data do DataFrame.
+One of the features available in *sparksnake* allows users to enrich a Spark DataFrame with a series of date attributes extracted from a DataFrame column that represents a date information. In other words, this is an easy and efficient way to get new attributes in a DataFrame like year, month, day, quarter, day of the week and much more with the power of the method `extract_date_attributes()`.
 
-Para visualizar esta funcionalidade na prática, vamos criar uma versão simplificada do DataFrame `df_orders` com apenas alguns atributos essenciais para a demonstração.
+To see how this work in practice, let's create a simplified version of the `df_orders` DataFrame selecting only a few attributes for demo purposes.
 
-??? tip "Preparação: criando versão simplificada do DataFrame df_orders"
+??? tip "Prepartion: creating a simplified version of df_orders DataFrame"
 
     ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/main/docs/assets/gifs/sparksnake-prep-df_orders_simp.gif)
 
-Assim, o DataFrame alvo da demonstração desta funcionalidade de extração de atributos temporais contém apenas duas colunas: order_id e dt_compra. O objetivo final será obter uma série de atributos temporais com base na variável dt_compra.
+Now the target DataFrame for the demo has only two columns: order_id and dt_compra. The final goal is to obtain a bunch of date attributes from the dt_compra column.
 
-??? example "Enriquecendo um DataFrame Spark com atributos temporais"
-    :clapper: **Demonstração:**
+??? example "Getting date attributes from a date column in a DataFrame"
+    :clapper: **Demonstration:**
 
     ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/main/docs/assets/gifs/sparksnake-extract_date_attributes.gif)
 
     ___
 
-    :muscle: **Vantagens e benefícios da funcionalidade:**
+    :muscle: **Advantages and benefits:**
     
-    - [x] Possibilidade de enriquecimento completo de DataFrame com informações de data
-    - [x] Possibilidade de conversão automática de strings em campos date ou timestamp
-    - [x] Aprimoramento de análise de dados com base em informações de data extraídas
+    - [x] Enrich the data analysis process with date attributes extracted in a easy way
+    - [x] Abstraction of complex queries and functions calls for extract date information
+    - [x] Option to automatically convert strings in date or timestamp columns
 
     ___
 
-    :snake: **Código utilizado:**
+    :snake: **Code**
     
     ```python
-    # Criando versão simplificada do DataFrame de pedidos
+    # Creating a simplified version of orders DataFrame
     df_orders_simp = df_orders.selectExpr(
         "order_id",
         "order_purchase_timestamp AS dt_compra"
     )
 
-    # Extraindo atributos temporais para enriquecimento de DataFrame
+    # Extracting date attributes from a date DataFrame column
     df_orders_date = spark_manager.extract_date_attributes(
         df=df_orders_simp,
         date_col="dt_compra",
@@ -183,50 +183,50 @@ Assim, o DataFrame alvo da demonstração desta funcionalidade de extração de 
         dayofmonth=True
     )
 
-    # Visualizando resultado
+    # Showing the result
     df_orders_date.show(5)
     ```
 
     ___
 
-    :thinking: Saiba mais em [SparkETLManager.extract_date_attributes()](../../mkdocstrings/SparkETLManager/#sparksnake.manager.SparkETLManager.extract_date_attributes)
+    :thinking: Learn more at [SparkETLManager.extract_date_attributes()](../../mkdocstrings/SparkETLManager/#sparksnake.manager.SparkETLManager.extract_date_attributes)
 
     ___
 
-    ??? tip "Opcional: extração de todos os atributos possíveis de data"
-        Para trazer uma visão completa da funcionalidade em seu total poder, a demonstração abaixo utiliza todos os flags de atributos temporais existentes no método para enriquecer um DataFrame com todas as possibilidades disponíveis.
+    ??? tip "Optional: extracting all possible date attributes"
+        To bring a complte view of this feature, the video below uses all the date attributes flag available in the method to enrich a DataFrame with all possibilities.
 
         ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/main/docs/assets/gifs/sparksnake-opt-extract_date_attributes.gif)
 
 
-## Extraindo Atributos Estatísticos
+## Extracting Statistical Attributes
 
-Uma outra funcionalidade extremamente interessante encapsulada no *sparksnake* está relacionada à extração de uma série de atributos estatísticos de uma coluna numérica presente em um DataFrame Spark. Com apenas uma chamada de método, o usuário poderá aplicar um complexo processo de agrupamento para enriquecer seus dados com atributos relevantes dentro de seu processo analítico.
+Another powerful feature inside *sparksnake* allows users to extract a series of statistical attributes based on a numeric column and a set of columns to be grouped in the aggregation process. With the method `extract_aggregate_statistics()` the users can enrich their data analysis and get specialized DataFrames to answear all possible business questions.
 
-Para a demonstração proposta, vamos utilizar um DataFrame alternativo que contempla dados de pagamentos realizados em pedidos online.
+To see this in practice, let's now use the `df_payments` DataFrame with payments data of online orders.
 
-??? tip "Preparação: visualizando DataFrame de exemplo"
+??? tip "Preparation: showing a sample of the target df_payments DataFrame"
     ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/main/docs/assets/gifs/sparksnake-prep-df_payments.gif)
 
-As colunas dispostas indicam uma possibilidade analítica interessante relacionada aos valores de pagamentos realizados para cada categoria diferente. Seria interessante analisar a soma, a média, os valores mínimos e máximo, por exemplo, de pagamentos realizados em cartões de crédito e nas demais categorias. Vamos fazer isso com uma única chamada de método!
+The columns of the DataFrame show an interesting possibility of applying analytics on payment values for each payment type. Maybe it would be very important to see the sum, mean, min and max for credit card payments compared to other categories. Let's do that with a single method call!
 
-??? example "Enriquecendo DataFrame com atributos estatísticos"
-    :clapper: **Demonstração:**
+??? example "Getting statistical attributes from a DataFrame"
+    :clapper: **Demonstration:**
 
     ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/main/docs/assets/gifs/sparksnake-extract_aggregate_statistics.gif)
 
     ___
 
-    :muscle: **Vantagens e benefícios da funcionalidade:**
+    :muscle: **Advantages and benefits:**
     
-    - [x] Possibilidade de extração de múltiplos atributos estatísticos com uma única chamada
-    - [x] Aprimoramento de processo analítico
-    - [x] Abstração da complexidade de realizar um agrupamento complexo
-    - [x] Possibilidade de agrupamento por múltiplas colunas
+    - [x] Extract multiple statistical attributes with a single method call
+    - [x] Enhancement of analytics
+    - [x] Reduced complexity about aggregation process in pyspark
+    - [x] Option to group by multiple columns
 
     ___
 
-    :snake: **Código utilizado:**
+    :snake: **Code**
     
     ```python
     df_payments_stats = spark_manager.extract_aggregate_statistics(
@@ -242,162 +242,166 @@ As colunas dispostas indicam uma possibilidade analítica interessante relaciona
         min=True,
     )
 
-    # Visualizando resultados
+    # Showing results
     df_payments_stats.show(5)
     ```
 
     ___
 
-    :thinking: Saiba mais em [SparkETLManager.extract_aggregate_statistics()](../../mkdocstrings/SparkETLManager/#sparksnake.manager.SparkETLManager.extract_aggregate_statistics)
+    :thinking: Learn more at [SparkETLManager.extract_aggregate_statistics()](../../mkdocstrings/SparkETLManager/#sparksnake.manager.SparkETLManager.extract_aggregate_statistics)
 
-## Dropando Partições no S3
+## Dropping Partitions in S3
 
-Ao desenvolver e executar jobs Glue na AWS, uma situação que se faz sempre presente é o particionamento de tabelas no S3. Em alguns casos, é essencial evitar criar dados duplicados em partições já existentes. Dessa forma, o método `drop_partition()` possibilita uma forma de eliminar fisicamente partições no S3 antes de processos de escrita de novos dados.
+When developing and running Glue jobs on AWS, a situation that is always present is partitioning tables in S3. In some cases, it is essential to avoid creating duplicate data on existing partitions. In this way, the method `drop_partition()` enables a way to physically delete partitions in S3 before new data writing processes.
 
-Para demonstrar essa funcionalidade, uma nova aba de uma conta AWS será aberta para comprovar a existência da partição antes da execução do método e a sua eliminação posterior à execução do mesmo.
+To demonstrate this feature, a new tab of an AWS account will be open to prove the existence of the partition before the method is run and its deletion after it is run.
 
-??? example "Eliminando partições físicas no S3"
-    :clapper: **Demonstração:**
+??? example "Eliminating physical partitions in S3"
+    :clapper: **Demonstration:**
 
     ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/main/docs/assets/gifs/sparksnake-drop_partition.gif)
 
     ___
 
-    :muscle: **Vantagens e benefícios da funcionalidade:**
+    :muscle: **Advantages and benefits:**
     
-    - [x] Aplicação de *purge* em partição física do S3
-    - [x] Possibilidade de encadeamento de drop e escrita de dados em um único fluxo
-    - [x] Possibilidade de evitar duplicidade de dados ao executar um job múltiplas vezes em uma mesma janela
+    - [x] Applying of the *purge* method in a S3 partition to drop the prefix and all the data inside it
+    - [x] Possibility of chaining the drop method and a write method
+    - [x] Prevent duplicated data after running the same job twice
 
     ___
 
-    :snake: **Código utilizado:**
+    :snake: **Code**
     
     ```python
-    # Definindo URI de partição
+    # Defining partition URI
     partition_uri = "s3://some-bucket-name/some-table-name/some-partition-prefix/"
 
-    # Eliminando fisicamente a partição do S3
+    # Puring partition in S3
     spark_manager.drop_partition(partition_uri)
     ```
 
     ___
 
-    :thinking: Saiba mais em [GlueJobManager.drop_partition()](../../mkdocstrings/GlueJobManager/#sparksnake.glue.GlueJobManager.drop_partition)
+    :thinking: Learn more at [GlueJobManager.drop_partition()](../../mkdocstrings/GlueJobManager/#sparksnake.glue.GlueJobManager.drop_partition)
 
-## Adicionando Partições à DataFrames
 
-Em processos ETL, é comum ter operações que geram conjuntos de dados particionados por atributos já existentes e/ou por atributos de data que referem-se ao instante temporal de execução do *job*. Para casos onde precisa-se adicionar uma ou mais colunas de partição em um DataFrame Spark já existente, o método `add_partition_column()` encapsula a execução do método `withColumn()` para adicionar uma coluna na coleção distribuída de dados.
+## Adding Partitions to DataFrames
 
-??? example "Adicionando coluna de partição em um DataFrame Spark"
-    :clapper: **Demonstração:**
+In ETL processes, it is common to have operations that generate datasets partitioned by existing attributes and/or date attributes that refer to the time instant of job execution. For cases where you need to add one or more partition columns to an existing DataFrame Spark, the method `add_partition_column()` encapsulates the execution of the method `withColumn()` to add a column to an existing DataFrame.
+
+??? example "Adding a partition column to a Spark DataFrame"
+    :clapper: **Demonstration:**
 
     ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/main/docs/assets/gifs/sparksnake-add_partition.gif)
 
     ___
 
-    :muscle: **Vantagens e benefícios da funcionalidade:**
+    :muscle: **Advantages and benefits:**
     
-    - [x] Abstração do método de adição de coluna em um DataFrame
-    - [x] Maior clareza de operações em um fluxo de ETL ao explicitar a "adição de partição" como um método
-    - [x] Possibilidade de combinar os métodos `drop_partition()` e `add_partition_column()` em um fluxo de carga
+    - [x] Abstraction of the already available add column method in a DataFrame
+    - [x] Greater clarity of operations in an ETL flow by expliciting putting a "partition addition" call as a method
+    - [x] Possibility to combine the `drop_partition()` and the `add_partition_column()` in a data flow
 
     ___
 
-    :snake: **Código utilizado:**
+    :snake: **Code**
     
     ```python
     from datetime import datetime
 
-    # Adicionando partição de anomesdia ao DataFrame
+    # Adding a date partition in a DataFrame base on the date of job execution
     df_payments_partitioned = spark_manager.add_partition(
         df=df_payments,
         partition_name="anomesdia",
         partition_value=int(datetime.now().strftime("%Y%m%d"))
     )
 
-    # Visualizando resultado
+    # Showing results
     df_payments_partitioned.show(5)
     ```
 
     ___
 
-    :thinking: Saiba mais em [SparkETLManager.add_partition_column()](../../mkdocstrings/SparkETLManager/#sparksnake.manager.SparkETLManager.add_partition_column)
+    :thinking: Learn more at [SparkETLManager.add_partition_column()](../../mkdocstrings/SparkETLManager/#sparksnake.manager.SparkETLManager.add_partition_column)
 
-## Reparticionando um DataFrame
 
-Em alguns fluxos de trabalho, pensar em maneiras de otimizar o armazenamento dos conjuntos distribuídos é essencial para garantir a eficiência e promover melhores práticas de consumo dos produtos de dados gerados no processo. Aplicar métodos de reparticionamento de DataFrames Spark contribuem para uma série de fatores positivos em fluxos de ETL e, na biblioteca *sparksnake*, o método `repartition_dataframe()` foi criado para auxiliar o usuário neste processo. Basta fornecer um número alvo de partições e a própria funcionalidade irá gerenciar qual método do Spark é mais adequado para o caso (`coalesce()` o `repartition()`).
+## Repartitioning a DataFrame
 
-??? example "Modificando o número de partições físicas de um DataFrame"
-    :clapper: **Demonstração:**
+In some workflows, thinking about ways to optimize the storage of distributed pools is essential to ensure efficiency and promote best consumption practices for process-generated data products. Repartition a Spark DataFrame can contribute to achieve this goal and in the *sparksnake* library the method `repartition_dataframe()` was created to assist the user in this process. Simply provide a target number of partitions and the functionality itself will manage which Spark method is best suited for the case (`coalesce()` or `repartition()`).
+
+??? example "Modifying the number of physical partitions in a DataFrame"
+    :clapper: **Demonstration:**
 
     ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/main/docs/assets/gifs/sparksnake-repartition.gif)
 
     ___
 
-    :muscle: **Vantagens e benefícios da funcionalidade:**
+    :muscle: **Advantages and benefits:**
     
-    - [x] Possibilidade de otimizar o processo de armazenamento de dados no sistema de armazenamento distribuído (ex: S3)
-    - [x] Contribui para a redução de *small files* de uma tabela armazenada
-    - [x] Contribui com um aumento de performance de consultas realizadas na tabela gerada
-    - [x] Seleção automática entre os métodos `coalesce()` e `repartition()` com base no número atual coletado de partições do DataFrame
+    - [x] Optimized storing data proccess in a distributed storage system (e.g. S3)
+    - [x] Contributes to the reduction of small files from a stored table
+    - [x] Contributes to an increased query performance executed on the generated table
+    - [x] Automatic selection between methods `coalesce()` and `repartition()` based on the current number collected from DataFrame partition
 
     ___
 
-    :snake: **Código utilizado:**
+    :snake: **Code:**
     
     ```python
-    # Verificando número atual de partições do DataFrame
+    # Getting the actual number of partitions in a DataFrame
     df_orders.rdd.getNumPartitions()
 
-    # Diminuindo número de partições do DataFrame
+    # Reducing the number of partitions
     df_orders_partitioned = spark_manager.repartition_dataframe(
         df=df_orders,
         num_partitions=5
     )
 
-    # Verificando novo número de partições
+    # Getting the new number of partitions after repartition
     df_orders_partitioned.rdd.getNumPartitions()
     ```
     ___
 
-    :thinking: Saiba mais em [SparkETLManager.repartition_dataframe()](../../mkdocstrings/SparkETLManager/#sparksnake.manager.SparkETLManager.repartition_dataframe)
+    :thinking: Learn more at [SparkETLManager.repartition_dataframe()](../../mkdocstrings/SparkETLManager/#sparksnake.manager.SparkETLManager.repartition_dataframe)
 
     ___
 
-    ??? tip "Opcional: alerta de logs em caso de aumento no número de partições"
-        O método `repartition_dataframe()` funciona da seguinte forma:
+    ??? tip "Optional: log warnings in case of increasing the number of partitions (full shuffle)"
+        The method `repartition_dataframe()` works as follows:
 
-        1. Verifica-se o número atual de partições do DataFrame alvo
-        2. Verifica-se o número desejado de partições passado como parâmetro
+        1. The current number of partitions in the target DataFrame is checked
+        2. The desired number of partitions passed as a parameter is checked
         
-        * Se o número desejado for MENOR que o número atual, então o método `coalesce()` é executado
-        * Caso o número desejado for MAIOR que o atual, então o método `repartition()` é executado
+        * If the desired number is LESS than the current number, then the method `coalesce()` is executed
+        * If the desired number is GREATER than the current one, then the method `repartition()` is executed
 
-        E é justamente nesse segundo cenário que um alerta de log se faz presente ao usuário para que o mesmo se certifique de que esta é realmente a operação desejada. Isto pois o método `repartition()` implica em uma operação de *"full shuffle"*, podendo aumentar drasticamente o tempo de execução da aplicação Spark.
+        And it is precisely in this second scenario that a log alert is present to the user to make sure that this is actually the desired operation. This is because the method `repartition()` implies a full shuffle operation, and can dramatically increase the runtime of the Spark application.
 
-        Para maiores detalhes, consulte a seguinte [thread no Stack Overflow](https://stackoverflow.com/questions/31610971/spark-repartition-vs-coalesce) onde ambos os métodos são comparados em termos de operações *under the hood*.
+        For more details, check this [Stack Overflow thread](https://stackoverflow.com/questions/31610971/spark-repartition-vs-coalesce) where both methods are compared and explained.
 
         ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/main/docs/assets/gifs/sparksnake-opt-repartition.gif)
 
-## Escrevendo e Catalogando Dados
 
-Por fim, vamos supor agora que o usuário da biblioteca tenha a missão de escrever e catalogar os resultados das transformações codificadas. No Glue, de maneira nativa, os métodos necessários a serem chamados são:
+## Writing and Cataloging Data
+
+Finally, let's assume now that the *sparksnake* user has the mission of writing and cataloging the results of the encoded transformations. In Glue, natively, the methods needed to be called are:
 
 - `.getSink()`
 - `.setCatalogInfo()`
 - `.writeFrame()`
 
-Na visão do usuário, seria muito fácil se um único método pudesse ser executado para abstrair e encapsular todos os procedimentos necessários para escrita de um dado no S3 e sua posterior catalogação no Data Catalog da AWS. Para isso, o método `write_and_catalog_data()` se faz presente!
+In the user's view, it would be easier to achieve the same goal with a single method call. For this, the method `write_and_catalog_data()` is present!
 
-??? example "Escrevendo dados no S3 e catalogando no Data Catalog"
-    :clapper: **Demonstração:**
+
+??? example "Writing data in S3 and cataloging in the Data Catalog"
+    :clapper: **Demonstration:**
 
     ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/main/docs/assets/gifs/sparksnake-write_and_catalog_data.gif)
 
     ___
 
-    :muscle: **Vantagens e benefícios da funcionalidade:**
+    :muscle: **Advantages and benefits:**
     
     - [x] Abstração de diferentes métodos de escrita e catalogação em uma única chamada
     - [x] Possibilita uma maior organização da aplicação Spark desenvolvida
@@ -405,13 +409,13 @@ Na visão do usuário, seria muito fácil se um único método pudesse ser execu
 
     ___
 
-    :snake: **Código utilizado:**
+    :snake: **Code**
     
     ```python
-    # Definindo URI de tabela de saída
+    # Definint output table URI in S3
     s3_output_uri = "s3://some-bucket-name/some-table-name"
 
-    # Escrevendo dados no S3 e catalogando no Data Catalog
+    # Writing data and cataloging in Data Catalog
     spark_manager.write_and_catalog_data(
         df=df_payments_partitioned,
         s3_table_uri=s3_table_uri,
@@ -423,5 +427,4 @@ Na visão do usuário, seria muito fácil se um único método pudesse ser execu
     ```
     ___
 
-    :thinking: Saiba mais em [GlueJobManager.write_and_catalog_data()](../../mkdocstrings/GlueJobManager/#sparksnake.glue.GlueJobManager.write_and_catalog_data)
-
+    :thinking: Learn more at [GlueJobManager.write_and_catalog_data()](../../mkdocstrings/GlueJobManager/#sparksnake.glue.GlueJobManager.write_and_catalog_data)
