@@ -67,9 +67,9 @@ nav:
   - Features:
     - Library Structure: features/lib-structure.md
     - Developing Glue Jobs: features/demo-glue.md
-  - Documentação Oficial:
-    - A Classe SparkETLManager: mkdocstrings/sparketlmanager.md
-    - A Classe GlueJobManager: mkdocstrings/gluejobmanager.md
+  - Official Docs:
+    - SparkETLManager class: mkdocstrings/sparketlmanager.md
+    - GlueJobManager class: mkdocstrings/gluejobmanager.md
 
 # Extensões do MkDocs
 markdown_extensions:

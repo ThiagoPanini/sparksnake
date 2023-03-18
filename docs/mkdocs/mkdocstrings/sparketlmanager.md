@@ -1,4 +1,4 @@
-# Documentação da classe SparkETLManager
+# SparkETLManager Class Documentation
 
 ::: sparksnake.manager.SparkETLManager
     default_handler: python

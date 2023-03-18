@@ -1,4 +1,4 @@
-# Documentação da classe GlueJobManager
+# GlueJobManager Class Documentation
 
 ::: sparksnake.glue.GlueJobManager
     default_handler: python
