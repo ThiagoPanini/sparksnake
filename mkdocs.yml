@@ -65,7 +65,7 @@ nav:
     - sparksnake: index.md
     - Motivation: motivation.md
   - Features:
-    - Organização: features/organizacao.md
+    - Library Structure: features/lib-structure.md
     - Jornada de Uso com o Glue: features/exemplos-glue.md
   - Documentação Oficial:
     - A Classe SparkETLManager: mkdocstrings/sparketlmanager.md
