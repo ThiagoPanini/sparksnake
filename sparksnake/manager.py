@@ -1,13 +1,13 @@
-"""Gerenciamento de operações no serviço AWS Glue.
+"""Managing Spark operations in AWS services that uses it in ETL jobs.
 
-Módulo criado para consolidar classes, métodos, atributos, funções e
-implementações no geral que possam facilitar a construção de jobs Glue
-utilizando a linguagem Python como principal ferramenta.
+This module aims to provide a central point for users to have a series of
+useful features for developing their own Spark applications in AWS in services
+like Glue and EMR.
 
 ___
 """
 
-# Importando bibliotecas
+# Importing libraries
 from time import sleep
 
 from sparksnake.utils.log import log_config
@@ -17,37 +17,36 @@ from pyspark.sql import DataFrame
 from pyspark.sql.functions import expr, lit
 
 
-# Configurando objeto de logger
+# Setting up a logger object
 logger = log_config(logger_name=__file__)
 
 
-# Classe para o gerenciamento de transformações Spark em um job
 class SparkETLManager(GlueJobManager):
-    """
-    Disponibilização de funcionalidades codificadas em pyspark.
+    """Puts together all Spark features used in ETL jobs in AWS.
 
-    Classe responsável por fornecer métodos capazes de serem utilizados em
-    aplicações Spark visando facilitar a jornada de desenvolvimento do
-    usuário através de blocos de códigos prontos contendo funcionalidades
-    relevantes dentro da jornada de codificação
+    This class provides an easy and fast way for users to improve and
+    enhance the development of their Spark applications. The class makes it
+    possible through a series of features (attributes and methods) specially
+    coded for making the development journey something really simple and fun.
 
-    Esta classe pode ser configurada utilizando seu atributo "mode" que,
-    por sua vez, guia os processos de herança de outras classes da biblioteca
-    de modo a enriquecer esta classe com atributos e métodos característicos
-    do ambiente alvo de desenvolvimento e implantação da aplicação Spark.
+    According to the AWS service to be used by the user to run their Spark
+    application, this class can be configured through its "mode" attribute.
+    Technically, it means that the "mode" attribute literally handles all
+    class inheritance processes based on target AWS service to be used.
 
-    Assim, o usuário poderá utilizar funcionalidades relevantes em Spark,
-    seja desenvolvimento jobs no Glue, no EMR ou até mesmo localmente.
+    So, users can have available special attributes and methods for improving
+    their development process wherever they are creating a Spark application
+    for running on AWS Glue, Amazon EMR or even locally.
 
-    Example: Exemplo básico de utilização da classe `SparkETLManager`
+    Example: Class `SparkETLManager` basic usage example with mode="glue"
         ```python
-        # Importando classe
+        # Importing class
         from sparksnake.manager import SparkETLManager
 
-        # Definindo argumentos do job
+        # Defining job arguments
         ARGV_LIST = ["JOB_NAME", "S3_OUTPUT_PATH"]
 
-        # Definindo dicionário de origens do processo
+        # Defining dictionary of data sources to be used on job
         DATA_DICT = {
             "orders": {
                 "database": "ra8",
@@ -66,46 +65,69 @@ class SparkETLManager(GlueJobManager):
             }
         }
 
-        # Instanciando classe e inicializando job
-        spark_manager = SparkETLManager(ARGV_LIST, DATA_DICT)
+        # Creating a class object on initializing a glue job
+        spark_manager = SparkETLManager(
+            mode="glue",
+            argv_list=ARGV_LIST,
+            data_dict=DATA_DICT
+        )
+        
         spark_manager.init_job()
 
-        # Obtendo DataFrames Spark com base em dicionário DATA_DICT mapeado
+        # Getting all DataFrames Spark based on data_dict provided
         dfs_dict = spark_manager.generate_dataframes_dict()
 
-        # Desempacotando DataFrames através de dicionário obtido
+        # Indexing a DataFrame from the dictionary
         df_orders = dfs_dict["orders"]
 
-        # Eliminando partição de data (caso existente)
+        # Dropping a partition on S3 (if exists)
         spark_manager.drop_partition(
             s3_partition_uri="s3://some-bucket-name/some-table-name/partition/"
         )
 
-        # Adicionando coluna de partição ao DataFrame
+        # Adding a partition column into the DataFrame
         df_orders_partitioned = spark_manager.add_partition_column(
             partition_name="anomesdia",
             partition_value="20230101"
         )
 
-        # Reparticionando DataFrame para otimizar armazenamento
+        # Applying a repartition method for storage optimization
         df_orders_repartitioned = spark_manager.repartition_dataframe(
             df=df_orders_partitioned,
             num_partitions=10
         )
 
-        # Escrevendo dados no S3 e catalogando no Data Catalog
+        # Writing data on S3 and cataloging it on Data Catalog
         spark_manager.write_data_to_catalog(df=df_orders_repartitioned)
 
-        # Commitando job
+        # Job commit
         spark_manager.job.commit()
         ```
 
     Args:
         mode (string):
-            Modo de operação da classe criado para indicar o ambiente de
-            desenvolvimento e uso da aplicação Spark codificada utilizando
-            as funcionalidades desta classe.
-            Valores aceitáveis: "glue", "emr", "local"
+            Operation mode for the class. It handles inheritance from other
+            classes based on this library so the `SparkETLManager` class can
+            expand its features for a Spark application development in
+            specific scenarios.
+            Acceptable values are: "glue", "emr", "local".
+
+    Tip: The "mode" attribute may not be the only one
+        By its own construction, the class `SparkETLManager`inherits attributes
+        and methods from other classes in the library. It means that these
+        other classes may have its own attributes to be passed on class
+        construction.
+
+        For example, when users choose to set the Glue operation mode
+        (`mode="glue"`) on starting up the class `SparkETLManager`, a class
+        inheritance from `GlueJobManager` is set under the hood. Because of
+        that, attributes like `argv_list` and `data_dict` must be passed
+        together with `mode` as they are mandatory on `GlueJobManager` class
+        construction.
+
+        For a special tip, check the construction of the class to be inherited
+        based on mode operation to see which attributes are necessary to pass
+        at `SparkETLManager` class start up.
     """
 
     def __init__(self, mode: str, **kwargs) -> None:

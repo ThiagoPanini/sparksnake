@@ -1,3 +1,11 @@
+"""Managing common operations found in ETL jobs developed using AWS Glue.
+
+This module aims to put together everything it's needed to improve and enhance
+the development journey of Glue jobs on AWS.
+
+___
+"""
+
 # Importing libraries
 import sys
 from time import sleep
@@ -12,7 +20,7 @@ from pyspark.context import SparkContext
 from pyspark.sql import DataFrame
 
 
-# Configuring a logger object
+# Setting up a logger object
 logger = log_config(logger_name=__file__)
 
 
@@ -435,46 +443,42 @@ class GlueJobManager():
 
     def drop_partition(self, s3_partition_uri: str,
                        retention_period: int = 0) -> None:
-        """
-        Exclusão (purge) de partição física de tabela no S3.
+        """Deleting (purging) a physical table partition directly on S3.
 
-        Método responsável por eliminar partições do s3 através do purge físico
-        dos arquivos armazenados em um determinado prefixo. Em essência, este
-        método pode ser utilizado em conjunto com o método de adição de
-        partições, garantindo que dados não serão duplicados em uma mesma
-        partição em casos de dupla execução do job em uma mesma janela.
-        Para o processo de eliminação física dos arquivos, o método
-        `purge_s3_path` do glueContext é utilizado.
+        This methods is responsable for excluding physical partitions on S3
+        through purge method from a GlueContext. The users can use this feature
+        for ensuring that new writing processes in a specific partitions will
+        only be done after deleting existing references for the given
+        partition.
 
         Examples:
             ```python
-            # Eliminando partição física do S3
-            partition_uri = "s3://some-bucket/some-table/anomesdia=20230101/"
-            glue_manager.drop_partition(partition_uri)
+            # Dropping a physycal partition on S3
+            partition_uri = "s3://some-bucket/some-table/partition=value/"
+            spark_manager.drop_partition(partition_uri)
 
-            # O resultado é a exclusão física do prefixo anomesdia=20230101/
-            # e todos os seus arquivos.
+            # The result is the elimination of everything under the prefix
+            # partition=name (including the prefix itself and all table files)
             ```
 
         Args:
-            s3_partition_uri (str): URI da partição física localizada no s3.
-            retention_period (int):
-                Especifica o número de horas de retenção de dados.
+            s3_partition_uri (str): Partition URI on S3
+            retention_period (int): Hours to data retention
 
         Raises:
-            Exception: exceção genérica lançada caso o método\
-            `glueContext.purge_s3_path()` não possa ser executado com sucesso.
+            Exception: Generic exception raises when a failed attempt of
+            executing the `glueContext.purge_s3_path()` method.
         """
 
-        logger.info(f"Verificando e eliminando (se existir) partição "
-                    f"{s3_partition_uri}")
+        logger.info(f"Searching for the partition {s3_partition_uri} and "
+                    "dropping it (if exists)")
         try:
             self.glueContext.purge_s3_path(
                 s3_path=s3_partition_uri,
                 options={"retentionPeriod": retention_period}
             )
         except Exception as e:
-            logger.error(f"Erro ao eliminar partição {s3_partition_uri}. "
+            logger.error(f"Error on purging partition {s3_partition_uri}. "
                          f"Exception: {e}")
             raise e
 
@@ -491,22 +495,23 @@ class GlueJobManager():
             enable_update_catalog: bool = True,
             output_data_format: str = "parquet"
     ) -> None:
-        """
-        Escrita de dados no S3 e catalogação no Data Catalog.
+        """Writing data on S3 anda cataloging on Data Catalog.
 
-        Método responsável por consolidar todas as etapas necessárias para
-        escrita de dados no s3 e a subsequente catalogação no Data Catalog.
-        Em essência, este método realiza as seguintes operações:
+        This methods is responsible to put together all the steps needed to
+        write a Spark DataFrame or a Glue DynamicFrame into S3 and catalog
+        its metadata on Glue Data Catalog. In essence, this methods include
+        the following steps:
 
-        1. Verificação se o conjunto de dados fornecido como argumento
-        é do tipo DynamicFrame (caso contrário, converte)
-        2. Faz um sink com o catálogo de dado
-        3. Escreve dados no s3 e atualiza catálogo de dados
+        1. Check if the data object type (df argument) is a Glue DynamicFrame
+        (if it's not, it converts it)
+        2. Make a sink with data catalog
+        3. Write data in S3 and update the data catalog with the behavior
+        chosen by the user
 
         Examples:
             ```python
-            # Escrevendo e catalogando dados
-            glue_manager.write_data(
+            # Writing and cataloging data
+            spark_manager.write_data(
                 df=df_orders,
                 s3_table_uri="s3://some-bucket/some-table",
                 output_database_name="db_corp_business_inteligence",
@@ -517,70 +522,71 @@ class GlueJobManager():
 
         Args:
             df (DataFrame or DynamicFrame):
-                Objeto do tipo DataFrame Spark (`pyspark.sql.DataFrame`) ou
-                DynamicFrame do Glue (`awsglue.dynamicframe.DynamicFrame`)
-                alvo do processo de escrita e catalogação.
+                A data object that can be a Spark DataFrame
+                (`pyspark.sql.DataFrame`) or a Glue DynamicFrame
+                (`awsglue.dynamicframe.DynamicFrame`) considered as a target
+                element for writing and cataloging processes. This information
+                is used on `glueContext.getSink().writeFrame()` method.
 
             s3_table_uri (str):
-                URI da tabela a ser escrita no s3 no formato
-                `s3://bucket-name/table-prefix/`. Esta informação é utilizada
-                no parâmetro "path" do método `glueContext.getSink()`
+                Table URI in the format `s3://bucket-name/table-prefix/`. This
+                information is used on parameter "path" from
+                `glueContext.getSink()` method.
 
             output_database_name (str):
-                Referência nominal do database alvo do armazenamento da tabela.
-                Esta informação é utilizada no parâmetro catalogDatabase do
-                método `glueContext.getSink().setCatalogInfo()`.
+                Reference for the database used on the catalog process for the
+                table. This information is used on parameter "catalogDatabase"
+                from `glueContext.getSink().setCatalogInfo()` method.
 
             output_table_name (str):
-                Referência nominal da tabela para armazenametno dos dados.
-                Esta informação é utilizada no parâmetro catalogTableName do
-                método `glueContext.getSink().setCatalogInfo()`.
+                Reference for the table used on the catalog process. This
+                information is used on parameter "catalogTableName"
+                from `glueContext.getSink().setCatalogInfo()` method.
 
             partition_name (str or None):
-                Referência da coluna de partição utilizada para particionamento
-                dos dados a serem armazenados. Esta informação é utilizada no
-                parâmetro partitionKeys do método `glueContext.getSink()`.
+                Partition coumn name chosen for the table. This information is
+                used on parameter "partitionKeys" from `glueContext.getSink()`
+                method.
 
             connection_type (str):
-                Tipo de conexão utilizada para o armazenamento. Esta informação
-                é utilizada no parâmetro connection_type do método
-                `glueContext.getSink()`.
+                Connection type used in storage. This information is used on
+                parameter "connection_type" from `glueContext.getSink()` method
 
             update_behavior (str):
-                Determina o comportamento de atualização dos dados da tabela
-                alvo. Esta informação é utilizada no parâmetro updateBehavior
-                do método `glueContext.getSink()`.
+                Defines the update behavior for the target table. This
+                information is used on parameter "updateBehavior" from
+                `glueContext.getSink()` method.
 
             compression (str):
-                Tipo de compressão a ser utilizada no armazenamento dos dados.
-                Esta informação é utilizada no parâmetro compression do
-                método `glueContext.getSink()`.
+                Defines the compression method used on data storage process.
+                This information is used on parameter "compression" from
+                `glueContext.getSink()` method.
 
             enable_update_catalog (bool):
-                Flag para habilitar a atualização do catálogo de dados com os
-                dados armazenados pelo método. Esta informação é utilizada no
-                atributo enableUpdateCatalog do método `glueContext.getSink()`.
+                Enables the update of data catalog with data storage by this
+                method. This information is used on parameter
+                "enableUpdateCatalog" from  `glueContext.getSink()` method.
 
             output_data_format (str):
-                Formato dos dados a serem armazenados. Esta informação é
-                utilizada no parâmetro output_data_format do método
-                `glueContext.getSink().setFormat()`.
+                Defines the data format for the data to be stored on S3. This
+                information is used on parameter "output_data_format" from
+                `glueContext.getSink().setFormat()` method.
         """
 
-        # Convertendo DataFrame em DynamicFrame
+        # Converting DataFrame into DynamicFrame
         if type(df) == DataFrame:
-            logger.info("Transformando DataFrame preparado em DynamicFrame")
+            logger.info("Converting the Spark DataFrame as Glue DynamicFrame")
             try:
                 dyf = DynamicFrame.fromDF(df, self.glueContext, "dyf")
             except Exception as e:
-                logger.error("Erro ao transformar DataFrame em DynamicFrame. "
-                             f"Exception: {e}")
+                logger.error("Error on converting the DataFrame object as "
+                             f"DynamicFrame. Exception: {e}")
                 raise e
         else:
             dyf = df
 
-        # Criando sincronização com bucket s3
-        logger.info("Preparando e sincronizando elementos de saída da tabela")
+        # Creating a sink with S3
+        logger.info("Creating a sink with all configurations provided")
         try:
             # Criando relação de escrita de dados
             data_sink = self.glueContext.getSink(
@@ -593,12 +599,12 @@ class GlueJobManager():
                 transformation_ctx="data_sink",
             )
         except Exception as e:
-            logger.error("Erro ao configurar elementos de saída via getSink. "
+            logger.error("Error on creating a sink for the output table. "
                          f"Exception: {e}")
             raise e
 
-        # Configurando informações do catálogo de dados
-        logger.info("Adicionando entrada para tabela no catálogo de dados")
+        # Setting up data catalog info
+        logger.info("Setting up information on the Data Catalog for the table")
         try:
             data_sink.setCatalogInfo(
                 catalogDatabase=output_database_name,
@@ -608,11 +614,11 @@ class GlueJobManager():
                                 useGlueParquetWriter=True)
             data_sink.writeFrame(dyf)
 
-            logger.info(f"Tabela {output_database_name}."
+            logger.info(f"Table {output_database_name}."
                         f"{output_table_name} "
-                        "atualizada com sucesso no catálogo. Seus dados estão "
-                        f"armazenados em {s3_table_uri}")
+                        "successfully update on Data Catalog. Its data are "
+                        f"stored in the following path: {s3_table_uri}")
         except Exception as e:
-            logger.error("Erro ao adicionar entrada para tabela no catálogo "
-                         f"de dados. Exception: {e}")
+            logger.error("Error on trying to write data for the given table "
+                         f". Exception: {e}")
             raise e
