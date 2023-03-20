@@ -185,7 +185,7 @@ class SparkETLManager(GlueJobManager):
 
             # In the above example, the method will return a new DataFrame
             # with additional columns based on the order_date_content, such as:
-            # year_order_date, month_order_date and dayofmonth_order_date 
+            # year_order_date, month_order_date and dayofmonth_order_date
             ```
 
         Args:
