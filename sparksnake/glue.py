@@ -115,8 +115,8 @@ class GlueJobManager():
         """
 
         # Defining a initial string for composing the message
-        welcome_msg = f"Initialing the execution of {self.args['JOB_NAME']} "\
-                      "job. Data sources used in this ETL process:\n\n"
+        welcome_msg = f"Initializing the execution of {self.args['JOB_NAME']}"\
+                      " job. Data sources used in this ETL process:\n\n"
         initial_msg = ""
 
         # Iterating over the data_dict dicionary for extracting some info
