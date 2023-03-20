@@ -52,16 +52,16 @@ ___
 
 ## Features
 
-- 🤖 Simplification of building Spark applications with already coded classes and methods
-- 🌟 Consolidation of most common functionalities involving ETL processes in pyspark
-- ⚙️ Abstraction of the whole process of setting up a Job Glue with one line of code
+- 🤖 Enhanced development experience of Spark Applications to be deployed as jobs in AWS services like Glue and EMR
+- 🌟 Possibility to use common Spark operations for improving ETL steps using custom classes and methods
+- ⚙️ No need to think too much into the hard and complex service setup (e.g. with *sparksnake* you can have all elements for a Glue Job on AWS with a single line of code)
 - 👁️‍🗨️ Application observability improvement with detailed log messages in CloudWatch
-- 🛠️ Exception handling processes already embedded in library methods
+- 🛠️ Exception handling already embedded in library methods
 
 
 ## Getting Started
 
-The latest version of the sparksnake library is already published in [PyPI](https://pypi.org/project/sparksnake/) and available free of charge for anyone interested in improving the creation of their Spark applications using AWS services such as Glue and EMR. To start your journey, simply perform your installation using the following command:
+The *sparksnake* latest version is already published in [PyPI](https://pypi.org/project/sparksnake/) and available free of charge for anyone interested in improving the creation of their Spark applications using AWS services such as Glue and EMR. To start your journey, simply perform your installation using the following command:
 
 ```bash
 pip install sparksnake
