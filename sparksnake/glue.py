@@ -1,4 +1,12 @@
-# Importando bibliotecas
+"""Managing common operations found in ETL jobs developed using AWS Glue.
+
+This module aims to put together everything it's needed to improve and enhance
+the development journey of Glue jobs on AWS.
+
+___
+"""
+
+# Importing libraries
 import sys
 from time import sleep
 from sparksnake.utils.log import log_config
@@ -12,205 +20,206 @@ from pyspark.context import SparkContext
 from pyspark.sql import DataFrame
 
 
-# Configurando objeto de logger
+# Setting up a logger object
 logger = log_config(logger_name=__file__)
 
 
-# Classe para gerenciamento de insumos de um job Glue
 class GlueJobManager():
-    """Gerenciamento de insumos característicos de jobs Glue.
+    """Management of elements and operations commonly used in Glue jobs.
 
-    Classe responsável por gerenciar e fornecer todos os insumos
-    necessários para a utilização de um job do Glue na dinâmica
-    de processamento de dados. Em essência, todos os atributos e
-    métodos declarados na classe `GlueJobManager` são *herdados*
-    na classe `SparkETLManager`, também definida neste mesmo módulo.
+    This class is responsible for managing and providing all necessary inputs
+    for launching and developing Glue jobs in AWS. All attributes and methods
+    declared in this class are *inherited* by `SparkETLManager`class in the
+    `manager` module.
 
-    Para visualizar um exemplo básico de utilização, consulte a
-    documentação da classe `SparkETLManager`.
+    To see a end to end usage example, check the docs for the `SparkETLManager`
+    class.
 
     Args:
         argv_list (list):
-            Lista contendo os nomes dos argumentos utilizados
-            no job.
+            List with all user defined arguments for the job
 
         data_dict (dict):
-            Dicionário contendo todas as referências de origens
-            de dados utilizadas nos processos de transformação
-            consolidados no job. Navegue até o exemplo de uso
-            da classe SparkETLManager para detalhes adicionais.
+            Dictionary with all source data references to be read from the
+            catalog and used in the ETL job.
 
-    A classe considera a obtenção de alguns atributos de forma
-    interna através da execução de outros métodos e funções,
-    sendo eles:
+    This class can get some other attributes along the execution of its
+    methods. Those are:
 
     Attributes:
         args (dict):
-            Dicionário de argumentos de job listados pelo usuário
-            adicionados aos argumentos dos sitema (`sys.argv`)
-            passados automaticamente ao runner do job.
+            Dictionary with all arguments of the job. This is a joint
+            between user defined arguments and system arguments (`sys.argv`)
 
         sc (SparkContext):
-            Contexto Spark utilizado para criação de contexto do Glue
+            A Spark context object used for creating a Glue context object
 
         glueContext (GlueContext):
-            Contexto Glue utilizado para criação de sessão Spark
+            A Glue context object used for creating a Spark session object
 
         spark (SparkSession):
-            Sessão Spark utilizada como ponto central de operações
-            realizadas no job
+            A Spark session object used as a central point for job operations
 
-    Tip: Sobre as possibilidades de configuração do dicionário data_dict
-        O dicionário data_dict, passado como parâmetro de inicialização
-        da classe `SparkETLManager` (e também da classe `GlueJobManager`),
-        por natureza, deve ser definido de acordo com algumas premissas.
+    Tip: About setting up the data_dict class attribute
+        The data_dict dictionary passed as a required attribute for the
+        `GlueJobManager` class must be defined following some rules.
 
-        Sua principal função é proporcionar uma forma única de mapear a leitura
-        de todas as origens utilizadas no job. Dessa forma, sua composição é
-        fundamental para garantir que os processos de leitura de dados sejam
-        realizados com sucesso, independente do formato (DynamicFrame ou
-        DataFrame Spark).
+        Your main purpose is to provide a single point for controlling all
+        data sources used in the job. So, your composition is something really
+        important for ensuring that reading process can be executed in an
+        expected way.
 
-        Dessa forma, o conteúdo do dicionário data_dict está habilitado para
-        suportar toda e qualquer possibilidade presente no método nativo
-        `glueContext.create_dynamic_frame.from_catalog` utilizado pelo Glue
-        para leitura de DynamicFrames.
+        With that in mind, it's crucial to say that the data_dict dictionary
+        can be defined with all parameters found in
+        `glueContext.create_dynamic_frame.from_catalog` Glue method. In other
+        words, all keys of data_dict dictionary can be assume any valid
+        parameter of the Glue method mentioned above. Of course the values
+        of those keys defined in data_dict depends on the job rules.
 
-        :star: Em outras palavras, caso o usuário queira configurar o
-        dicionário data_dict para leitura de uma tabela particionada, a chave
-        push_down_predicate pode ser inclusa no dicionário com o devido valor
-        a ser utilizado na filtragem. E assim, outros parâmetros como, por
-        exemplo, additional_options e catalog_id, podem ser mapeados como
-        chaves do dicionário data_dict para endereçar as mais variadas
-        possibilidades de mapeamento de origens no Glue.
+        :star: It means that if the user wants to read a data source from the
+        catalog using the push down predicate Glue feature, it's only necessary
+        to define a key called "push_down_predicate" (the same way as found in
+        `glueContext.create_dynamic_frame.from_catalog` method) with the value
+        to be filtered. This is the same rule for all other parameters, such as
+        additional_options, catalog_id, transformation_ctx, and others. If the
+        user wants to read some data source with a special parameter, just take
+        a look at the mentioned Glue method above and input a key on the
+        data_dict to set up the data source reading process.
 
-        Caso algum parâmetro aceito pelo método
-        `glueContext.create_dynamic_frame.from_catalog` não seja inserido como
-        chave do dicionário data_dict, seu respectivo valor _default_ será
-        considerado nos processos de leitura internos da classe.
+        By the other hand, it's also important to mention that the user is not
+        forced to define the data_dict dictionary with all parameters found in
+        `glueContext.create_dynamic_frame.from_catalog` method. If the
+        data_dict attribute doesn't have a key for a specific parameter on the
+        Glue method mentioned abouve, so its default value will be considered.
+        For example, that if data_dict doesn't have a push_down_predicate key
+        for a data source, the value "None" will be considered as it's the
+        default value for this key on the
+        `glueContext.create_dynamic_frame.from_catalog` method.
     """
 
     def __init__(self, argv_list: list, data_dict: dict) -> None:
         self.argv_list = argv_list
         self.data_dict = data_dict
 
-        # Obtendo argumentos do job
+        # Getting job arguments
         self.args = getResolvedOptions(sys.argv, self.argv_list)
 
     def job_initial_log_message(self) -> None:
-        """Preparação e log de mensagem de início de jobs Glue.
+        """Preparation of a detailed log message for job initialization.
 
-        Método responsável por compor uma mensagem inicial de log a ser
-        consolidada no CloudWatch. A mensagem visa declarar todas as
-        origens utilizadas no job Glue, além de fornecer detalhes
-        sobre os push down predicates (se utilizados) em cada
-        processo de leitura de dados.
+        This method is responsible for composing an initial log message to be
+        shown in CloudWatch after the user initializes a Glue Job. The message
+        aim to clarify some job details, such as all the data sources mapped
+        and its push down predicate values (if used). This can be a good
+        practice for making Glue jobs cleaner and more organized.
         """
 
-        # Definindo strings iniciais para composição da mensagem
-        welcome_msg = f"Iniciando execução de job {self.args['JOB_NAME']}. "\
-                      "Origens presentes no processo de ETL:\n\n"
+        # Defining a initial string for composing the message
+        welcome_msg = f"Initializing the execution of {self.args['JOB_NAME']}"\
+                      " job. Data sources used in this ETL process:\n\n"
         initial_msg = ""
 
-        # Iterando sobre dicionário de dados para extração de parâmetros
+        # Iterating over the data_dict dicionary for extracting some info
         for _, params in self.data_dict.items():
-            # Obtendo tabela e iniciando construção da mensagem
+            # Getting table name and start building the message
             tbl_ref = f"{params['database']}.{params['table_name']}"
-            table_msg = f"Tabela {tbl_ref} "
+            table_msg = f"Table {tbl_ref} "
 
-            # Validando existência de push_down_predicate
+            # Looking for a push_down_predicate information in the dictionary
             if "push_down_predicate" in params:
-                table_msg += "com push down predicate definido por "\
+                table_msg += "with the following push down predicate info: "\
                              f"{params['push_down_predicate']}\n"
             else:
-                table_msg += "sem push down predicate definido\n"
+                table_msg += "without push down predicate\n"
 
-            # Concatenando mensagem final
+            # Concat final message
             initial_msg += table_msg
 
-        # Adicionando mensagem de boas vindas
+        # Logging the message to CloudWatch
         logger.info(welcome_msg + initial_msg)
 
     def print_args(self) -> None:
-        """Obtendo e logando argumentos do job.
+        """Getting and logging job arguments in CloudWatch.
 
-        Método responsável por mostrar ao usuário, como uma mensagem
-        de log, todos os argumentos utilizados no referido job e
-        seus respectivos valores.
+        This method is responsible to show users all the arguments used in the
+        job. It achieves its goal by iterating over all args in self.args class
+        attribut for composing a detailed log message.
         """
 
-        # Formatando e logando argumentos do job
+        # Formatting and composing a log message with job arguments
         args_formatted = "".join([f'--{k}="{v}"\n'
                                   for k, v in self.args.items()])
-        logger.info(f"Argumentos do job:\n\n{args_formatted}")
+        logger.info(f"Job arguments:\n\n{args_formatted}")
         sleep(0.01)
 
     def get_context_and_session(self) -> None:
-        """Obtendo elementos de contexto e sessão da aplicação.
+        """Getting context and session elements for Glue job application.
 
-        Método responsável por criar e associar atributos da classe
-        para os elementos SparkContext, GlueContext e SparkSession.
+        This method is a central point for creating the following elements:
+        SparkContext, GlueContext and SparkSession.
         """
-        logger.info("Criando SparkContext, GlueContext e SparkSession")
+        logger.info("Creating SparkContext, GlueContext and SparkSession")
         self.sc = SparkContext.getOrCreate()
         self.glueContext = GlueContext(self.sc)
         self.spark = self.glueContext.spark_session
 
     def init_job(self):
-        """Inicializando objeto de job a partir de contexto do Glue.
+        """Initializing a Glue job.
 
-        Método criado para consolidar todas as etapas de inicialização
-        de um job do Glue a partir da visualização dos argumentos e
-        obtenção dos elementos de contexto e sessão. Com a execução
-        deste método, o usuário poderá ter uma porta única de entrada
-        para todos os processos relativamente burocráticos de configuração
-        de um job do Glue.
+        This method consolidates all the necessary steps required for a Glue
+        job initialization process. In its definition, it calls the following
+        methods:
+
+        * `self.job_initial_log_message()`
+        * `self.print_args()`
+        * `self.get_context_and_session()`
+
+        After that, the class has all the attributes required for calling the
+        Job class used by Glue to initialize a job object.
         """
 
-        # Obtendo argumentos e consolidando mensagens de log
+        # Getting job arguments and logging useful infos for users
         self.job_initial_log_message()
         self.print_args()
 
-        # Obtendo elementos de sessão e conteto Spark e Glue
+        # Getting context and session elements
         self.get_context_and_session()
 
-        # Inicializando objeto de Job do Glue
+        # Initializing a Glue job based on a GlueContext element
         self.job = Job(self.glueContext)
         self.job.init(self.args['JOB_NAME'], self.args)
 
     def generate_dynamicframes_dict(self) -> dict:
-        """Gerando dicionário de DynamicFrames do projeto.
+        """Getting a dictionary of DynamicFrames objects read from the catalog.
 
-        Método responsável por utilizar o atributo data_dict da classe
-        para leitura e obtenção de todos os DynamicFrames configurados
-        no referido dicionário de acordo com as especificações
-        fornecidas. A grande vantagem deste método é a disponibilização
-        dos DynamicFrames como elementos de um dicionário Python que,
-        posteriormente, podem ser acessados em outras etapas do código
-        para o mapeamento das operações. Esta dinâmica evita que o
-        usuário precise codificar um bloco específico de leitura para
-        cada origem de dados do job, possibilitando que o usuário apenas
-        acesse cada uma das suas origens através de uma indexação.
+        This method uses the data_dict class attribute for reading and getting
+        DynamicFrame objects mapped as data sources on the mentioned
+        dictionary. The main advantage of using this method is explained by
+        having the possibility to read multiple data sources with a single
+        method call. The result of this method is a dictionary containing all
+        DynamicFrames objects as values of keys mapped on data_dict class
+        attribute. The user will be able to access those DynamicFrames in
+        a easy way through indexing.
 
         Examples:
             ```python
-            # Obtendo lista de dynamicframes Glue
-            dyfs_dict = glue_manager.generate_dynamicframes_dict()
+            # Getting a dictionary of Glue DynamicFrames
+            dyfs_dict = spark_manager.generate_dynamicframes_dict()
 
-            # Desempacotando dicionário para obter origens individualmente
+            # Inexing and getting individual DynamicFrames
             dyf_orders = dyfs_dict["orders"]
             dyf_customers = dyfs_dict["customers"]
             ```
 
         Returns:
-            Dicionário Python contendo um mapeamento de cada uma das\
-            origens configuradas no atributo self.data_dict e seus\
-            respectivos objetos do tipo DynamicFrame.
+            Python dictionary with keys representing the identification of the\
+            data source put into the data_dict class attributes and values\
+            representing DynamicFrame objects read from catalog.
 
-        Tip: Detalhes sobre o dicionário de DynamicFrames resultante
-            Para proporcionar uma visão clara sobre o retorno deste método,
-            considere, como exemplo, a seguinte configuração para o atributo
-            `self.data_dict` utilizado na inicialização da classe:
+        Tip: Details about the returned dictionary from the method
+            In order to provide a clear view of the return of this method,
+            consider the following definition example of `self.data_dict` as a
+            class attribute:
 
             ```python
             {
@@ -232,19 +241,18 @@ class GlueJobManager():
             }
             ```
 
-            Todos os parâmetros presentes no método
-            `glueContext.create_dynamic_frame.from_catalog()` são
-            aceitos na construção do dicionário `self.data_dict`.
-            Além disso, alguns parâmetros adicionais foram inclusos
-            visando proporcionar uma maior facilidade aos usuários,
-            como por exemplo:
+            As stated before, all
+            `glueContext.create_dynamic_frame.from_catalog()` can be used as
+            dictionary keys on `self.data_dict` definition. Moreover, some
+            additional keys can be defined by the user for some special
+            purposes, such as:
 
-            - "create_temp_view": bool -> configura a criação
-                de uma tabela temporária (view) para a tabela
-                em questão
+            - "create_temp_view": bool -> Sets the creation of a Spark
+                temporary table (view) after reading the data source as a
+                DynamicFrame
 
-            O retorno do método `generate_dynamicframes_dict()` será
-            no seguinte formato:
+            The return of the method `generate_dynamicframes_dict()` will be
+            presented as the following format:
 
             ```python
             {
@@ -253,39 +261,36 @@ class GlueJobManager():
             }
             ```
 
-            onde as tags <DynamicFrame> representam o objeto do tipo
-            DynamicFrame lido para cada origem, utilizando as
-            configurações apresentadas no dicionário do atributo
-            self.data_dict e disponibilizado ao usuário dentro da
-            respectiva chave que representa a origem.
+            where the tags <DynamicFrame> means objects of DynamicFrame type
+            read for each data source.
         """
 
-        logger.info("Iterando sobre dicionário de dados fornecido para "
-                    "leitura de DynamicFrames do Glue")
+        logger.info("Looping for the data_dict dictionary for reading data "
+                    "sources as Glue DynamicFrame objects")
         try:
             dynamic_frames = []
             for t in self.data_dict.keys():
-                # Coletando argumentos obrigatórios: database, table_name, ctx
+                # Getting some required args: database, table_name, ctx
                 database = self.data_dict[t]["database"]
                 table_name = self.data_dict[t]["table_name"]
                 transformation_ctx = self.data_dict[t]["transformation_ctx"]
 
-                # Coletando argumento não obrigatório: push_down_predicate
+                # Getting non required args: push_down_predicate
                 push_down_predicate = self.data_dict[t]["push_down_predicate"]\
                     if "push_down_predicate" in self.data_dict[t].keys()\
                     else ""
 
-                # Coletando argumento não obrigatório: additional_options
+                # Getting non required args: additional_options
                 additional_options = self.data_dict[t]["additional_options"] \
                     if "additional_options" in self.data_dict[t].keys()\
                     else {}
 
-                # Coletando argumento não obrigatório: catalog_id
+                # Getting non required args: catalog_id
                 catalog_id = self.data_dict[t]["catalog_id"] \
                     if "catalog_id" in self.data_dict[t].keys()\
                     else None
 
-                # Lendo DynamicFrame
+                # Reading the DynamicFrame
                 dyf = self.glueContext.create_dynamic_frame.from_catalog(
                     database=database,
                     table_name=table_name,
@@ -295,59 +300,62 @@ class GlueJobManager():
                     catalog_id=catalog_id
                 )
 
-                # Adicionando à lista de DynamicFrames
+                # Appending the DynamicFrame obnject to DynamicFrames list
                 dynamic_frames.append(dyf)
 
         except Exception as e:
-            logger.error("Erro ao gerar lista de DynamicFrames com base "
-                         f"em dicionário. Exception: {e}")
+            logger.error("Error on generating a list of DynamicFrames list. "
+                         f"Exception: {e}")
             raise e
 
-        logger.info("Mapeando DynamicFrames às chaves do dicionário")
+        logger.info("Mapping DynamicFrames objects to a dictionary key")
         sleep(0.01)
 
-        # Criando dicionário de Dynamic Frames
+        # Creating a DynamicFrames dictionary
         dynamic_dict = {k: dyf for k, dyf
                         in zip(self.data_dict.keys(), dynamic_frames)}
-        logger.info("Dados gerados com sucesso. Total de DynamicFrames: "
-                    f"{len(dynamic_dict.values())}")
+        logger.info("Success on creating data. There are a number of "
+                    f"{len(dynamic_dict.values())} DynamicFrames read.")
 
-        # Retornando dicionário de DynamicFrames
+        # Returning the dictionary
         sleep(0.01)
         return dynamic_dict
 
     def generate_dataframes_dict(self) -> dict:
-        """
-        Gerando dicionário de DataFrames Spark do projeto.
+        """Getting a dictionary of DataFrames objects read from the catalog.
 
-        Método responsável por consolidar os processos necessários
-        para disponibilização, ao usuário, de objetos do tipo DataFrame
-        Spark capazes de serem utilizados nas mais variadas etapas
-        de transformação do job Glue. Na prática, este método chama o
-        método `generate_dynamic_frames_dict()` para coleta dos objetos do
-        tipo DynamicFrame (ver documentação acima) e, na sequência, aplica
-        o método `.toDF()` para transformação de tais objetos em objetos
-        do tipo DataFrame Spark.
+        This method uses the data_dict class attribute for reading and getting
+        DataFrame objects mapped as data sources on the mentioned
+        dictionary. The main advantage of using this method is explained by
+        having the possibility to read multiple data sources with a single
+        method call. The result of this method is a dictionary containing all
+        DataFrames objects as values of keys mapped on data_dict class
+        attribute. The user will be able to access those DataFrames in
+        a easy way through indexing.
 
-        Examples
+        In its behalf, this method calls `generate_dynamicframes_dict()` method
+        for getting a dictionary of DynamicFrames after applying the method
+        `toDF()` for transforming all objects into Spark DataFrames.
+
+        Examples:
             ```python
-            # Obtendo lista de DataFrames Spark
-            dfs_dict = glue_manager.generate_dataframes_dict()
+            # Getting a dictionary of Spark DataFrames
+            dyfs_dict = spark_manager.generate_dataframes_dict()
 
-            # Desempacotando dicionário para obter origens individualmente
-            df_orders = dfs_dict["orders"]
-            df_customers = dfs_dict["customers"]
+            # Inexing and getting individual DataFrames
+            dyf_orders = dyfs_dict["orders"]
+            dyf_customers = dyfs_dict["customers"]
             ```
 
         Returns:
-            Dicionário Python contendo um mapeamento de cada uma das\
-            origens configuradas no atributo self.data_dict e seus\
-            respectivos objetos do tipo DataFrame.
+            Python dictionary with keys representing the identification of the\
+            data source put into the data_dict class attributes and values\
+            representing DataFrame objects read from catalog.
 
-        Tip: Detalhes sobre o dicionário de DataFrames resultante
-            Para proporcionar uma visão clara sobre o retorno deste método,
-            considere, como exemplo, a seguinte configuração para o atributo
-            `self.data_dict` utilizado na inicialização da classe:
+        Tip: Details about the returned dictionary from the method
+            In order to provide a clear view of the return of this method,
+            consider the following definition example of `self.data_dict` as a
+            class attribute:
 
             ```python
             {
@@ -369,19 +377,18 @@ class GlueJobManager():
             }
             ```
 
-            Todos os parâmetros presentes no método
-            `glueContext.create_dynamic_frame.from_catalog()` são
-            aceitos na construção do dicionário `self.data_dict`.
-            Além disso, alguns parâmetros adicionais foram inclusos
-            visando proporcionar uma maior facilidade aos usuários,
-            como por exemplo:
+            As stated before, all
+            `glueContext.create_dynamic_frame.from_catalog()` can be used as
+            dictionary keys on `self.data_dict` definition. Moreover, some
+            additional keys can be defined by the user for some special
+            purposes, such as:
 
-            - "create_temp_view": bool -> configura a criação
-                de uma tabela temporária (view) para a tabela
-                em questão
+            - "create_temp_view": bool -> Sets the creation of a Spark
+                temporary table (view) after reading the data source as a
+                DataFrame
 
-            O retorno do método `generate_dataframes_dict()` será
-            no seguinte formato:
+            The return of the method `generate_dataframes_dict()` will be
+            presented as the following format:
 
             ```python
             {
@@ -390,95 +397,88 @@ class GlueJobManager():
             }
             ```
 
-            onde as tags <DataFrame> representam o objeto do tipo
-            DataFrame lido para cada origem, utilizando as
-            configurações apresentadas no dicionário do atributo
-            self.data_dict e disponibilizado ao usuário dentro da
-            respectiva chave que representa a origem.
+            where the tags <DataFrame> means objects of DataFrame type
+            read for each data source.
         """
 
-        # Gerando dicionário de DynamicFrames
+        # Getting a DynamicFrame objects dictionary
         dyf_dict = self.generate_dynamicframes_dict()
 
-        # Transformando DynamicFrames em DataFrames
-        logger.info(f"Transformando os {len(dyf_dict.keys())} "
-                    "DynamicFrames em DataFrames Spark")
+        # Transforming DynamicFrames into DataFrames
+        logger.info(f"Transforming {len(dyf_dict.keys())} "
+                    "Glue DynamicFrames into Spark DataFrames")
         try:
             df_dict = {k: dyf.toDF() for k, dyf in dyf_dict.items()}
-            logger.info("DataFrames Spark gerados com sucesso")
+            logger.info("Success on generating all Spark DataFrames")
             sleep(0.01)
 
         except Exception as e:
-            logger.error("Erro ao transformar DynamicFrames em "
-                         f"DataFrames Spark. Exception: {e}")
+            logger.error("Error on transforming Glue DataFrames into Spark "
+                         f"DataFrames. Exception: {e}")
             raise e
 
-        # Iterando sobre dicionário de dados para validar criação de temp views
+        # Creating spark temporary tables if applicable
         for table_key, params in self.data_dict.items():
             try:
-                # Extraindo variáveis
+                # Extracting useful variables from the dict
                 df = df_dict[table_key]
                 table_name = params["table_name"]
 
-                # Criando tabela temporária (se aplicável)
+                # Creating temp tables (if the flag for it was set as True)
                 if "create_temp_view" in params\
                         and bool(params["create_temp_view"]):
                     df.createOrReplaceTempView(table_name)
 
-                    logger.info(f"Tabela temporária (view) {table_name} "
-                                "criada com sucesso.")
+                    logger.info(f"Spark temporary table (view) {table_name} "
+                                "was successfully created.")
 
             except Exception as e:
-                logger.error("Erro ao criar tabela temporária "
+                logger.error("Error on creating Spark temporary table "
                              f"{table_name}. Exception: {e}")
                 raise e
 
-        # Retornando dicionário de DataFrames Spark convertidos
+        # Returning the DataFrames dict
         sleep(0.01)
         return df_dict
 
     def drop_partition(self, s3_partition_uri: str,
                        retention_period: int = 0) -> None:
-        """
-        Exclusão (purge) de partição física de tabela no S3.
+        """Deleting (purging) a physical table partition directly on S3.
 
-        Método responsável por eliminar partições do s3 através do purge físico
-        dos arquivos armazenados em um determinado prefixo. Em essência, este
-        método pode ser utilizado em conjunto com o método de adição de
-        partições, garantindo que dados não serão duplicados em uma mesma
-        partição em casos de dupla execução do job em uma mesma janela.
-        Para o processo de eliminação física dos arquivos, o método
-        `purge_s3_path` do glueContext é utilizado.
+        This methods is responsable for excluding physical partitions on S3
+        through purge method from a GlueContext. The users can use this feature
+        for ensuring that new writing processes in a specific partitions will
+        only be done after deleting existing references for the given
+        partition.
 
         Examples:
             ```python
-            # Eliminando partição física do S3
-            partition_uri = "s3://some-bucket/some-table/anomesdia=20230101/"
-            glue_manager.drop_partition(partition_uri)
+            # Dropping a physycal partition on S3
+            partition_uri = "s3://some-bucket/some-table/partition=value/"
+            spark_manager.drop_partition(partition_uri)
 
-            # O resultado é a exclusão física do prefixo anomesdia=20230101/
-            # e todos os seus arquivos.
+            # The result is the elimination of everything under the prefix
+            # partition=name (including the prefix itself and all table files)
             ```
 
         Args:
-            s3_partition_uri (str): URI da partição física localizada no s3.
-            retention_period (int):
-                Especifica o número de horas de retenção de dados.
+            s3_partition_uri (str): Partition URI on S3
+            retention_period (int): Hours to data retention
 
         Raises:
-            Exception: exceção genérica lançada caso o método\
-            `glueContext.purge_s3_path()` não possa ser executado com sucesso.
+            Exception: Generic exception raises when a failed attempt of
+            executing the `glueContext.purge_s3_path()` method.
         """
 
-        logger.info(f"Verificando e eliminando (se existir) partição "
-                    f"{s3_partition_uri}")
+        logger.info(f"Searching for the partition {s3_partition_uri} and "
+                    "dropping it (if exists)")
         try:
             self.glueContext.purge_s3_path(
                 s3_path=s3_partition_uri,
                 options={"retentionPeriod": retention_period}
             )
         except Exception as e:
-            logger.error(f"Erro ao eliminar partição {s3_partition_uri}. "
+            logger.error(f"Error on purging partition {s3_partition_uri}. "
                          f"Exception: {e}")
             raise e
 
@@ -495,22 +495,23 @@ class GlueJobManager():
             enable_update_catalog: bool = True,
             output_data_format: str = "parquet"
     ) -> None:
-        """
-        Escrita de dados no S3 e catalogação no Data Catalog.
+        """Writing data on S3 anda cataloging on Data Catalog.
 
-        Método responsável por consolidar todas as etapas necessárias para
-        escrita de dados no s3 e a subsequente catalogação no Data Catalog.
-        Em essência, este método realiza as seguintes operações:
+        This methods is responsible to put together all the steps needed to
+        write a Spark DataFrame or a Glue DynamicFrame into S3 and catalog
+        its metadata on Glue Data Catalog. In essence, this methods include
+        the following steps:
 
-        1. Verificação se o conjunto de dados fornecido como argumento
-        é do tipo DynamicFrame (caso contrário, converte)
-        2. Faz um sink com o catálogo de dado
-        3. Escreve dados no s3 e atualiza catálogo de dados
+        1. Check if the data object type (df argument) is a Glue DynamicFrame
+        (if it's not, it converts it)
+        2. Make a sink with data catalog
+        3. Write data in S3 and update the data catalog with the behavior
+        chosen by the user
 
         Examples:
             ```python
-            # Escrevendo e catalogando dados
-            glue_manager.write_data(
+            # Writing and cataloging data
+            spark_manager.write_data(
                 df=df_orders,
                 s3_table_uri="s3://some-bucket/some-table",
                 output_database_name="db_corp_business_inteligence",
@@ -521,70 +522,71 @@ class GlueJobManager():
 
         Args:
             df (DataFrame or DynamicFrame):
-                Objeto do tipo DataFrame Spark (`pyspark.sql.DataFrame`) ou
-                DynamicFrame do Glue (`awsglue.dynamicframe.DynamicFrame`)
-                alvo do processo de escrita e catalogação.
+                A data object that can be a Spark DataFrame
+                (`pyspark.sql.DataFrame`) or a Glue DynamicFrame
+                (`awsglue.dynamicframe.DynamicFrame`) considered as a target
+                element for writing and cataloging processes. This information
+                is used on `glueContext.getSink().writeFrame()` method.
 
             s3_table_uri (str):
-                URI da tabela a ser escrita no s3 no formato
-                `s3://bucket-name/table-prefix/`. Esta informação é utilizada
-                no parâmetro "path" do método `glueContext.getSink()`
+                Table URI in the format `s3://bucket-name/table-prefix/`. This
+                information is used on parameter "path" from
+                `glueContext.getSink()` method.
 
             output_database_name (str):
-                Referência nominal do database alvo do armazenamento da tabela.
-                Esta informação é utilizada no parâmetro catalogDatabase do
-                método `glueContext.getSink().setCatalogInfo()`.
+                Reference for the database used on the catalog process for the
+                table. This information is used on parameter "catalogDatabase"
+                from `glueContext.getSink().setCatalogInfo()` method.
 
             output_table_name (str):
-                Referência nominal da tabela para armazenametno dos dados.
-                Esta informação é utilizada no parâmetro catalogTableName do
-                método `glueContext.getSink().setCatalogInfo()`.
+                Reference for the table used on the catalog process. This
+                information is used on parameter "catalogTableName"
+                from `glueContext.getSink().setCatalogInfo()` method.
 
             partition_name (str or None):
-                Referência da coluna de partição utilizada para particionamento
-                dos dados a serem armazenados. Esta informação é utilizada no
-                parâmetro partitionKeys do método `glueContext.getSink()`.
+                Partition coumn name chosen for the table. This information is
+                used on parameter "partitionKeys" from `glueContext.getSink()`
+                method.
 
             connection_type (str):
-                Tipo de conexão utilizada para o armazenamento. Esta informação
-                é utilizada no parâmetro connection_type do método
-                `glueContext.getSink()`.
+                Connection type used in storage. This information is used on
+                parameter "connection_type" from `glueContext.getSink()` method
 
             update_behavior (str):
-                Determina o comportamento de atualização dos dados da tabela
-                alvo. Esta informação é utilizada no parâmetro updateBehavior
-                do método `glueContext.getSink()`.
+                Defines the update behavior for the target table. This
+                information is used on parameter "updateBehavior" from
+                `glueContext.getSink()` method.
 
             compression (str):
-                Tipo de compressão a ser utilizada no armazenamento dos dados.
-                Esta informação é utilizada no parâmetro compression do
-                método `glueContext.getSink()`.
+                Defines the compression method used on data storage process.
+                This information is used on parameter "compression" from
+                `glueContext.getSink()` method.
 
             enable_update_catalog (bool):
-                Flag para habilitar a atualização do catálogo de dados com os
-                dados armazenados pelo método. Esta informação é utilizada no
-                atributo enableUpdateCatalog do método `glueContext.getSink()`.
+                Enables the update of data catalog with data storage by this
+                method. This information is used on parameter
+                "enableUpdateCatalog" from  `glueContext.getSink()` method.
 
             output_data_format (str):
-                Formato dos dados a serem armazenados. Esta informação é
-                utilizada no parâmetro output_data_format do método
-                `glueContext.getSink().setFormat()`.
+                Defines the data format for the data to be stored on S3. This
+                information is used on parameter "output_data_format" from
+                `glueContext.getSink().setFormat()` method.
         """
 
-        # Convertendo DataFrame em DynamicFrame
+        # Converting DataFrame into DynamicFrame
         if type(df) == DataFrame:
-            logger.info("Transformando DataFrame preparado em DynamicFrame")
+            logger.info("Converting the Spark DataFrame as Glue DynamicFrame")
             try:
                 dyf = DynamicFrame.fromDF(df, self.glueContext, "dyf")
             except Exception as e:
-                logger.error("Erro ao transformar DataFrame em DynamicFrame. "
-                             f"Exception: {e}")
+                logger.error("Error on converting the DataFrame object as "
+                             f"DynamicFrame. Exception: {e}")
                 raise e
         else:
             dyf = df
 
-        # Criando sincronização com bucket s3
-        logger.info("Preparando e sincronizando elementos de saída da tabela")
+        # Creating a sink with S3
+        logger.info("Creating a sink with all configurations provided")
         try:
             # Criando relação de escrita de dados
             data_sink = self.glueContext.getSink(
@@ -597,12 +599,12 @@ class GlueJobManager():
                 transformation_ctx="data_sink",
             )
         except Exception as e:
-            logger.error("Erro ao configurar elementos de saída via getSink. "
+            logger.error("Error on creating a sink for the output table. "
                          f"Exception: {e}")
             raise e
 
-        # Configurando informações do catálogo de dados
-        logger.info("Adicionando entrada para tabela no catálogo de dados")
+        # Setting up data catalog info
+        logger.info("Setting up information on the Data Catalog for the table")
         try:
             data_sink.setCatalogInfo(
                 catalogDatabase=output_database_name,
@@ -612,11 +614,11 @@ class GlueJobManager():
                                 useGlueParquetWriter=True)
             data_sink.writeFrame(dyf)
 
-            logger.info(f"Tabela {output_database_name}."
+            logger.info(f"Table {output_database_name}."
                         f"{output_table_name} "
-                        "atualizada com sucesso no catálogo. Seus dados estão "
-                        f"armazenados em {s3_table_uri}")
+                        "successfully update on Data Catalog. Its data are "
+                        f"stored in the following path: {s3_table_uri}")
         except Exception as e:
-            logger.error("Erro ao adicionar entrada para tabela no catálogo "
-                         f"de dados. Exception: {e}")
+            logger.error("Error on trying to write data for the given table "
+                         f". Exception: {e}")
             raise e

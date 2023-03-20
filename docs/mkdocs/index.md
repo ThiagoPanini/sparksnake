@@ -1,8 +1,10 @@
 # sparksnake
 
-## Visão Geral
+## Overview
 
-A biblioteca *sparksnake* proporciona uma forma fácil, rápida e eficiente para utilizar funcionalidades Spark através de serviços de *analytics* na AWS. Com ela, é possível se servir de classes, métodos e funções codificadas em pyspark que visam simplificar, ao máximo, a jornada de uso deste *framework* através das particularidades encontradas em serviços AWS, como o Glue e o EMR, por exemplo.
+The *sparksnake* library provides an easy, fast, and efficient way to use Spark features inside analytics services on AWS. With *sparksnake*, it is possible to use classes, methods and functions developed in pyspark to simplify, as much as possible, the journey of building Spark applications along all the particularities found in AWS services, such as Glue and EMR, for example.
+
+Do you want to take your job Glue or your EMR cluster to the next level? Take a look at *sparksnake*!
 
 
 <div align="center">
@@ -48,60 +50,61 @@ A biblioteca *sparksnake* proporciona uma forma fácil, rápida e eficiente para
 
 ___
 
-## Funcionalidades
+## Features
 
-- 🤖 Simplificação de construção de aplicações Spark através de classes e métodos já codificados
-- 🌟 Consolidação de funcionalidades mais comuns envolvendo processos de ETL em pyspark
-- ⚙️ Abstração do todo o processo de *setup* de um *job* Glue através de uma linha de código
-- 👁️‍🗨️ Aprimoramento do *observability* da aplicação através de mensagens detalhadas de log no CloudWatch
-- 🛠️ Tratamento de exceções já embutidos nos métodos da biblioteca
+- 🤖 Simplification of building Spark applications with already coded classes and methods
+- 🌟 Consolidation of most common functionalities involving ETL processes in pyspark
+- ⚙️ Abstraction of the whole process of setting up a Job Glue with one line of code
+- 👁️‍🗨️ Application observability improvement with detailed log messages in CloudWatch
+- 🛠️ Exception handling processes already embedded in library methods
 
 
-## Instalação
+## Getting Started
 
-A última versão da biblioteca *sparksnake* já está publicada no [PyPI](https://pypi.org/project/sparksnake/) e disponível para uso totalmente gratuito por qualquer um interessado em aprimorar a construção de suas aplicações Spark utilizando serviços AWS como Glue e EMR, por exemplo. Para iniciar sua jornada de uso, basta realizar sua instalação através do seguinte comando:
+The latest version of the sparksnake library is already published in [PyPI](https://pypi.org/project/sparksnake/) and available free of charge for anyone interested in improving the creation of their Spark applications using AWS services such as Glue and EMR. To start your journey, simply perform your installation using the following command:
 
 ```bash
 pip install sparksnake
 ```
 
-??? tip "Sobre ambientes virtuais Python"
-    Em geral, uma boa prática relacionada a criação de novos projetos Python diz respeito à criação e uso de [ambientes virtuais](https://docs.python.org/3/library/venv.html) (ou *virtual environments*, no inglês). Criar um *venv* para cada projeto Python iniciado permite, entre outras vantagens, ter em mãos um ambiente isolado com um controle mais refinado sobre as dependências utilizadas.
-
-    ??? example "Criando ambientes virtuais"
-        Para criar um ambiente virtual Python, basta navegar até um diretório escolhido para organizar todos os *virtual envs* criados e executar o seguinte comando:
-
-        ```bash
-        python -m venv <nome_venv>
-        ```
-
-        Onde `<nome_venv>` deve ser substituído pelo nome escolhido para o ambiente virtual a ser criado. É comum ter nomes de ambientes virtuais associados à projetos (ex: `project_venv`).
-
-    ??? example "Acessando ambientes virtuais"
-        Criar um *virtual env* é apenas a primeira etapa do processo. Após criado, o ambiente precisa ser explicitamente acessado pelo usuário para garantir que todas as ações subsequentes relacionadas à instalação de bibliotecas sejam realizadas, de fato, no ambiente isolado criado.
-        
-        Se o sistema operacional utilizado é Windows, então use o comando abaixo para acessar o ambiente virtual Python:
-
-        ```bash
-        # Acessando ambiente virtual no Windows
-        <caminho_venv>/Scripts/activate
-        ```
-
-        Em caso de uso de um sistema operacional Linux (ou Git Bash no Windows), o comando possui pequenas alterações e é dado por:
-
-        ```bash
-        # Acessando ambiente virtual no Linux
-        source <caminho_venv>/Scripts/activate
-        ```
-
-        Onde `<caminho_venv>` é a referência da localização do ambiente virtual recém criado. Por exemplo, se você criou o ambiente virtual de nome *test_venv* no seu diretório de usuário, então `<caminho_venv>` pode ser substituído por `C:\Users\usuario\test_venv` no Windows ou simplesmente `~/test_venv` no Linux.
+??? tip "About Python virtual environments"
+    In general, it's a good practice create a [virtual environment](https://docs.python.org/3/library/venv.html) before the start of every Python project. Creating a venv for each Python project allows, among other advantages, to have an isolated environment with more refined control over the dependencies used.
     
-    Para mais informações, o [excelente artigo do blog Real Python](https://realpython.com/python-virtual-environments-a-primer/) poderá esclarecer uma série de dúvidas envolvendo a criação e o uso de ambientes virtuais Python.
+    ??? example "Creating virtual environments"
+        To create a Python virtual environment, run the following code in a folder of your preference (maybe one you can use for organizing all your further virtual environments):
+
+        ```bash
+        python -m venv <venv_name>
+        ```
+
+        Where `<venv_name>` should be replaced by the name chosen for the virtual environment to be created. It is common to have virtual environment names associated with projects (ex: `project_venv`)
 
 
-## Contatos
+    ??? example "Accessing virtual environments"
+        Once created, the environment needs to be explicitly accessed by the user to ensure that all subsequent actions related to installing libraries are actually performed inside of the isolated environment created.
+
+        If the operating system used is Windows, then use the command below to access the Python virtual environment:
+
+        ```bash
+        # Accessing venvs on Windows
+        <venv_path>/Scripts/activate
+        ```
+
+        In case of use of a Linux operating system (or Git Bash in Windows), the command has minor changes and is given by:
+
+        ```bash
+        # Accessing venvs on Linux
+        source <venv_path>/Scripts/activate
+        ```
+
+        Where `<venv_path>` is the location reference of the newly created virtual environment. For example, if you created a virtual environment named *test_venv* name in your user directory, then `<venv_path>` can be replaced by `C:\Users\username\test_venv` on Windows or simply `~/test_venv` on Linux.
+        
+    
+    For more information, this [excellent Real Python blog article](https://realpython.com/python-virtual-environments-a-primer/) may shed light on a number of questions involving the creation and use of Python virtual environments.
+    
+
+## Contacts
 
 - :fontawesome-brands-github: [@ThiagoPanini](https://github.com/ThiagoPanini)
 - :fontawesome-brands-linkedin: [Thiago Panini](https://www.linkedin.com/in/thiago-panini/)
 - :fontawesome-brands-hashnode: [panini-tech-lab](https://panini.hashnode.dev/)
-

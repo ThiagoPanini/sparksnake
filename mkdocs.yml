@@ -63,13 +63,13 @@ theme:
 nav:
   - Home:
     - sparksnake: index.md
-    - Motivação: motivacao.md
+    - Motivation: motivation.md
   - Features:
-    - Organização: features/organizacao.md
-    - Jornada de Uso com o Glue: features/exemplos-glue.md
-  - Documentação Oficial:
-    - A Classe SparkETLManager: mkdocstrings/sparketlmanager.md
-    - A Classe GlueJobManager: mkdocstrings/gluejobmanager.md
+    - Library Structure: features/lib-structure.md
+    - Developing Glue Jobs: features/demo-glue.md
+  - Official Docs:
+    - SparkETLManager class: mkdocstrings/sparketlmanager.md
+    - GlueJobManager class: mkdocstrings/gluejobmanager.md
 
 # Extensões do MkDocs
 markdown_extensions:
