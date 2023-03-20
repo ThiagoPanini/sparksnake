@@ -70,7 +70,7 @@ class GlueJobManager():
         expected way.
 
         With that in mind, it's crucial to say that the data_dict dictionary
-        can be defined with all parameters found in 
+        can be defined with all parameters found in
         `glueContext.create_dynamic_frame.from_catalog` Glue method. In other
         words, all keys of data_dict dictionary can be assume any valid
         parameter of the Glue method mentioned above. Of course the values
