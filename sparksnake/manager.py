@@ -38,7 +38,7 @@ class SparkETLManager(GlueJobManager):
     their development process wherever they are creating a Spark application
     for running on AWS Glue, Amazon EMR or even locally.
 
-    Example: Class `SparkETLManager` basic usage example with mode="glue"
+    Example: A basic usage example of class `SparkETLManager` with mode="glue"
         ```python
         # Importing class
         from sparksnake.manager import SparkETLManager
@@ -71,7 +71,7 @@ class SparkETLManager(GlueJobManager):
             argv_list=ARGV_LIST,
             data_dict=DATA_DICT
         )
-        
+
         spark_manager.init_job()
 
         # Getting all DataFrames Spark based on data_dict provided
@@ -133,18 +133,20 @@ class SparkETLManager(GlueJobManager):
     def __init__(self, mode: str, **kwargs) -> None:
         self.mode = mode.strip().lower()
 
-        # Validando modo/serviço de execução da classe
+        # Looking out for the operation mode
+        # ToDo: insert conditions for local mode and emr mode (future)
         if self.mode == "glue":
-            # Validar
-            # Coletando argumentos necessários para mode="glue"
+            # Collecting required args for mode="glue"
+            # Check if requred args are in **kwargs and throw and exception
             argv_list = kwargs["argv_list"]
             data_dict = kwargs["data_dict"]
 
-            # Herdando atributos e métodos da classe GlueJobManager
-            GlueJobManager.__init__(self, argv_list=argv_list,
+            # Applying class inheritance for this mode
+            GlueJobManager.__init__(self,
+                                    argv_list=argv_list,
                                     data_dict=data_dict)
 
-        # Se for local, instanciar uma sessão Spark como atributo da classe
+        # ToDo: if mode="local", creates a sels.spark SparkSession object
 
     @staticmethod
     def extract_date_attributes(df: DataFrame,
@@ -153,26 +155,25 @@ class SparkETLManager(GlueJobManager):
                                 date_format: str = "yyyy-MM-dd",
                                 convert_string_to_date: bool = True,
                                 **kwargs) -> DataFrame:
-        """
-        Extração de atributos de datas de coluna de um DataFrame.
+        """Extracting date attributes from a Spark DataFrame date column.
 
-        Método responsável por consolidar a extração de diferentes atributos de
-        data de um dado campo de um DataFrame informado pelo usuário. Tal campo
-        pode ser do tipo primitivo DATE ou TIMESTAMP. Caso o campo alvo da
-        extração de atributos de data passado pelo usuário seja do tipo STRING,
-        porém com possibilidades de conversão para um tipo de data, então o
-        parâmetro `convert_string_to_date` deve ser igual a `True`.
+        This method makes it possible to extract multiple date attributes from
+        a column in a Spark DataFrame that represents a date or timestamp
+        information. To do that, the given date column in the DataFrame should
+        be of types DATE, TIMESTAMP. There is a special case where the target
+        date column is of STRING data type. In that situtation, the column
+        must be parseable as a date so the date attributes can be extracted
+        from it.
 
-
-        A lógica estabelecida é composta por uma validação inicial de conversão
-        do campo, seguida da extração de todos os atributos possíveis de data
-        conforme argumentos fornecidos pelo usuário. Com essa funcionalidade,
-        os usuários podem enriquecer seus DataFrames Spark com novos atributos
-        relevantes para seus respectivos processos analíticos.
+        The method logic is made for a initial field casting validation
+        followed by the extraction of all date attributes according to the user
+        input on the method call. The big idea behing this features is the
+        ability to provide users a huge DataFrame enrichment with a single
+        method call to improve their analytics processes.
 
         Examples:
             ```python
-            # Extraindo atributos temporais de uma coluna de data em um df
+            # Extracting date attributes from a date column in a Spark df
             df_date_prep = spark_manager.extract_date_attributes(
                 df=df_raw,
                 date_col="order_date",
@@ -182,51 +183,50 @@ class SparkETLManager(GlueJobManager):
                 dayofmonth=True
             )
 
-            # O resultado será um novo DataFrame contendo três colunas
-            # adicionais criadas com base no conteúdo de order_date:
-            # year_order_date, month_order_date e dayofmonth_order_date
+            # In the above example, the method will return a new DataFrame
+            # with additional columns based on the order_date_content, such as:
+            # year_order_date, month_order_date and dayofmonth_order_date 
             ```
 
         Args:
             df (pyspark.sql.DataFrame):
-                DataFrame Spark alvo das transformações aplicadas.
+                A target Spark DataFrame for applying the transformation.
 
             date_col (str):
-                Referência da coluna de data (ou string capaz de ser convertida
-                como um campo de data) a ser utilizada no processo de extração
-                de atributos temporais.
+                A date column name (or parseable string as date) to be used in
+                the date extraction process.
 
             date_col_type (str):
-                String que informa se a coluna de data passada no argumento
-                `date_col` é do tipo date ou timestamp.
+                Reference for data type of `date_col` argument. Acceptable
+                values are "date" or "timestamp".
 
             date_format (str):
-                Formato de conversão de string para data. Aplicável caso
-                `convert_string_to_date=True`
+                Date format applied in a optional string to date casting.
+                It's applicable only if `convert_string_to_date=True`
 
             convert_string_to_date (bool):
-                Flag que indica a conversão da coluna `date_col` para um
-                formato aceitável de data.
+                Enables an automatic casting of the `date_col` column reference
+                into a given `date_format`.
 
         Keyword Args:
-            year (bool): Flag para extração do ano da coluna alvo
-            quarter (bool): Flag para extração do quadrimestre da coluna alvo
-            month (bool): Flag para extração do mês da coluna alvo
-            dayofmonth (bool): Flag para extração do dia do mês da coluna alvo
-            dayofweek (bool): Flag para extração do dia da semana da coluna
-            weekofyear (bool): Flag para extração da semana do ano da coluna
+            year (bool): Extracts the year of target date column
+            quarter (bool): Extracts the quarter of target date column
+            month (bool): Extracts the month of target date column
+            dayofmonth (bool): Extracts the dayofmonth of target date column
+            dayofweek (bool): Extracts the dayofweek of target date column
+            weekofyear (bool): Extracts the weekofyear of target date column
 
         Raises:
-            ValueError: exceção lançada caso o parâmetro date_col_type seja\
-            informado como algo diferente de "date" ou "timestamp"
+            ValueError: Exception raised if the `date_col_type` argument is\
+            passed in non acceptable value (e.g. something different of "date"\
+            or "timestamp").
 
         Returns:
-            DataFrame Spark com novas colunas baseadas nas extrações de\
-            atributos temporais da coluna de data passada como alvo.
+            Spark DataFrame with new date columns extracted.
         """
 
         try:
-            # Criando expressões de conversão com base no tipo do campo
+            # Creating casting expressions based on data type of date_col arg
             date_col_type = date_col_type.strip().lower()
             if convert_string_to_date:
                 if date_col_type == "date":
@@ -236,10 +236,11 @@ class SparkETLManager(GlueJobManager):
                     conversion_expr = f"to_timestamp({date_col},\
                         '{date_format}') AS {date_col}_{date_col_type}"
                 else:
-                    raise ValueError("Argumento date_col_type invalido! "
-                                     "Insira 'date' ou 'timestamp'")
+                    raise ValueError("The data type of date_col_type parameter"
+                                     " is invalid. Acceptable values are "
+                                     "'date'or 'timestamp'")
 
-                # Aplicando consulta para transformação dos dados
+                # Applying a select expression for casting data if applicable
                 df = df.selectExpr(
                     "*",
                     conversion_expr
@@ -247,18 +248,19 @@ class SparkETLManager(GlueJobManager):
                     .withColumnRenamed(f"{date_col}_{date_col_type}", date_col)
 
         except Exception as e:
-            logger.error('Erro ao configurar e realizar conversao de campo'
-                         f'{date_col} para {date_col_type} via expressao'
-                         f'{conversion_expr}. Exception: {e}')
+            logger.error(f"Error on casting the column {date_col} as "
+                         f"{date_col_type} using the expression "
+                         f"{conversion_expr}. Exception: {e}")
             raise e
 
-        # Criando lista de atributos possíveis de data a serem extraídos
+        # Creating a list of all possible date attributes to be extracted
         possible_date_attribs = ["year", "quarter", "month", "dayofmonth",
                                  "dayofweek", "dayofyear", "weekofyear"]
 
         try:
-            # Iterando sobre atributos e construindo expressão completa
+            # Looping over all possible attributes and extracting date attribs
             for attrib in possible_date_attribs:
+                # Add a new column only if attrib is in kwargs
                 if attrib in kwargs and bool(kwargs[attrib]):
                     df = df.withColumn(
                         f"{attrib}_{date_col}",
@@ -268,8 +270,8 @@ class SparkETLManager(GlueJobManager):
             return df
 
         except Exception as e:
-            logger.error('Erro ao adicionar colunas em DataFrame com'
-                         f'novos atributos de data. Exception: {e}')
+            logger.error("Error on adding new date columns into the "
+                         f"DataFrame. Exception: {e}")
             raise e
 
     def extract_aggregate_statistics(self,
@@ -279,17 +281,16 @@ class SparkETLManager(GlueJobManager):
                                      round_result: bool = False,
                                      n_round: int = 2,
                                      **kwargs) -> DataFrame:
-        """
-        Extração de atributos estatísticos de coluna numérica.
+        """Extracts statistical attributes based on a group by opreation.
 
-        Método responsável por consolidar a extração de diferentes atributos
-        estatísticos de uma coluna numérica presente em um DataFrame Spark.
-        Com esta funcionalidade, os usuários podem obter uma série de atributos
-        estatísticos enriquecidos em um DataFrame para futuras análises.
+        This method makes it possible to extract multiple statistical
+        aggregations based in a numerical column and a set of columns to be
+        grouped by. With this feature, users can configure complex aggregations
+        in a single method call in order to enhance their analysis.
 
         Examples:
             ```python
-            # Gerando estatísticas
+            # Creating a new special and aggregated DataFrame
             df_stats = spark_manager.extract_aggregate_statistics(
                 df=df_orders,
                 numeric_col="order_value",
@@ -300,87 +301,83 @@ class SparkETLManager(GlueJobManager):
                 min=True
             )
 
-            # O resultado será um novo DataFrame com as colunas:
-            # order_id e order_year (agrupamento)
-            # sum_order_value (soma de order_value)
-            # mean_order_value (média de order_value)
-            # max_order_value (máximo de order_value)
-            # min_order_value (mínimo de order_value)
+            # In the above example, the method will return a new DataFrame with
+            # the following columns:
+            # order_id e order_year (group by)
+            # sum_order_value (sum of order_value column)
+            # mean_order_value (average of order_value column)
+            # max_order_value (max value of order_value column)
+            # min_order_value (min value of order_value column)
             ```
 
         Args:
             df (pyspark.sql.DataFrame):
-                DataFrame Spark alvo das transformações aplicadas.
+                A target Spark DataFrame for applying the transformation
 
             numeric_col (str):
-                Referência da coluna numérica presente no DataFrame para servir
-                como alvo das extrações estatísticas consideradas.
+                A numeric column name on the target DataFrame to be used as
+                target of aggregation process
 
             group_by (str or list):
-                Coluna nominal ou lista de colunas utilizadas como parâmetros
-                do agrupamento consolidado pelas extrações estatísticas.
+                A column name or a list of columns used as group categories
+                on the aggregation process
 
             round_result (bool):
-                Flag para indicar o arredondamento dos valores resultantes
-                dos atributos estatísticos gerados pelo agrupamento.
+                Enables rounding aggregation results on each new column
 
             n_round (int):
-                Indicador de casas decimais de arredondamento. Aplicável caso
-                `round_result=True`.
+                Defines the round number on rounding. Applied only if
+                `round_result=True`
 
-        Tip: Sobre os argumentos de chave e valor kwargs:
-            Para proporcionar uma funcionalidade capaz de consolidar a
-            extração dos atributos estatísticos mais comuns para os usuários
-            com apenas uma linha de código, uma lista específica de funções
-            foi selecionada para fazer parte dos métodos estatísticos aceitos
-            neste método.
+        Tip: About keyword arguments
+            In order to provide a new feature that is capable to put together
+            the extraction of multiple statistical attributes with a single
+            line of code, a special list of pyspark functions were selected
+            as acceptable functions to be called on the aggregation process.
 
-            A referência sobre qual estatística extrair pode ser fornecida
-            pelo usuário através dos `**kwargs` em um formato de chave=valor,
-            onde a chave referencia a referência nominal para a função
-            estatística (em formato de string) e valor é um flag booleano.
+            It means that if users wants to apply an aggregation on the
+            target DataFrame and extract the sum, the mean, the minimum and
+            the maximum value of a given numeric column, they must pass
+            keyword arguments as following: `sum=True`, `mean=True`,
+            `min=True` and `max=True`.
 
-            Em outras palavras, caso o usuário deseje enriquecer seu DataFrame
-            com os valores da média, máximo e mínimo de um campo, o método
-            deve ser parametrizado, para além dos argumentos detalhados,
-            com `avg=True`, `min=True`, `max=True`.
-
-            Detalhes sobre a lista de funções estatísticas aceitas neste
-            método poderão ser vistas logo abaixo.
+            All acceptable keyword arguments (pyspark functions) can be
+            found right below:
 
         Keyword Args:
-            sum (bool): Extração da soma dos valores agregados
-            mean (bool): Extração da média dos valores agregados
-            max (bool): Extração do máximo do valor agregado
-            min (bool): Extração do mínimo do valor agregado
-            countDistinct (bool): Contagem distinta do valore agregado
-            variance (bool): Extração da variância do valor agregado
-            stddev (bool): Extração do Desvio padrão do valor agregado
-            kurtosis (bool): Kurtosis (curtose) do valor agregado
-            skewness (bool): Assimetria do valor agregado
+            sum (bool): Extracts the sum of a given numeric column
+            mean (bool): Extracts the mean of a given numeric column
+            max (bool): Extracts the max of a given numeric column
+            min (bool): Extracts the min of a given numeric column
+            countDistinct (bool): Extracts the count distinct value\
+                of a given numeric column
+            variance (bool): Extracts the variance of a given numeric column
+            stddev (bool): Extracts the standard deviation of a given numeric\
+                column
+            kurtosis (bool): Extracts the kurtosis of a given numeric column
+            skewness (bool): Extracts the skewness of a given numeric column
 
         Returns:
-            DataFrame Spark criado após processo de agregação estatística\
-            parametrizado no método.
+            A new Spark DataFrame with new statistical columns based on the\
+            aggregation configured by user on method call.
 
         Raises:
-            Exception: exceção genérica lançada na impossibilidade de\
-            gerar e executar a query SQL (SparkSQL) para extração de\
-            atributos estatísticos do DataFrame.
+            Exception: Generic exception raised when failed to execute the\
+            SparkSQL query for extracting the stats from the DataFrame.
         """
 
-        # Desempacotando colunas de agrupamento em caso de múltiplas colunas
+        # Joining all group by columns in a single string to make agg easier
         if type(group_by) == list and len(group_by) > 1:
             group_by = ",".join(group_by)
 
-        # Criando tabela temporária para extração de estatísticas
+        # Creating a Spark temporary table for grouping data using SparkSQL
         df.createOrReplaceTempView("tmp_extract_aggregate_statistics")
 
         possible_functions = ["sum", "mean", "max", "min", "count",
                               "countDistinct", "variance", "stddev",
                               "kurtosis", "skewness"]
         try:
-            # Iterando sobre atributos e construindo expressão completa
+            # Looping over the attributes to build a single aggregation expr
             agg_query = ""
             for f in possible_functions:
                 if f in kwargs and bool(kwargs[f]):
@@ -391,10 +388,10 @@ class SparkETLManager(GlueJobManager):
 
                     agg_query += f"{agg_function} AS {f}_{numeric_col},"
 
-            # Retirando última vírgula do comando de agregação
+            # Dropping the last comma on the expression
             agg_query = agg_query[:-1]
 
-            # Construindo consulta definitiva
+            # Building the final query to be executed
             final_query = f"""
                 SELECT
                     {group_by},
@@ -407,96 +404,88 @@ class SparkETLManager(GlueJobManager):
             return self.spark.sql(final_query)
 
         except Exception as e:
-            logger.error('Erro ao extrair estatísticas de DataFrame'
-                         f'Exception: {e}')
+            logger.error("Error on extracting statistical attributes from "
+                         f"DataFrame. Exception: {e}")
             raise e
 
     @staticmethod
     def add_partition_column(df: DataFrame,
                              partition_name: str,
                              partition_value) -> DataFrame:
-        """
-        Adição de coluna de partição em um DataFrame Spark.
+        """Adding a "partition" column on a Spark DataFrame.
 
-        Método responsável por adicionar uma coluna ao DataFrame alvo para
-        funcionar como partição da tabela gerada. Na prática, este método
-        utiliza o método `.withColumn()` do pyspark para adição de uma coluna
-        considerando um nome de atributo (partition_name) e seu respectivo
-        valor (partition_value).
+        This method is responsible for adding a new column on a target Spark
+        DataFrame to be considered as a table partition. In essence, this
+        method uses the native pyspark `.withColumn()` method for adding a
+        new column to the DataFrame using a name for the partition column
+        (partition_name) and its value (partition_value).
 
         Examples
             ```python
-            # Definindo informações de partição de data da tabela final
+            # Defining partition information
             partition_name = "anomesdia"
             partition_value = int(datetime.strftime('%Y%m%d'))
 
-            # Adicionando coluna de partição a um DataFrame
-            df_partitioned = spark_manager.add_partition(
+            # Adding a partition column to the DataFrame
+            df_partitioned = spark_manager.add_partition_column(
                 df=df_orders,
                 partition_name=partition_name,
                 partition_value=partition_value
             )
 
-            # O resultado é um novo DataFrame contendo a coluna anomesdia
-            # e seu respectivo valor definido utilizando a lib datetime
+            # The method returns a new DataFrame with a new column
+            # referenced by "anomesdia" and its value referenced by
+            # the datetime library
             ```
 
         Args:
-            df (pyspark.sql.DataFrame): DataFrame Spark alvo.
-            partition_name (str): Nome da coluna de partição a ser adicionada.
-            partition_value (Any): Valor da partição atribuído à coluna.
+            df (pyspark.sql.DataFrame): A target Spark DataFrame.
+            partition_name (str): Column name to be added on the DataFrame.
+            partition_value (Any): Value for the new column to be added.
 
         Returns:
-            DataFrame Spark criado após processo de agregação estatística\
-            parametrizado no método.
+            A Spark DataFrame with the new column added.
 
         Raises:
-            Exception: exceção genérica lançada ao obter um erro na tentativa\
-            de execução do método `.withColumn()` para adição da coluna de\
-            partição no DataFrame alvo.
+            Exception: A generic exception raised on failed to execute the\
+            method `.withColumn()` for adding the new column.
         """
 
-        logger.info("Adicionando coluna de partição no DataFrame final "
+        logger.info("Adding a new partition column to the DataFrame "
                     f"({partition_name}={str(partition_value)})")
         try:
             df_partitioned = df.withColumn(partition_name,
                                            lit(partition_value))
+            return df_partitioned
         except Exception as e:
-            logger.error("Erro ao adicionar coluna de partição ao DataFrame "
-                         f"via método .withColumn(). Exception: {e}")
-
-        # Retornando DataFrame com coluna de partição
-        return df_partitioned
+            logger.error("Error on adding a partition colum to the DataFrame "
+                         f"using the .withColumn() method. Exception: {e}")
 
     @staticmethod
     def repartition_dataframe(df: DataFrame, num_partitions: int) -> DataFrame:
-        """
-        Reparticionamento de um DataFrame para otimização de armazenamento.
+        """Repartitioning a Spark DataFrame for optimizing storage.
 
-        Método responsável por aplicar processo de reparticionamento de
-        DataFrames Spark visando a otimização do armazenamento dos arquivos
-        físicos no sistema de armazenamento distribuído. O método contempla
-        algumas validações importantes em termos do uso dos métodos
-        `coalesce()` e `repartition()` com base no número atual das partições
-        existentes no DataFrame passado como argumento.
+        This method applies the repartition process in a Spark DataFrame in
+        order to optimize its storage on S3. The method has some important
+        checks based on each pyspark method to use for repartitioning the
+        DataFrame. Take a look at the below tip to learn more.
 
-        Tip: Detalhes adicionais sobre o funcionamento do método:
-            Seguindo as melhores práticas de reparticionamento, caso
-            o número desejado de partições (num_partitions) seja MENOR
-            que o número atual de partições coletadas, então o método
-            utilizado será o `coalesce()`.
+        Tip: Additional details on method behavior
+            The method `repartition_dataframe()` works as follows:
 
-            Por outro lado, caso o número desejado de partições seja MAIOR que
-            o número atual, então o método utilizado será o `repartition()`,
-            considerando a escrita de uma mensagem de log com a tag warning
-            para o usuário, dados os possíveis impactos. Por fim, se o número
-            de partições desejadas for igual ao número atual, nenhuma
-            operação é realizada e o DataFrame original é retornado
-            intacto ao usuário.
+            1. The current number of partitions in the target DataFrame
+            is checked
+            2. The desired number of partitions passed as a parameter
+            is checked
+
+            * If the desired number is LESS than the current number, then the
+            method `coalesce()` is executed
+            * If the desired number is GREATER than the current one, then the
+            method `repartition()` is executed
 
         Examples:
             ```python
-            # Reparticionando DataFrame para otimizar armazenamento
+            # Repartitioning a Spark DataFrame
             df_repartitioned = spark_manager.repartition_dataframe(
                 df=df_orders,
                 num_partitions=10
@@ -504,94 +493,75 @@ class SparkETLManager(GlueJobManager):
             ```
 
         Args:
-            df (pyspark.sql.DataFrame): DataFrame Spark alvo do processo.
-            num_partitions (int): Número de partições físicas desejadas.
+            df (pyspark.sql.DataFrame): A target Spark Dataframe.
+            num_partitions (int): Desider number of partitions.
 
         Returns:
-            DataFrame Spark reparticionado de acordo com o número de\
-            partições especificadas pelo usuário.
+            A new Spark DataFrame gotten after the repartition process.
 
         Raises:
-            Exception: exceção genérica lançada ao obter um erro na tentativa\
-            de realizar os procedimentos de reparticionamento de um DataFrame,\
-            seja este dado pelo método `colaesce()` ou pelo método\
-            `repartition()`
+            Exception: A generic exception is raised on a failed attempt to\
+            run the repartition method (`coalesce()` or `repartition()`) in\
+            the given Spark DataFrame.
         """
 
-        # Corrigindo argumento num_partitions
+        # Casting arg to integer to avoid exceptions
         num_partitions = int(num_partitions)
 
-        # Coletando informações atuais de partições físicas do DataFrame
-        logger.info("Coletando o número atual de partições do DataFrame")
+        # Getting the current number of partitions of the given DataFrame
+        logger.info("Getting the current number of partition of the DataFrame")
         try:
             current_partitions = df.rdd.getNumPartitions()
 
         except Exception as e:
-            logger.error("Erro ao coletar número atual de partições do "
-                         "DataFrame via df.rdd.getNumPartitions. "
+            logger.error("Error on collecting the current number of "
+                         "using df.rdd.getNumPartitions method. "
                          f"Exception: {e}")
             raise e
 
-        # Se o número de partições desejadas for igual ao atual, não operar
+        # If the desired partition number if equal to the current number, skip
         if num_partitions == current_partitions:
-            logger.warning(f"Número de partições atuais ({current_partitions})"
-                           f" é igual ao número de partições desejadas "
-                           f"({num_partitions}). Nenhuma operação de "
-                           "repartitionamento será realizada e o DataFrame "
-                           "original será retornado sem alterações")
+            logger.warning(f"The current number of partitions "
+                           f"({current_partitions}) is equal to the desired "
+                           f"number ({num_partitions}). There is no need to "
+                           "run any Spark repartition method")
             sleep(0.01)
             return df
 
-        # Se o número de partições desejadas for MENOR, usar coalesce()
+        # If the desired number if LESS THAN the current, use coalesce()
         elif num_partitions < current_partitions:
-            logger.info("Iniciando reparticionamento de DataFrame via "
-                        f"coalesce() de {current_partitions} para "
-                        f"{num_partitions} partições")
+            logger.info("Initializing the repartition process using "
+                        f"coalesce(), changing the number of DataFrame "
+                        f"partitions from {current_partitions} to "
+                        f"{num_partitions}")
             try:
                 df_repartitioned = df.coalesce(num_partitions)
 
             except Exception as e:
-                logger.warning("Erro ao reparticionar DataFrame via "
-                               "repartition(). Nenhuma operação de "
-                               "repartitionamento será realizada e "
-                               "o DataFrame original será retornado sem "
-                               f"alterações. Exceção: {e}")
+                logger.warning("Error on repartitioning using coalesce(). "
+                               "The repartition process won't be executed and "
+                               "the target DataFrame will be returned without "
+                               f"any changes. Exception: {e}")
                 return df
 
-        # Se o número de partições desejadas for MAIOR, utilizar repartition()
+        # If the desired number is GREATER THAN the current, use repartition()
         elif num_partitions > current_partitions:
-            logger.warning("O número de partições desejadas "
-                           f"({num_partitions})  é maior que o atual "
-                           f"({current_partitions}) e, portanto, a operação "
-                           "deverá ser realizada pelo método repartition(), "
-                           "podendo impactar diretamente na performance do "
-                           "processo dada a natureza do método e sua "
-                           "característica de full shuffle. Como sugestão, "
-                           "avalie se as configurações de reparticionamento "
-                           "realmente estão conforme o esperado.")
+            logger.warning(f"The desired partition number ({num_partitions}) "
+                           f"is greater than the current one "
+                           f"({current_partitions}) and, because of that, "
+                           "the repartitioning operation will be executed "
+                           "using the repartition() method which can be "
+                           "expensive under the application perspective. As a "
+                           "suggestion, check if this is really the expected "
+                           "behavior for this operation.")
             try:
                 df_repartitioned = df.repartition(num_partitions)
 
             except Exception as e:
-                logger.warning("Erro ao reparticionar DataFrame via "
-                               "repartition(). Nenhuma operação de "
-                               "repartitionamento será realizada e "
-                               "o DataFrame original será retornado sem "
-                               f"alterações. Exceção: {e}")
+                logger.warning("Error on repartitioning using repartition(). "
+                               "The repartition process won't be executed and "
+                               "the target DataFrame will be returned without "
+                               f"any changes. Exception: {e}")
                 return df
-
-        # Validando possível inconsistência no processo de reparticionamento
-        updated_partitions = df_repartitioned.rdd.getNumPartitions()
-        if updated_partitions != num_partitions:
-            logger.warning(f"Por algum motivo desconhecido, o número de "
-                           "partições atual do DataFrame "
-                           f"({updated_partitions}) não corresponde ao "
-                           f"número estabelecido ({num_partitions}) mesmo "
-                           "após o processo de reparticionamento ter sido "
-                           "executado sem nenhuma exceção lançada. "
-                           "Como sugestão, investigue se o Glue possui alguma "
-                           "limitação de transferência de arquivos entre os "
-                           "nós dadas as características das origens usadas.")
-            sleep(0.01)
 
         return df_repartitioned
