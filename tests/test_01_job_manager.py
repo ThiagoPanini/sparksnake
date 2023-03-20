@@ -70,12 +70,12 @@ def test_mensagem_de_log_contendo_detalhes_sobre_as_origens_do_job(
     """
 
     # Definindo mensagem de log esperada do método
-    expected_log_msg = "Iniciando execução de job a-fake-arg-value. "\
-        "Origens presentes no processo de ETL:\n\n"\
-        "Tabela some-fake-database.orders-fake-table sem push down predicate "\
-        "definido\n"\
-        "Tabela some-fake-database.customers-fake-table com push down "\
-        "predicate definido por anomesdia=20221201\n"
+    expected_log_msg = "Initializing the execution of a-fake-arg-value job. "\
+        "Data sources used in this ETL process:\n\n"\
+        "Table some-fake-database.orders-fake-table without push down "\
+        "predicate\n"\
+        "Table some-fake-database.customers-fake-table with the following "\
+        "push down predicate info: anomesdia=20221201\n"
 
     # Executando método para escrita de mensagem de log
     with caplog.at_level(logging.INFO):
