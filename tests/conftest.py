@@ -1,12 +1,12 @@
-"""Arquivo de gerenciamento de insumos do pytest.
+"""Confest file for managing pytest fixtures and other components.
 
-Neste arquivo, serão consolidados elementos essenciais
-para aplicação de testes unitários, como fixtures.
+This file will handle essential components and elements to be used on test
+scripts along the project, like features and other things.
 
 ___
 """
 
-# Importando bibliotecas
+# Importing libraries
 import sys
 import pytest
 
@@ -15,14 +15,14 @@ from sparksnake.manager import GlueJobManager
 from tests.helpers.user_inputs import FAKE_ARGV_LIST, FAKE_DATA_DICT
 
 
-# Objeto pré configurado da classe GlueJobManager
+# A GlueJobManager objects
 @pytest.fixture()
 def job_manager() -> GlueJobManager:
-    # Adicionando argumentos de sistema
+    # Adding system args
     for fake_arg in FAKE_ARGV_LIST:
         sys.argv.append(f"--{fake_arg}=a-fake-arg-value")
 
-    # Instanciando objeto da classe
+    # Initializing a class object
     job_manager = GlueJobManager(
         argv_list=FAKE_ARGV_LIST,
         data_dict=FAKE_DATA_DICT

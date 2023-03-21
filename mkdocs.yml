@@ -1,12 +1,12 @@
-# Informações do projeto
+# Project main info
 site_name: sparksnake
-site_url: https://github.com/ThiagoPanini/sparksnake
+site_url: https://sparksnake.readthedocs.io/pt/latest/
 site_author: Thiago Panini
 site_description: >-
   Componentes e elementos criados para facilitar a jornada de
   construção de jobs Glue na AWS
 
-# Repositório
+# Source repo info
 repo_name: ThiagoPanini/sparksnake
 repo_url: https://github.com/ThiagoPanini/sparksnake
 
@@ -14,21 +14,21 @@ repo_url: https://github.com/ThiagoPanini/sparksnake
 copyright: |
   Copyright &copy; 2023 <a href="https://github.com/ThiagoPanini"  target="_blank" rel="noopener">ThiagoPanini</a>
 
-# Definindo diretório de páginas em markdown
+# Setting up docs dir
 docs_dir: docs/mkdocs
 
-# Configuração do tema
+# Setting up theme
 theme:
   name: material
 
-  # Apontando diretório adicional para customizações
+  # Pointing a additional dir for custom setup
   custom_dir: docs/assets
 
-  # Definindo ícone customizado no header
+  # Setting up a custom icon for site header
   icon:
     logo: custom/custom-icon
 
-  # Definindo paleta de cores nas versões "Dia" e "Noite"
+  # Setting up a color palette
   palette:
     - media: "(prefers-color-scheme: light)"
       scheme: default
@@ -45,7 +45,7 @@ theme:
         icon: material/weather-night
         name: Clique para alterar para modo claro
 
-  # Definindo features do template
+  # Setting up template features
   features:
     - navigation.tabs
     - navigation.top
@@ -59,7 +59,7 @@ theme:
     - search.suggest
     - content.code.copy
 
-# Configurando navegação
+# Setting up navigation
 nav:
   - Home:
     - sparksnake: index.md
@@ -71,7 +71,7 @@ nav:
     - SparkETLManager class: mkdocstrings/sparketlmanager.md
     - GlueJobManager class: mkdocstrings/gluejobmanager.md
 
-# Extensões do MkDocs
+# Setting up MkDocs extensions
 markdown_extensions:
   - pymdownx.tasklist:
       custom_checkbox: true
@@ -94,10 +94,10 @@ markdown_extensions:
         custom_icons:
           - overrides/.icons
 
-# Definindo customizações personalizadas
+# Custom CSS
 extra_css:
   - stylesheets/extra.css
 
-# Definindo plugins
+# Plugins
 plugins:
   - mkdocstrings

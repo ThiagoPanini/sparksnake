@@ -8,7 +8,7 @@ To provide an extremely detailed consumption journey, this initial section will 
 
 The first step in this journey goes through importing the library's main class that acts as a central point for all existing functionality. This is the class `SparkETLManager` present in the module `manager`.
 
-??? example "Importando a classe SparkETLManager no script de aplicação"
+??? example "Importing SparkETLManager class on application script"
     ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/main/docs/assets/gifs/sparksnake-setup-import.gif)
 
 

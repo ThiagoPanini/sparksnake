@@ -1,24 +1,20 @@
-"""Consolidando inputs do usuário para criação de objetos de classes.
+"""Centralizing all user inputs for helping on fixtures and test cases.
 
-Este arquivo Python tem como principal objetivo centralizar a definição
-de variáveis utilizadas como simulação de entradas de usuários para a
-criação e configuração de objetos de classes presentes nos módulos
-que consolidam as funcionalidades da biblioteca.
+This file aims to put together all variables used on fixture definitions and
+test cases that requires user inputs as a way to configure or validate
+something.
 
-A ideia por trás de centralizar tais definições em um único arquivo é
-a de proporcionar um maior nível de organização no que diz respeito
-a criação de fixtures e insumos para a execução de testes unitários.
-Com isso, qualquer tipo de alteração realizada nas definições aqui
-consolidadas poderão refletir instantaneamente no comportamento dos
-elementos criados a partir das mesmas.
+The idea behind this file is to have everything related to user inputs on
+test cases in a single place. This makes easier to handle, give maintenance,
+support and improvements for building new test cases.
 
 ___
 """
 
-# Simulando lista de argumentos de um job Glue
+# A fake argument list for creating Glue jobs
 FAKE_ARGV_LIST = ["JOB_NAME", "S3_SOURCE_PATH", "S3_OUTPUT_PATH"]
 
-# Simulando dicionário de origens utilizado nas classes da biblioteca
+# A fake data dictionary for setting up data sources
 FAKE_DATA_DICT = {
     "orders": {
         "database": "some-fake-database",

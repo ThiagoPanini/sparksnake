@@ -18,12 +18,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Instalação do Python
+      - name: Python Installation
         uses: actions/setup-python@v3
         with:
           python-version: '3.10'
 
-      - name: Instalação das Dependências
+      - name: Dependencies Installation
         run: |
           python -m pip install --upgrade pip
           python -m pip install -r ./requirements/dev.txt
@@ -42,7 +42,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Testes Unitários em Imagem Docker Glue 3.0
+      - name: Unit Test on Glue 3.0 Docker Image
         uses: addnab/docker-run-action@v3
         with:
           image: amazon/aws-glue-libs:glue_libs_3.0.0_image_01
@@ -61,7 +61,7 @@ jobs:
             python3 -m pip install --user --upgrade pip -r requirements/dev.txt
             python3 -m pytest -vv --color=yes --cov=./ --cov-report=xml
 
-      - name: Cobertura dos Testes - codecov
+      - name: Test Coverage with Codecov
         uses: codecov/codecov-action@v3
         with:
           token: ${{ secrets.CODECOV_TOKEN }}

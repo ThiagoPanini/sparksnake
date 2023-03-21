@@ -1,15 +1,12 @@
-"""Consolidação de testes unitários da classe GlueJobManager.
+"""Test cases for GlueJobManager class features.
 
-Neste arquivo, serão consolidados testes unitários
-utilizados para validar as funcionalidades presentes na
-classe GlueJobManager, visando garantir que todos os insumos
-essenciais para execução de jobs do Glue na AWS estejam
-sendo entregues com eficiência ao usuário.
+This file will handle all test cases for testing GlueJobManager class and its
+features.
 
 ___
 """
 
-# Importando bibliotecas
+# Importing libraries
 import pytest
 import logging
 
@@ -23,32 +20,30 @@ from awsglue.job import Job
 
 
 @pytest.mark.glue_job_manager
-def test_atributos_args_contem_um_dicionario_de_argumentos_do_job(
+def test_type_of_args_class_attribute_is_dictionary(
     job_manager
 ):
     """
-    G: dado que o usuário deseja inicializar um job do Glue na AWS
-    W: quando a classe GlueJobManager for instanciada
-    T: o objeto resultante deve conter um atributo chamado args que
-       contém um dicionário Python com argumentos do job
+    G: given that users want to initialize a Glue job on AWS
+    W: when the class GlueJobManager is called to create an object
+    T: then args attribute created must be of dict type
     """
 
     assert type(job_manager.args) is dict
 
 
 @pytest.mark.glue_job_manager
-def test_atributos_args_contem_argumentos_definidos_pelo_usuario(
+def test_args_class_attribute_has_user_defined_arguments(
     job_manager
 ):
     """
-    G: dado que o usuário deseja inicializar um job do Glue na AWS
-    W: quando a classe GlueJobManager for instanciada
-    T: a lista de argumentos definida pelo usuário utilizada para
-       criar a instância de objeto deve estar contida no atributo
-       self.args
+    G: given that users want to initialize a Glue job on AWS
+    W: when the class GlueJobManager is called to create an object
+    T: then the arguments previous defined by user on argv_list must be into
+       self.args dictionary attribute
     """
 
-    # Coletando argumentos do job obtidos via getResolvedOptions
+    # Getting argument job names
     job_arg_names = list(job_manager.args.keys())
 
     assert all(a in job_arg_names for a in FAKE_ARGV_LIST)
@@ -56,20 +51,17 @@ def test_atributos_args_contem_argumentos_definidos_pelo_usuario(
 
 @pytest.mark.glue_job_manager
 @pytest.mark.job_inital_log_message
-def test_mensagem_de_log_contendo_detalhes_sobre_as_origens_do_job(
+def test_content_of_initial_log_message_match_expected(
     job_manager, caplog
 ):
     """
-    G: dado que o usuário deseja iniciar um job Glue na AWS
-    W: quando o método job_initial_message() for executado a
-       partir de um objeto da classe GlueJobManager ou de outro
-       objeto que herde suas funcionalidades
-    T: então a mensagem de log capturada deve condizer com as
-       características das origens definidas no atributo data_dict
-       da classe
+    G: given that users want to initialize a Glue job on AWS
+    W: when the job_initial_message() is called
+    T: then the log message captured must match the expected value based on
+       data_dict attribute used on object creation from GlueJobManager class
     """
 
-    # Definindo mensagem de log esperada do método
+    # Degining the expected log message based on data_dict_dictionary used
     expected_log_msg = "Initializing the execution of a-fake-arg-value job. "\
         "Data sources used in this ETL process:\n\n"\
         "Table some-fake-database.orders-fake-table without push down "\
@@ -77,7 +69,7 @@ def test_mensagem_de_log_contendo_detalhes_sobre_as_origens_do_job(
         "Table some-fake-database.customers-fake-table with the following "\
         "push down predicate info: anomesdia=20221201\n"
 
-    # Executando método para escrita de mensagem de log
+    # Calling the method for logging the initial message
     with caplog.at_level(logging.INFO):
         job_manager.job_initial_log_message()
 
@@ -86,23 +78,21 @@ def test_mensagem_de_log_contendo_detalhes_sobre_as_origens_do_job(
 
 @pytest.mark.glue_job_manager
 @pytest.mark.print_args
-def test_mensagem_de_log_contendo_argumentos_do_job(
+def test_print_args_method_really_prints_job_arguments_defined_by_user(
     job_manager, caplog
 ):
     """
-    G: dado que o usuário deseja iniciar um job Glue na AWS
-    W: quando o método print_args() for executado a
-       partir de um objeto da classe GlueJobManager ou de outro
-       objeto que herde suas funcionalidades
-    T: então a mensagem de log capturada deve conter minimamente
-       os argumentos definidos pelo usuário em self.argv_list
+    G: given that users want to initialize a Glue job on AWS
+    W: when the print_args() is called
+    T: then the log message captured must have the arguments defined by user
+       on self.argv_list class attribute
     """
 
-    # Preparando validador de mensagem de log com argumentos
+    # Creating a list for the expected message based on user defined job args
     expected_argv_msg = [f'--{arg}="a-fake-arg-value"'
                          for arg in FAKE_ARGV_LIST]
 
-    # Executando método para escrita de mensagem de log
+    # Calling the method
     with caplog.at_level(logging.INFO):
         job_manager.print_args()
 
@@ -111,43 +101,43 @@ def test_mensagem_de_log_contendo_argumentos_do_job(
 
 @pytest.mark.glue_job_manager
 @pytest.mark.get_context_and_session
-def test_obtencao_de_elementos_de_contexto_e_sessao(job_manager):
+def test_getting_context_and_session_elements(job_manager):
     """
-    G: dado que o usuário deseja obter os elementos de contexto e sessão no Job
-    W: quando o método get_context_and_session() for executado
-    T: então os atributos self.sc, self.glueContext e self.spark devem existir
-       na classe GlueJobManager
+    G: given that users want to get the context and session elements
+    W: when method get_context_and_session() is called
+    T: then the object class must have new attributes identified as
+       self.sc, self.glueContext and self.spark
     """
 
-    # Executando método de coleta de elementos de contexto e sessão do job
+    # Calling the method for getting context and session elements
     job_manager.get_context_and_session()
 
-    # Coletando atributos da classe e definindo lista de validação
+    # Getting class attributes and defining an assertion list
     class_attribs = job_manager.__dict__
     attribs_names = ["sc", "glueContext", "spark"]
 
-    # Validando se a lista de atributos existem na classe
+    # Asserting class has now new attributes
     assert all(a in list(class_attribs.keys()) for a in attribs_names)
 
 
 @pytest.mark.glue_job_manager
 @pytest.mark.get_context_and_session
-def test_tipos_primitivos_de_elementos_de_contexto_e_sessao(job_manager):
+def test_type_of_context_and_session_elements_match_expected(job_manager):
     """
-    G: dado que o usuário deseja obter os elementos de contexto e sessão no Job
-    W: quando o método get_context_and_session() for executado
-    T: então os atributos self.sc, self.glueContext e self.spark devem
-       representar elementos do tipo SparkContext, GlueContext e SparkSession,
-       respectivamente
+    G: given that users want to get the context and session elements
+    W: when method get_context_and_session() is called
+    T: then the self.sc must be of type SparkContext, the self.glueContext
+       attrib must be of type GlueContext and the self.spark attribute must be
+       of type SparkSession
     """
 
-    # Executando método de coleta de elementos de contexto e sessão do job
+    # Calling the method for getting context and session elements
     job_manager.get_context_and_session()
 
-    # Coletando atributos da classe e definindo lista de validação
+    # Getting class attributes dictionary
     class_attribs = job_manager.__dict__
 
-    # Validando tipos primitivos dos atributos de contexto e sessão
+    # Asserting type of each element
     assert type(class_attribs["sc"]) == SparkContext
     assert type(class_attribs["glueContext"]) == GlueContext
     assert type(class_attribs["spark"]) == SparkSession
@@ -155,25 +145,25 @@ def test_tipos_primitivos_de_elementos_de_contexto_e_sessao(job_manager):
 
 @pytest.mark.glue_job_manager
 @pytest.mark.init_job
-def test_metodo_de_inicializacao_do_job_gera_contexto_e_sessao(job_manager):
+def test_init_job_method_generates_context_and_session_elements(job_manager):
     """
-    G: dado que deseja-se inicializar um job Glue pela classe GlueJobManager
-    W: quando o método init_job() for chamado
-    T: então os elementos de contexto e sessão (Spark e Glue) devem existir
-       e apresentarem os tipos primitivos adequados
+    G: given that users want to initialize a Glue job on AWS
+    W: when method init_job() is called
+    T: then context and session elements from Glue and Spark must exist and
+       its types must match
     """
 
-    # Executando método de inicialização do job
+    # Calling method for job initialization
     job_manager.init_job()
 
-    # Coletando atributos da classe e definindo lista de validação
+    # Getting class attribs and setting up a assertion list
     class_attribs = job_manager.__dict__
     attribs_names = ["sc", "glueContext", "spark"]
 
-    # Validando existência de atributos da classe
+    # Asserting if the new attributes really exist
     assert all(a in list(class_attribs.keys()) for a in attribs_names)
 
-    # Validando tipos primitivos dos atributos de contexto e sessão
+    # Asserting if types match
     assert type(class_attribs["sc"]) == SparkContext
     assert type(class_attribs["glueContext"]) == GlueContext
     assert type(class_attribs["spark"]) == SparkSession
@@ -181,18 +171,17 @@ def test_metodo_de_inicializacao_do_job_gera_contexto_e_sessao(job_manager):
 
 @pytest.mark.glue_job_manager
 @pytest.mark.init_job
-def test_metodo_de_inicializacao_do_job_gera_atributo_do_tipo_job(job_manager):
+def test_init_job_methods_generates_a_job_type_attribute(job_manager):
     """
-    G: dado que deseja-se inicializar um job Glue pela classe GlueJobManager
-    W: quando o método init_job() for chamado
-    T: então deve existir um atributo "job" do tipo awsglue.job.Job no objeto
-       da classe
+    G: given that users want to initialize a Glue job on AWS
+    W: when method init_job() is called
+    T: then a new class attribute self.job of type awsglue.jobJob must exists
     """
 
-    # Executando método de inicialização do job
+    # Calling method for job initialization
     job_manager.init_job()
 
-    # Coletando atributos da classe
+    # Getting class attributes
     class_attribs = job_manager.__dict__
 
     assert "job" in class_attribs.keys()
