@@ -1,4 +1,4 @@
-name: "🚀 PyPI Publish and Release Drafter"
+name: "🚀 CI Build and Deploy"
 
 on:
   push:
@@ -24,12 +24,12 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Build do Pacote
+      - name: Package Build
         run: |
           pip install --upgrade build
           python -m build
 
-      - name: Publicação no PyPI
+      - name: PyPI Publish
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           password: ${{ secrets.PYPI_API_TOKEN }}
@@ -39,7 +39,7 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      - name: Cria novo draft de release
+      - name: Release Drafter
         uses: release-drafter/release-drafter@v5
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
