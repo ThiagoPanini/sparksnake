@@ -1,11 +1,11 @@
-# Arquivos temporários
+# Temp files
 tmp/
 
-# Notebooks e arquivos ipynb
+# ipynb files
 notebooks/
 **ipynb
 
-# Arquivos auxiliares do VSCode
+# VSCode auxiliar files
 .vscode
 
 # Byte-compiled / optimized / DLL files

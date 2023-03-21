@@ -1,20 +1,19 @@
-"""
-Arquivo de configuração da biblioteca.
+"""Package setup script.
 
-Aqui são consolidadas todas as informações refentes ao pacote
-publicado e disponibilizado no PyPI
+This script handles everything about package publishing on PyPI.
 """
-# Importando bibliotecas
+
+# Importing libraries
 from setuptools import setup, find_packages
 
-# Lendo README.md
+# Reading README.md for project description
 with open("README.md", "r", encoding='utf-8') as f:
     __long_description__ = f.read()
 
-# Criando setup
+# Setting up package information
 setup(
     name='sparksnake',
-    version='0.1.5',
+    version='0.1.6',
     author='Thiago Panini',
     author_email='panini.development@gmail.com',
     packages=find_packages(),
@@ -22,8 +21,8 @@ setup(
         "pyspark"
     ],
     license='MIT',
-    description="Funcionalidades Spark criadas para facilitar a criação de "
-                "aplicações que utilizam este framework em serviços AWS",
+    description="Improving the development of Spark applications deployed as "
+                "jobs on AWS services like Glue and EMR",
     long_description=__long_description__,
     long_description_content_type="text/markdown",
     url='https://github.com/ThiagoPanini/sparksnake',
