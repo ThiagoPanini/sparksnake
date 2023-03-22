@@ -12,7 +12,7 @@ from time import sleep
 
 from sparksnake.utils.log import log_config
 
-from pyspark.sql import DataFrame
+from pyspark.sql import SparkSession, DataFrame
 from pyspark.sql.functions import expr, lit
 
 try:
@@ -137,19 +137,51 @@ class SparkETLManager(ManagerClass):
     def __init__(self, mode: str, **kwargs) -> None:
         self.mode = mode.strip().lower()
 
-        # Looking out for the operation mode
-        # ToDo: insert conditions for local mode and emr mode (future)
+        # Looking out for glue operation mode
         if self.mode == "glue":
+            # Checking if required args for GlueJobManager were passed
+            if "argv_list" not in kwargs or "data_dict" not in kwargs:
+                raise TypeError("The operation mode was set as 'glue' but "
+                                "'argv_list' and/or 'data_dict' required "
+                                "arguments weren't set properly. Please pass "
+                                "those arguments at class initialization.")
+
             # Collecting required args for mode="glue"
-            # Check if requred args are in **kwargs and throw and exception
             argv_list = kwargs["argv_list"]
             data_dict = kwargs["data_dict"]
 
             # Applying class inheritance for this mode
-            ManagerClass.__init__(self, argv_list=argv_list,
-                                  data_dict=data_dict)
+            try:
+                ManagerClass.__init__(self, argv_list=argv_list,
+                                      data_dict=data_dict)
+            except TypeError:
+                raise TypeError("Error on inherting class GlueJobManager. "
+                                "Check if your environment has the awsglue "
+                                "libraries and try again. If you don't have "
+                                "awsglue libs available, you probably want to "
+                                "run sparksnake in a local operation mode. If "
+                                "this is the case, change the mode attribute "
+                                "to 'local'")
 
-        # ToDo: if mode="local", creates a sels.spark SparkSession object
+            # Logging initialization message
+            logger.info("The class was succesfully initialized with Glue "
+                        "operation mode and all Glue sparksnake features were "
+                        "inherited and are now available")
+
+        # Looking out for local mode
+        elif self.mode == "local":
+            # Checking if user wants to pass its own SparkSession object
+            if "spark" in kwargs and type(kwargs["spark"]) is SparkSession:
+                self.spark = kwargs["spark"]
+            else:
+                # Creating a SparkSession object
+                self.spark = SparkSession.builder\
+                                .appName("sparksnake-app")\
+                                .getOrCreate()
+
+            # Logging initialization message
+            logger.info("The class was succesfully initialized with 'local' "
+                        "operation mode")
 
     @staticmethod
     def extract_date_attributes(df: DataFrame,
