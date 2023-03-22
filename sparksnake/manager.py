@@ -11,17 +11,21 @@ ___
 from time import sleep
 
 from sparksnake.utils.log import log_config
-from sparksnake.glue import GlueJobManager
 
 from pyspark.sql import DataFrame
 from pyspark.sql.functions import expr, lit
 
+try:
+    from sparksnake.glue import GlueJobManager as ManagerClass
+except ImportError:
+    class ManagerClass:
+        pass
 
 # Setting up a logger object
 logger = log_config(logger_name=__file__)
 
 
-class SparkETLManager(GlueJobManager):
+class SparkETLManager(ManagerClass):
     """Puts together all Spark features used in ETL jobs in AWS.
 
     This class provides an easy and fast way for users to improve and
@@ -142,9 +146,8 @@ class SparkETLManager(GlueJobManager):
             data_dict = kwargs["data_dict"]
 
             # Applying class inheritance for this mode
-            GlueJobManager.__init__(self,
-                                    argv_list=argv_list,
-                                    data_dict=data_dict)
+            ManagerClass.__init__(self, argv_list=argv_list,
+                                  data_dict=data_dict)
 
         # ToDo: if mode="local", creates a sels.spark SparkSession object
 

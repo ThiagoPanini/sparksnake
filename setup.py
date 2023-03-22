@@ -13,7 +13,7 @@ with open("README.md", "r", encoding='utf-8') as f:
 # Setting up package information
 setup(
     name='sparksnake',
-    version='0.1.6',
+    version='0.1.7',
     author='Thiago Panini',
     author_email='panini.development@gmail.com',
     packages=find_packages(),
