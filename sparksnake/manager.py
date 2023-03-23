@@ -182,8 +182,8 @@ class SparkETLManager(ManagerClass):
             else:
                 # Creating a SparkSession object
                 self.spark = SparkSession.builder\
-                                .appName("sparksnake-app")\
-                                .getOrCreate()
+                    .appName("sparksnake-app")\
+                    .getOrCreate()
 
             # Logging initialization message
             logger.info("The class was succesfully initialized with 'local' "
