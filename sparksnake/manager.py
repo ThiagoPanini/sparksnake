@@ -137,6 +137,12 @@ class SparkETLManager(ManagerClass):
     def __init__(self, mode: str, **kwargs) -> None:
         self.mode = mode.strip().lower()
 
+        # Checking if the operation mode value was passed as expected
+        if self.mode not in ("local", "glue", "emr"):
+            raise ValueError(f"The attribute mode was set as {self.mode} "
+                             "but acceptable values are 'local', 'glue' and "
+                             'emr')
+
         # Looking out for glue operation mode
         if self.mode == "glue":
             # Checking if required args for GlueJobManager were passed
