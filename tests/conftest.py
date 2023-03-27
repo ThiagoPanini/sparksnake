@@ -26,6 +26,12 @@ spark = SparkSession.builder\
     .getOrCreate()
 
 
+# A SparkETLManager class object with mode="local"
+@pytest.fixture()
+def spark_manager_local() -> SparkETLManager:
+    return SparkETLManager(mode="local")
+
+
 # A GlueJobManager class object
 @pytest.fixture()
 def job_manager() -> GlueJobManager:
@@ -42,9 +48,9 @@ def job_manager() -> GlueJobManager:
     return job_manager
 
 
-# A SparkETLManager class object
+# A SparkETLManager class object with mode="local"
 @pytest.fixture()
-def spark_manager() -> SparkETLManager:
+def spark_manager_local() -> SparkETLManager:
     return SparkETLManager(mode="local")
 
 

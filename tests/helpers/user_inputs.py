@@ -16,6 +16,16 @@ from pyspark.sql.types import StringType, IntegerType, DecimalType, DateType,\
     TimestampType, BooleanType
 
 
+# A list with acceptable values for operation mode on SparkETLManager class
+ACCEPTABLE_OPERATION_MODES = ["local", "glue", "emr"]
+
+
+# A fake schema to be used on creation of a fake Spark DataFrame
+FAKE_SCHEMA_DTYPES = [
+    StringType, IntegerType, DecimalType, DateType, TimestampType,
+    BooleanType
+]
+
 # A fake argument list for creating Glue jobs
 FAKE_ARGV_LIST = ["JOB_NAME", "S3_SOURCE_PATH", "S3_OUTPUT_PATH"]
 
@@ -38,8 +48,4 @@ FAKE_DATA_DICT = {
     }
 }
 
-# A fake schema to be used on creation of a fake Spark DataFrame
-FAKE_SCHEMA_DTYPES = [
-    StringType, IntegerType, DecimalType, DateType, TimestampType,
-    BooleanType
-]
+
