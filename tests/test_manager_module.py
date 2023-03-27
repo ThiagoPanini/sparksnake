@@ -10,3 +10,128 @@ ___
 
 # Importing libraries
 import pytest
+
+from pyspark.sql.functions import expr
+from pyspark.sql.types import StringType, DateType, TimestampType
+
+
+@pytest.mark.spark_manager
+@pytest.mark.date_transform
+def test_casting_date_column_with_date_transform_method(
+    df_fake,
+    spark_manager,
+    date_col="date_string_field",
+    date_col_type="date",
+    date_format="yyyy-MM-dd"
+):
+    """
+    G: Given that users have a string column in a DataFrame that has date
+    information and they need to cast it to date
+    W: When the date_transform method is called with the following parameters:
+        - date_col="name-of-the-string-column"
+        - date_col_type="date"
+        - date_format="yyyy-MM-dd"
+        - cast_string_to_date=True
+    T: Then the "name-of-the-string-column" column on the resulting DataFrame
+    must have the DateType type
+    """
+
+    # Casting a source date column to string to test the feature
+    df_fake_tmp = df_fake.withColumn(
+        "date_string_field",
+        expr("cast(date_field AS STRING)")
+    )
+
+    # Calling the method for casting a string field to date
+    df_fake_prep = spark_manager.date_transform(
+        df=df_fake_tmp,
+        date_col=date_col,
+        date_col_type=date_col_type,
+        date_format=date_format,
+        cast_string_to_date=True
+    )
+
+    # Extracting data type BEFORE casting
+    dtype_pre_casting = df_fake_tmp.schema[date_col].dataType
+
+    # Extracting data type AFTER casting
+    dtype_pos_casting = df_fake_prep.schema[date_col].dataType
+
+    # Asserting the casting
+    assert dtype_pre_casting == StringType()
+    assert dtype_pos_casting == DateType()
+
+
+@pytest.mark.spark_manager
+@pytest.mark.date_transform
+def test_casting_timestamp_column_with_date_transform_method(
+    df_fake,
+    spark_manager,
+    date_col="timestamp_string_field",
+    date_col_type="timestamp",
+    date_format="yyyy-MM-dd HH:mm:ss"
+):
+    """
+    G: Given that users have a string column in a DataFrame that has timestamp
+    information and they need to cast it to timestamp
+    W: When the date_transform method is called with the following parameters:
+        - date_col="name-of-the-string-column"
+        - date_col_type="timestamp"
+        - date_format="yyyy-MM-dd HH:mm:ss"
+        - cast_string_to_date=True
+    T: Then the "name-of-the-string-column" column on the resulting DataFrame
+    must have the TimestampType type
+    """
+
+    # Casting a source date column to string to test the feature
+    df_fake_tmp = df_fake.withColumn(
+        "timestamp_string_field",
+        expr("cast(timestamp_field AS STRING)")
+    )
+
+    # Calling the method for casting a string field to date
+    df_fake_prep = spark_manager.date_transform(
+        df=df_fake_tmp,
+        date_col=date_col,
+        date_col_type=date_col_type,
+        date_format=date_format,
+        cast_string_to_date=True
+    )
+
+    # Extracting data type BEFORE casting
+    dtype_pre_casting = df_fake_tmp.schema[date_col].dataType
+
+    # Extracting data type AFTER casting
+    dtype_pos_casting = df_fake_prep.schema[date_col].dataType
+
+    # Asserting the casting
+    assert dtype_pre_casting == StringType()
+    assert dtype_pos_casting == TimestampType()
+
+
+@pytest.mark.spark_manager
+@pytest.mark.date_transform
+def test_error_on_casting_date_column_with_wrong_column_name(
+    df_fake,
+    spark_manager,
+    date_col="invalid_column_name",
+    date_col_type="date",
+    date_format="yyyy-MM-dd HH:mm:ss"
+):
+    """
+    G: Given that users have a string column in a DataFrame that has date
+    information and they need to cast it to date
+    W: When the date_transform method is called with a column name that
+    doesn't exist on DataFrame
+    T: Then an Exception must be raised
+    """
+
+    # Asserting execption raising
+    with pytest.raises(Exception):
+        _ = spark_manager.date_transform(
+            df=df_fake,
+            date_col=date_col,
+            date_col_type=date_col_type,
+            date_format=date_format,
+            cast_string_to_date=True
+        )

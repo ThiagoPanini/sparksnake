@@ -11,11 +11,22 @@ import sys
 import pytest
 
 from sparksnake.glue import GlueJobManager
+from sparksnake.manager import SparkETLManager
 
-from tests.helpers.user_inputs import FAKE_ARGV_LIST, FAKE_DATA_DICT
+from tests.helpers.faker import fake_dataframe
+from tests.helpers.user_inputs import FAKE_ARGV_LIST, FAKE_DATA_DICT,\
+    FAKE_SCHEMA_DTYPES
+
+from pyspark.sql import SparkSession, DataFrame
 
 
-# A GlueJobManager objects
+# Defining a SparkSession object
+spark = SparkSession.builder\
+    .appName("sparksnake-conftest-file")\
+    .getOrCreate()
+
+
+# A GlueJobManager class object
 @pytest.fixture()
 def job_manager() -> GlueJobManager:
     # Adding system args
@@ -29,3 +40,15 @@ def job_manager() -> GlueJobManager:
     )
 
     return job_manager
+
+
+# A SparkETLManager class object
+@pytest.fixture()
+def spark_manager() -> SparkETLManager:
+    return SparkETLManager(mode="local")
+
+
+# A fake Spark DataFrame object
+@pytest.fixture()
+def df_fake() -> DataFrame:
+    return fake_dataframe(spark, FAKE_SCHEMA_DTYPES)
