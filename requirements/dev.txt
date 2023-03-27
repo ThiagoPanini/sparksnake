@@ -6,3 +6,4 @@ pandas
 pytest
 pytest-cov
 pyspark
+Faker
