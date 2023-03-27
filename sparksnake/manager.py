@@ -1,8 +1,7 @@
 """Managing Spark operations in AWS services that uses it in ETL jobs.
 
-This module aims to provide a central point for users to have a series of
-useful features for developing their own Spark applications in AWS in services
-like Glue and EMR.
+This module provides Spark features do be applied in Spark applications to
+be deployed locally or using AWS services like Glue and EMR.
 
 ___
 """
@@ -180,7 +179,8 @@ class SparkETLManager(ManagerClass):
             if "spark" in kwargs and type(kwargs["spark"]) is SparkSession:
                 self.spark = kwargs["spark"]
             else:
-                # Creating a SparkSession object
+                logger.info("Creating a SparkSession object to be used in a "
+                            "local environment")
                 self.spark = SparkSession.builder\
                     .appName("sparksnake-app")\
                     .getOrCreate()
@@ -190,12 +190,12 @@ class SparkETLManager(ManagerClass):
                         "operation mode")
 
     @staticmethod
-    def extract_date_attributes(df: DataFrame,
-                                date_col: str,
-                                date_col_type: str = "date",
-                                date_format: str = "yyyy-MM-dd",
-                                convert_string_to_date: bool = True,
-                                **kwargs) -> DataFrame:
+    def date_transform(df: DataFrame,
+                       date_col: str,
+                       date_col_type: str = "date",
+                       date_format: str = "yyyy-MM-dd",
+                       convert_string_to_date: bool = True,
+                       **kwargs) -> DataFrame:
         """Extracting date attributes from a Spark DataFrame date column.
 
         This method makes it possible to extract multiple date attributes from
@@ -315,13 +315,14 @@ class SparkETLManager(ManagerClass):
                          f"DataFrame. Exception: {e}")
             raise e
 
-    def extract_aggregate_statistics(self,
-                                     df: DataFrame,
-                                     numeric_col: str,
-                                     group_by: str or list,
-                                     round_result: bool = False,
-                                     n_round: int = 2,
-                                     **kwargs) -> DataFrame:
+    @staticmethod
+    def aggregate_data(df: DataFrame,
+                       spark_session: SparkSession,
+                       numeric_col: str,
+                       group_by: str or list,
+                       round_result: bool = False,
+                       n_round: int = 2,
+                       **kwargs) -> DataFrame:
         """Extracts statistical attributes based on a group by opreation.
 
         This method makes it possible to extract multiple statistical
@@ -442,7 +443,7 @@ class SparkETLManager(ManagerClass):
                     {group_by}
             """
 
-            return self.spark.sql(final_query)
+            return spark_session.sql(final_query)
 
         except Exception as e:
             logger.error("Error on extracting statistical attributes from "
