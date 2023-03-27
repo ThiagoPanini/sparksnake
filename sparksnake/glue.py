@@ -265,7 +265,7 @@ class GlueJobManager():
             read for each data source.
         """
 
-        logger.info("Looping for the data_dict dictionary for reading data "
+        logger.info("Iterating over data_dict dictionary for reading data "
                     "sources as Glue DynamicFrame objects")
         try:
             dynamic_frames = []
@@ -314,8 +314,8 @@ class GlueJobManager():
         # Creating a DynamicFrames dictionary
         dynamic_dict = {k: dyf for k, dyf
                         in zip(self.data_dict.keys(), dynamic_frames)}
-        logger.info("Success on creating data. There are a number of "
-                    f"{len(dynamic_dict.values())} DynamicFrames read.")
+        logger.info("Success on reading data. There are "
+                    f"{len(dynamic_dict.values())} DynamicFrames available.")
 
         # Returning the dictionary
         sleep(0.01)

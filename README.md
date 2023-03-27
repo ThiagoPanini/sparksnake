@@ -13,7 +13,7 @@
   <br>
 
   ![CI workflow](https://img.shields.io/github/actions/workflow/status/ThiagoPanini/sparksnake/ci-main.yml?label=ci)
-  [![Documentation Status](https://readthedocs.org/projects/sparksnake/badge/?version=latest)](https://sparksnake.readthedocs.io/pt/latest/?badge=latest)
+  [![Documentation Status](https://readthedocs.org/projects/sparksnake/badge/?version=latest)](https://sparksnake.readthedocs.io/en/latest/?badge=latest)
   [![codecov](https://codecov.io/gh/ThiagoPanini/sparksnake/branch/main/graph/badge.svg?token=zSdFO9jkD8)](https://codecov.io/gh/ThiagoPanini/sparksnake)
 
 </div>
@@ -34,16 +34,16 @@ The *sparksnake* library provides an easy, fast, and efficient way to use Spark 
 Do you want to take your job Glue or your EMR cluster to the next level? Take a look at *sparksnake*!
 
 > **Note**
->  Now the *sparksnake* library has an official documentation in readthedocs! Visit the [following link](https://sparksnake.readthedocs.io/pt/latest/) and check out usability technical details, practical examples and more!
+>  Now the *sparksnake* library has an official documentation in readthedocs! Visit the [following link](https://sparksnake.readthedocs.io/en/latest/) and check out usability technical details, practical examples and more!
 
 
 ## Features
 
-- 🤖 Simplification of building Spark applications with already coded classes and methods
-- 🌟 Consolidation of most common functionalities involving ETL processes in pyspark
-- ⚙️ Abstraction of the whole process of setting up a Job Glue with one line of code
+- 🤖 Enhanced development experience of Spark Applications to be deployed as jobs in AWS services like Glue and EMR
+- 🌟 Possibility to use common Spark operations for improving ETL steps using custom classes and methods
+- ⚙️ No need to think too much into the hard and complex service setup (e.g. with *sparksnake* you can have all elements for a Glue Job on AWS with a single line of code)
 - 👁️‍🗨️ Application observability improvement with detailed log messages in CloudWatch
-- 🛠️ Exception handling processes already embedded in library methods
+- 🛠️ Exception handling already embedded in library methods
 
 ___
 
