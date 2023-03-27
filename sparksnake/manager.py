@@ -194,7 +194,7 @@ class SparkETLManager(ManagerClass):
                        date_col: str,
                        date_col_type: str = "date",
                        date_format: str = "yyyy-MM-dd",
-                       convert_string_to_date: bool = True,
+                       cast_string_to_date: bool = True,
                        **kwargs) -> DataFrame:
         """Extracting date attributes from a Spark DataFrame date column.
 
@@ -243,9 +243,9 @@ class SparkETLManager(ManagerClass):
 
             date_format (str):
                 Date format applied in a optional string to date casting.
-                It's applicable only if `convert_string_to_date=True`
+                It's applicable only if `cast_string_to_date=True`
 
-            convert_string_to_date (bool):
+            cast_string_to_date (bool):
                 Enables an automatic casting of the `date_col` column reference
                 into a given `date_format`.
 
@@ -269,7 +269,7 @@ class SparkETLManager(ManagerClass):
         try:
             # Creating casting expressions based on data type of date_col arg
             date_col_type = date_col_type.strip().lower()
-            if convert_string_to_date:
+            if cast_string_to_date:
                 if date_col_type == "date":
                     conversion_expr = f"to_date({date_col},\
                         '{date_format}') AS {date_col}_{date_col_type}"
