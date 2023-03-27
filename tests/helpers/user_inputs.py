@@ -12,8 +12,8 @@ ___
 """
 
 # Importing libraries
-from pyspark.sql.types import StructType, StructField, StringType,\
-    IntegerType, DecimalType, DateType, TimestampType, BooleanType
+from pyspark.sql.types import StringType, IntegerType, DecimalType, DateType,\
+    TimestampType, BooleanType
 
 
 # A fake argument list for creating Glue jobs
@@ -39,7 +39,7 @@ FAKE_DATA_DICT = {
 }
 
 # A fake schema to be used on creation of a fake Spark DataFrame
-FAKE_SCHEMA_DTYPES =  [
+FAKE_SCHEMA_DTYPES = [
     StringType, IntegerType, DecimalType, DateType, TimestampType,
     BooleanType
 ]
