@@ -1,4 +1,4 @@
-"""Test cases for GlueJobManager class features.
+"""Test cases for features defined on glue.py module.
 
 This file handles the definition of all test cases for testing GlueJobManager
 class and its features. The idea is to isolate a test script for testing
