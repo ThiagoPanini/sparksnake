@@ -49,21 +49,6 @@ def test_error_with_glue_mode_without_argvlist_or_datadict_attributes():
 
 
 @pytest.mark.spark_manager_local
-@pytest.mark.constructor
-def test_error_with_glue_mode_without_argvlist_or_datadict_attributes():
-    """
-    G: Given that users want to initialize a SparkETLManager class object
-    W: When the SparkETLManager class is initialized with mode="glue" but
-    there's no argv_list or data_dict_attributes passed by the user
-    T: Then a TypeError exception muset be raised
-    """
-
-    # Initializing class
-    with pytest.raises(TypeError):
-        _ = SparkETLManager(mode="glue")
-
-
-@pytest.mark.spark_manager_local
 @pytest.mark.date_transform
 def test_casting_date_column_with_date_transform_method(
     df_fake,
