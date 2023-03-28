@@ -13,6 +13,7 @@ from sparksnake.utils.log import log_config
 
 from pyspark.sql import SparkSession, DataFrame
 from pyspark.sql.functions import expr, lit
+from pyspark.sql.utils import AnalysisException
 
 try:
     from sparksnake.glue import GlueJobManager as ManagerClass
@@ -271,49 +272,47 @@ class SparkETLManager(ManagerClass):
             date_col_type = date_col_type.strip().lower()
             if cast_string_to_date:
                 if date_col_type == "date":
-                    conversion_expr = f"to_date({date_col},\
+                    casting_expr = f"to_date({date_col},\
                         '{date_format}') AS {date_col}_{date_col_type}"
                 elif date_col_type == "timestamp":
-                    conversion_expr = f"to_timestamp({date_col},\
+                    casting_expr = f"to_timestamp({date_col},\
                         '{date_format}') AS {date_col}_{date_col_type}"
                 else:
                     raise ValueError("The data type of date_col_type parameter"
                                      " is invalid. Acceptable values are "
-                                     "'date'or 'timestamp'")
+                                     "'date' or 'timestamp'")
 
                 # Applying a select expression for casting data if applicable
                 df = df.selectExpr(
                     "*",
-                    conversion_expr
+                    casting_expr
                 ).drop(date_col)\
                     .withColumnRenamed(f"{date_col}_{date_col_type}", date_col)
 
-        except Exception as e:
-            logger.error(f"Error on casting the column {date_col} as "
-                         f"{date_col_type} using the expression "
-                         f"{conversion_expr}. Exception: {e}")
-            raise e
+        except ValueError as ve:
+            logger.error(ve)
+            raise ve
+
+        except AnalysisException as ae:
+            logger.error("Analysis error on trying to cast the column "
+                         f"{date_col} using the expression {casting_expr}. "
+                         "Maybe this column doesn't exist on the DataFrame. "
+                         f"Check the error treceback for more details: {ae}")
+            raise ae
 
         # Creating a list of all possible date attributes to be extracted
         possible_date_attribs = ["year", "quarter", "month", "dayofmonth",
                                  "dayofweek", "dayofyear", "weekofyear"]
 
-        try:
-            # Looping over all possible attributes and extracting date attribs
-            for attrib in possible_date_attribs:
-                # Add a new column only if attrib is in kwargs
-                if attrib in kwargs and bool(kwargs[attrib]):
-                    df = df.withColumn(
-                        f"{attrib}_{date_col}",
-                        expr(f"{attrib}({date_col})")
-                    )
+        # Iterating over all possible attributes and extracting date attribs
+        for attrib in possible_date_attribs:
+            # Add a new column only if attrib is in kwargs
+            if attrib in kwargs and bool(kwargs[attrib]):
+                df = df.withColumn(
+                    f"{attrib}_{date_col}", expr(f"{attrib}({date_col})")
+                )
 
-            return df
-
-        except Exception as e:
-            logger.error("Error on adding new date columns into the "
-                         f"DataFrame. Exception: {e}")
-            raise e
+        return df
 
     @staticmethod
     def aggregate_data(df: DataFrame,
@@ -419,7 +418,7 @@ class SparkETLManager(ManagerClass):
                               "countDistinct", "variance", "stddev",
                               "kurtosis", "skewness"]
         try:
-            # Looping over the attributes to build a single aggregation expr
+            # Iterating over the attributes to build a single aggregation expr
             agg_query = ""
             for f in possible_functions:
                 if f in kwargs and bool(kwargs[f]):
