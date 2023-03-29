@@ -10,22 +10,49 @@ ___
 import sys
 import pytest
 
-from sparksnake.glue import GlueJobManager
+from sparksnake.manager import SparkETLManager
 
-from tests.helpers.user_inputs import FAKE_ARGV_LIST, FAKE_DATA_DICT
+from tests.helpers.faker import fake_dataframe
+from tests.helpers.user_inputs import FAKE_ARGV_LIST, FAKE_DATA_DICT,\
+    FAKE_SCHEMA_DTYPES
+
+from pyspark.sql import SparkSession, DataFrame
 
 
-# A GlueJobManager objects
+# Creating a SparkSession object
+spark = SparkSession.builder\
+    .appName("sparksnake-conftest-file")\
+    .getOrCreate()
+
+
+# Returning the SparkSession object as a fixture
 @pytest.fixture()
-def job_manager() -> GlueJobManager:
+def spark_session(spark=spark) -> SparkSession:
+    return spark
+
+
+# A SparkETLManager class object with mode="local"
+@pytest.fixture()
+def spark_manager_local() -> SparkETLManager:
+    return SparkETLManager(mode="local")
+
+
+# A GlueJobManager class object
+@pytest.fixture()
+def spark_manager_glue() -> SparkETLManager:
     # Adding system args
     for fake_arg in FAKE_ARGV_LIST:
         sys.argv.append(f"--{fake_arg}=a-fake-arg-value")
 
     # Initializing a class object
-    job_manager = GlueJobManager(
+    return SparkETLManager(
+        mode="glue",
         argv_list=FAKE_ARGV_LIST,
         data_dict=FAKE_DATA_DICT
     )
 
-    return job_manager
+
+# A fake Spark DataFrame object
+@pytest.fixture()
+def df_fake() -> DataFrame:
+    return fake_dataframe(spark, FAKE_SCHEMA_DTYPES)

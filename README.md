@@ -9,7 +9,6 @@
   ![PyPI - Downloads](https://img.shields.io/pypi/dm/sparksnake?color=purple)
   ![PyPI - Status](https://img.shields.io/pypi/status/sparksnake?color=purple)
   ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/ThiagoPanini/sparksnake?color=purple)
-  ![GitHub Last Commit](https://img.shields.io/github/last-commit/ThiagoPanini/sparksnake?color=purple)
   <br>
 
   ![CI workflow](https://img.shields.io/github/actions/workflow/status/ThiagoPanini/sparksnake/ci-main.yml?label=ci)

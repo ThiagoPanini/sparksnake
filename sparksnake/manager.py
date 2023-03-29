@@ -13,6 +13,7 @@ from sparksnake.utils.log import log_config
 
 from pyspark.sql import SparkSession, DataFrame
 from pyspark.sql.functions import expr, lit
+from pyspark.sql.utils import AnalysisException
 
 try:
     from sparksnake.glue import GlueJobManager as ManagerClass
@@ -148,8 +149,7 @@ class SparkETLManager(ManagerClass):
             if "argv_list" not in kwargs or "data_dict" not in kwargs:
                 raise TypeError("The operation mode was set as 'glue' but "
                                 "'argv_list' and/or 'data_dict' required "
-                                "arguments weren't set properly. Please pass "
-                                "those arguments at class initialization.")
+                                "arguments weren't set properly.")
 
             # Collecting required args for mode="glue"
             argv_list = kwargs["argv_list"]
@@ -159,14 +159,14 @@ class SparkETLManager(ManagerClass):
             try:
                 ManagerClass.__init__(self, argv_list=argv_list,
                                       data_dict=data_dict)
-            except TypeError:
-                raise TypeError("Error on inherting class GlueJobManager. "
-                                "Check if your environment has the awsglue "
-                                "libraries and try again. If you don't have "
-                                "awsglue libs available, you probably want to "
-                                "run sparksnake in a local operation mode. If "
-                                "this is the case, change the mode attribute "
-                                "to 'local'")
+            except TypeError as te:
+                logger.error("Error on inherting class GlueJobManager. Check "
+                             "if your environment has the awsglue libraries "
+                             "and try again. If you don't have awsglue libs "
+                             "available, you probably want to run sparksnake "
+                             "in a local operation mode. If this is the case, "
+                             "change the mode attribute to 'local'")
+                raise te
 
             # Logging initialization message
             logger.info("The class was succesfully initialized with Glue "
@@ -194,7 +194,7 @@ class SparkETLManager(ManagerClass):
                        date_col: str,
                        date_col_type: str = "date",
                        date_format: str = "yyyy-MM-dd",
-                       convert_string_to_date: bool = True,
+                       cast_string_to_date: bool = True,
                        **kwargs) -> DataFrame:
         """Extracting date attributes from a Spark DataFrame date column.
 
@@ -215,7 +215,7 @@ class SparkETLManager(ManagerClass):
         Examples:
             ```python
             # Extracting date attributes from a date column in a Spark df
-            df_date_prep = spark_manager.extract_date_attributes(
+            df_date_prep = spark_manager.date_transform(
                 df=df_raw,
                 date_col="order_date",
                 date_col_type="timestamp",
@@ -243,9 +243,9 @@ class SparkETLManager(ManagerClass):
 
             date_format (str):
                 Date format applied in a optional string to date casting.
-                It's applicable only if `convert_string_to_date=True`
+                It's applicable only if `cast_string_to_date=True`
 
-            convert_string_to_date (bool):
+            cast_string_to_date (bool):
                 Enables an automatic casting of the `date_col` column reference
                 into a given `date_format`.
 
@@ -269,61 +269,59 @@ class SparkETLManager(ManagerClass):
         try:
             # Creating casting expressions based on data type of date_col arg
             date_col_type = date_col_type.strip().lower()
-            if convert_string_to_date:
+            if cast_string_to_date:
                 if date_col_type == "date":
-                    conversion_expr = f"to_date({date_col},\
+                    casting_expr = f"to_date({date_col},\
                         '{date_format}') AS {date_col}_{date_col_type}"
                 elif date_col_type == "timestamp":
-                    conversion_expr = f"to_timestamp({date_col},\
+                    casting_expr = f"to_timestamp({date_col},\
                         '{date_format}') AS {date_col}_{date_col_type}"
                 else:
                     raise ValueError("The data type of date_col_type parameter"
                                      " is invalid. Acceptable values are "
-                                     "'date'or 'timestamp'")
+                                     "'date' or 'timestamp'")
 
                 # Applying a select expression for casting data if applicable
                 df = df.selectExpr(
                     "*",
-                    conversion_expr
+                    casting_expr
                 ).drop(date_col)\
                     .withColumnRenamed(f"{date_col}_{date_col_type}", date_col)
 
-        except Exception as e:
-            logger.error(f"Error on casting the column {date_col} as "
-                         f"{date_col_type} using the expression "
-                         f"{conversion_expr}. Exception: {e}")
-            raise e
+        except ValueError as ve:
+            logger.error(ve)
+            raise ve
+
+        except AnalysisException as ae:
+            logger.error("Analysis error on trying to cast the column "
+                         f"{date_col} using the expression {casting_expr}. "
+                         "Maybe this column doesn't exist on the DataFrame. "
+                         f"Check the error treceback for more details: {ae}")
+            raise ae
 
         # Creating a list of all possible date attributes to be extracted
         possible_date_attribs = ["year", "quarter", "month", "dayofmonth",
                                  "dayofweek", "dayofyear", "weekofyear"]
 
-        try:
-            # Looping over all possible attributes and extracting date attribs
-            for attrib in possible_date_attribs:
-                # Add a new column only if attrib is in kwargs
-                if attrib in kwargs and bool(kwargs[attrib]):
-                    df = df.withColumn(
-                        f"{attrib}_{date_col}",
-                        expr(f"{attrib}({date_col})")
-                    )
+        # Iterating over all possible attributes and extracting date attribs
+        for attrib in possible_date_attribs:
+            # Add a new column only if attrib is in kwargs
+            if attrib in kwargs and bool(kwargs[attrib]):
+                df = df.withColumn(
+                    f"{attrib}_{date_col}", expr(f"{attrib}({date_col})")
+                )
 
-            return df
-
-        except Exception as e:
-            logger.error("Error on adding new date columns into the "
-                         f"DataFrame. Exception: {e}")
-            raise e
+        return df
 
     @staticmethod
-    def aggregate_data(df: DataFrame,
-                       spark_session: SparkSession,
-                       numeric_col: str,
-                       group_by: str or list,
-                       round_result: bool = False,
-                       n_round: int = 2,
-                       **kwargs) -> DataFrame:
-        """Extracts statistical attributes based on a group by opreation.
+    def agg_data(spark_session: SparkSession,
+                 df: DataFrame,
+                 numeric_col: str,
+                 group_by: str or list,
+                 round_result: bool = False,
+                 n_round: int = 2,
+                 **kwargs) -> DataFrame:
+        """Extracts statistical attributes based on a group by operation.
 
         This method makes it possible to extract multiple statistical
         aggregations based in a numerical column and a set of columns to be
@@ -333,7 +331,8 @@ class SparkETLManager(ManagerClass):
         Examples:
             ```python
             # Creating a new special and aggregated DataFrame
-            df_stats = spark_manager.extract_aggregate_statistics(
+            df_stats = spark_manager.agg_data(
+                spark_session=spark,
                 df=df_orders,
                 numeric_col="order_value",
                 group_by=["order_id", "order_year"],
@@ -353,6 +352,10 @@ class SparkETLManager(ManagerClass):
             ```
 
         Args:
+            spark_session (pyspark.sql.SparkSession):
+                A SparkSession object to be used to run SparkSQL query for
+                grouping data
+
             df (pyspark.sql.DataFrame):
                 A target Spark DataFrame for applying the transformation
 
@@ -416,10 +419,9 @@ class SparkETLManager(ManagerClass):
         df.createOrReplaceTempView("tmp_extract_aggregate_statistics")
 
         possible_functions = ["sum", "mean", "max", "min", "count",
-                              "countDistinct", "variance", "stddev",
-                              "kurtosis", "skewness"]
+                              "variance", "stddev", "kurtosis", "skewness"]
         try:
-            # Looping over the attributes to build a single aggregation expr
+            # Iterating over the attributes to build a single aggregation expr
             agg_query = ""
             for f in possible_functions:
                 if f in kwargs and bool(kwargs[f]):
@@ -445,10 +447,13 @@ class SparkETLManager(ManagerClass):
 
             return spark_session.sql(final_query)
 
-        except Exception as e:
-            logger.error("Error on extracting statistical attributes from "
-                         f"DataFrame. Exception: {e}")
-            raise e
+        except AnalysisException as ae:
+            logger.error("Error on trying to aggregate data from DataFrame "
+                         f"using the following query:\n {final_query}. "
+                         "Possible reasons are: missing to pass group_by "
+                         "parameter or numeric_col argument doesn't exists "
+                         f"on the DataFrame. Exception: {ae}")
+            raise ae
 
     @staticmethod
     def add_partition_column(df: DataFrame,
@@ -499,9 +504,11 @@ class SparkETLManager(ManagerClass):
             df_partitioned = df.withColumn(partition_name,
                                            lit(partition_value))
             return df_partitioned
+
         except Exception as e:
             logger.error("Error on adding a partition colum to the DataFrame "
                          f"using the .withColumn() method. Exception: {e}")
+            raise e
 
     @staticmethod
     def repartition_dataframe(df: DataFrame, num_partitions: int) -> DataFrame:
