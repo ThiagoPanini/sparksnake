@@ -22,8 +22,8 @@ from pyspark.sql import SparkSession, DataFrame
 
 # Creating a SparkSession object
 spark = SparkSession.builder\
-        .appName("sparksnake-conftest-file")\
-        .getOrCreate()
+    .appName("sparksnake-conftest-file")\
+    .getOrCreate()
 
 
 # Returning the SparkSession object as a fixture
