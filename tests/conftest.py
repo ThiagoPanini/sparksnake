@@ -10,7 +10,6 @@ ___
 import sys
 import pytest
 
-from sparksnake.glue import GlueJobManager
 from sparksnake.manager import SparkETLManager
 
 from tests.helpers.faker import fake_dataframe
