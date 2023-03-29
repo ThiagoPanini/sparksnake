@@ -496,3 +496,88 @@ def test_error_on_calling_add_partition_method_with_invalid_partition_name(
             partition_name=partition_name,
             partition_value=partition_value
         )
+
+
+@pytest.mark.spark_manager_local
+@pytest.mark.repartition_dataframe
+def test_decreasing_dataframe_partitions_with_repartition_method(
+    spark_manager_local,
+    df_fake
+):
+    """
+    G: Given that an user wants to decrease the number of partitions in a
+       Spark DataFrame
+    W: When the repartition_dataframe() method is called with a number of
+       desired partitions on num_partition arg that is LESS THAN the current
+       number of DataFrame partitions
+    T: Then the returned DataFrame must have the desired number of partitions
+    """
+
+    # Getting the current partitions number and setting a desired number
+    current_partitions = df_fake.rdd.getNumPartitions()
+    partitions_to_set = current_partitions // 2
+
+    # Calling the repartition method
+    df_repartitioned = spark_manager_local.repartition_dataframe(
+        df=df_fake,
+        num_partitions=partitions_to_set
+    )
+
+    assert df_repartitioned.rdd.getNumPartitions() == partitions_to_set
+
+
+@pytest.mark.spark_manager_local
+@pytest.mark.repartition_dataframe
+def test_increasing_dataframe_partitions_with_repartition_method(
+    spark_manager_local,
+    df_fake
+):
+    """
+    G: Given that an user wants to increase the number of partitions in a
+       Spark DataFrame
+    W: When the repartition_dataframe() method is called with a number of
+       desired partitions on num_partition arg that is MORE THAN the current
+       number of DataFrame partitions
+    T: Then the returned DataFrame must have the desired number of partitions
+    """
+
+    # Getting the current partitions number and setting a desired number
+    current_partitions = df_fake.rdd.getNumPartitions()
+    partitions_to_set = current_partitions * 2
+
+    # Calling the repartition method
+    df_repartitioned = spark_manager_local.repartition_dataframe(
+        df=df_fake,
+        num_partitions=partitions_to_set
+    )
+
+    assert df_repartitioned.rdd.getNumPartitions() == partitions_to_set
+
+
+@pytest.mark.spark_manager_local
+@pytest.mark.repartition_dataframe
+def test_trying_to_repartition_dataframe_with_current_partition_number(
+    spark_manager_local,
+    df_fake
+):
+    """
+    G: Given that an user wants to change the number of partitions in a
+       Spark DataFrame
+    W: When the repartition_dataframe() method is called with a number of
+       desired partitions on num_partition arg that is EQUAL to the current
+       number of DataFrame partitions
+    T: Then no repartition operation should be executed and the returned
+       DataFrame must have the same number of partitions as before
+    """
+
+    # Getting the current partitions number and setting a desired number
+    current_partitions = df_fake.rdd.getNumPartitions()
+    partitions_to_set = current_partitions
+
+    # Calling the repartition method
+    df_repartitioned = spark_manager_local.repartition_dataframe(
+        df=df_fake,
+        num_partitions=partitions_to_set
+    )
+
+    assert df_repartitioned.rdd.getNumPartitions() == partitions_to_set
