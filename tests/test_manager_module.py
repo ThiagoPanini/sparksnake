@@ -451,7 +451,7 @@ def test_correct_col_name_after_adding_partition_with_add_partition_method(
 
 @pytest.mark.spark_manager_local
 @pytest.mark.add_partition_column
-def test_correct_col_name_after_adding_partition_with_add_partition_method(
+def test_correct_col_value_after_adding_partition_with_add_partition_method(
     spark_manager_local,
     df_fake,
     partition_name="execution_date",
