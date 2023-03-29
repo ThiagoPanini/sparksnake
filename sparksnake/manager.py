@@ -149,8 +149,7 @@ class SparkETLManager(ManagerClass):
             if "argv_list" not in kwargs or "data_dict" not in kwargs:
                 raise TypeError("The operation mode was set as 'glue' but "
                                 "'argv_list' and/or 'data_dict' required "
-                                "arguments weren't set properly. Please pass "
-                                "those arguments at class initialization.")
+                                "arguments weren't set properly.")
 
             # Collecting required args for mode="glue"
             argv_list = kwargs["argv_list"]
@@ -160,14 +159,14 @@ class SparkETLManager(ManagerClass):
             try:
                 ManagerClass.__init__(self, argv_list=argv_list,
                                       data_dict=data_dict)
-            except TypeError:
-                raise TypeError("Error on inherting class GlueJobManager. "
-                                "Check if your environment has the awsglue "
-                                "libraries and try again. If you don't have "
-                                "awsglue libs available, you probably want to "
-                                "run sparksnake in a local operation mode. If "
-                                "this is the case, change the mode attribute "
-                                "to 'local'")
+            except TypeError as te:
+                logger.error("Error on inherting class GlueJobManager. Check "
+                             "if your environment has the awsglue libraries "
+                             "and try again. If you don't have awsglue libs "
+                             "available, you probably want to run sparksnake "
+                             "in a local operation mode. If this is the case, "
+                             "change the mode attribute to 'local'")
+                raise te
 
             # Logging initialization message
             logger.info("The class was succesfully initialized with Glue "
