@@ -20,10 +20,16 @@ from tests.helpers.user_inputs import FAKE_ARGV_LIST, FAKE_DATA_DICT,\
 from pyspark.sql import SparkSession, DataFrame
 
 
-# Defining a SparkSession object
+# Creating a SparkSession object
 spark = SparkSession.builder\
-    .appName("sparksnake-conftest-file")\
-    .getOrCreate()
+        .appName("sparksnake-conftest-file")\
+        .getOrCreate()
+
+
+# Returning the SparkSession object as a fixture
+@pytest.fixture()
+def spark_session(spark=spark) -> SparkSession:
+    return spark
 
 
 # A SparkETLManager class object with mode="local"

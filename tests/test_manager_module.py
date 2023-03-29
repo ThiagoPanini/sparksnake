@@ -200,7 +200,7 @@ def test_error_on_casting_date_column_with_invalid_column_name(
 
 @pytest.mark.spark_manager_local
 @pytest.mark.date_transform
-def test_correct_field_name_after_extracting_year_info_from_date(
+def test_correct_col_name_after_extracting_year_info_from_date(
     spark_manager_local,
     df_fake,
     date_col="date_field"
@@ -225,7 +225,7 @@ def test_correct_field_name_after_extracting_year_info_from_date(
 
 
 @pytest.mark.date_transform
-def test_correct_field_value_after_extracting_year_info_from_date(
+def test_correct_col_value_after_extracting_year_info_from_date(
     spark_manager_local,
     df_fake,
     date_col="date_field"
@@ -256,7 +256,7 @@ def test_correct_field_value_after_extracting_year_info_from_date(
 
 @pytest.mark.spark_manager_local
 @pytest.mark.date_transform
-def test_correct_field_name_after_extracting_all_date_information(
+def test_correct_col_names_after_extracting_all_date_information(
     spark_manager_local,
     df_fake,
     date_col="date_field"
@@ -294,3 +294,132 @@ def test_correct_field_name_after_extracting_all_date_information(
     expected_field_names = [f"{d}_{date_col}" for d in date_kwargs]
 
     assert all(d in new_field_names for d in expected_field_names)
+
+
+@pytest.mark.spark_manager_local
+@pytest.mark.agg_data
+def test_correct_col_names_after_aggregating_data_with_all_possible_functions(
+    spark_manager_local,
+    df_fake,
+    spark_session,
+    numeric_col="integer_field",
+    group_by="boolean_field"
+):
+    """
+    G: Given that a user wants to aggregate data from a DataFrame
+    W: When the agg_data() method is called to aggregate data using all
+       possible functions available on method
+    T: Then there might new columns with named matching the pattern
+       {function}_{numeric_col} where {function} is the aggreaget function flag
+       passed on kwargs and {numeric_col} is the numeric col parameter passed
+       on method call
+    """
+
+    # Creating a kwargs dict with all possible functions to aggregate
+    agg_functions = ["sum", "mean", "max", "min", "count", "variance",
+                     "stddev", "kurtosis", "skewness"]
+    kwargs_dict = {f: True for f in agg_functions}
+
+    # Aggregating data
+    df_agg = spark_manager_local.agg_data(
+        spark_session=spark_session,
+        df=df_fake,
+        numeric_col=numeric_col,
+        group_by=group_by,
+        **kwargs_dict
+    )
+
+    # Creating a list of expected column names to be in df_agg DataFrame
+    expected_columns = [f"{f}_{numeric_col}" for f in agg_functions]
+
+    assert all(c in df_agg.schema.fieldNames() for c in expected_columns)
+
+
+@pytest.mark.spark_manager_local
+@pytest.mark.agg_data
+def test_aggregating_data_with_sum_function_returns_expected_value(
+    spark_manager_local,
+    df_fake,
+    spark_session,
+    numeric_col="integer_field",
+    group_by="boolean_field"
+):
+    """
+    G: Given that a user wants to aggregate data from a DataFrame
+    W: When the agg_data() method is called to aggregate data with sum
+    T: Then sum_{numeric_col} column value must match the expected
+    """
+
+    # Aggregating data
+    df_agg = spark_manager_local.agg_data(
+        spark_session=spark_session,
+        df=df_fake,
+        numeric_col=numeric_col,
+        group_by=group_by,
+        sum=True
+    )
+
+    # Collecting rows for the raw DataFrame to be tested
+    value_rows = df_fake.where(expr("boolean_field == True"))\
+        .select(numeric_col).collect()
+
+    # Applying the sum on the result rows using Python
+    expected_result = sum([r[0] for r in value_rows])
+
+    # Collecting the result from the DataFrame after agg_data() method
+    agg_result = df_agg.where(expr("boolean_field == True"))\
+        .select(f"sum_{numeric_col}").collect()[0][0]
+
+    assert agg_result == expected_result
+
+
+@pytest.mark.spark_manager_local
+@pytest.mark.agg_data
+def test_error_on_calling_agg_data_method_with_invalid_numeric_col_reference(
+    spark_manager_local,
+    df_fake,
+    spark_session,
+    numeric_col="invalid_col",
+    group_by="boolean_field"
+):
+    """
+    G: Given that a user wants to aggregate data from a DataFrame
+    W: When the agg_data() method is called with a column reference for
+       numeric_col argument that doesn't exist on the target DataFrame
+    T: Then a AnalysisException error must be raised
+    """
+
+    # Trying to aggregate with invalid numeric_col argument
+    with pytest.raises(AnalysisException):
+        _ = spark_manager_local.agg_data(
+            spark_session=spark_session,
+            df=df_fake,
+            numeric_col=numeric_col,
+            group_by=group_by
+        )
+
+
+@pytest.mark.spark_manager_local
+@pytest.mark.agg_data
+def test_error_on_calling_agg_data_method_with_invalid_group_by_reference(
+    spark_manager_local,
+    df_fake,
+    spark_session,
+    numeric_col="integer_field",
+    group_by="invalid_col"
+):
+    """
+    G: Given that a user wants to aggregate data from a DataFrame
+    W: When the agg_data() method is called with a column reference for
+       group_by argument that doesn't exist on the target DataFrame
+    T: Then a AnalysisException error must be raised
+    """
+
+    # Trying to aggregate with invalid numeric_col argument
+    with pytest.raises(AnalysisException):
+        _ = spark_manager_local.agg_data(
+            spark_session=spark_session,
+            df=df_fake,
+            numeric_col=numeric_col,
+            group_by=group_by
+        )

@@ -216,7 +216,7 @@ class SparkETLManager(ManagerClass):
         Examples:
             ```python
             # Extracting date attributes from a date column in a Spark df
-            df_date_prep = spark_manager.extract_date_attributes(
+            df_date_prep = spark_manager.date_transform(
                 df=df_raw,
                 date_col="order_date",
                 date_col_type="timestamp",
@@ -315,14 +315,14 @@ class SparkETLManager(ManagerClass):
         return df
 
     @staticmethod
-    def aggregate_data(df: DataFrame,
-                       spark_session: SparkSession,
-                       numeric_col: str,
-                       group_by: str or list,
-                       round_result: bool = False,
-                       n_round: int = 2,
-                       **kwargs) -> DataFrame:
-        """Extracts statistical attributes based on a group by opreation.
+    def agg_data(spark_session: SparkSession,
+                 df: DataFrame,
+                 numeric_col: str,
+                 group_by: str or list,
+                 round_result: bool = False,
+                 n_round: int = 2,
+                 **kwargs) -> DataFrame:
+        """Extracts statistical attributes based on a group by operation.
 
         This method makes it possible to extract multiple statistical
         aggregations based in a numerical column and a set of columns to be
@@ -332,7 +332,8 @@ class SparkETLManager(ManagerClass):
         Examples:
             ```python
             # Creating a new special and aggregated DataFrame
-            df_stats = spark_manager.extract_aggregate_statistics(
+            df_stats = spark_manager.agg_data(
+                spark_session=spark,
                 df=df_orders,
                 numeric_col="order_value",
                 group_by=["order_id", "order_year"],
@@ -352,6 +353,10 @@ class SparkETLManager(ManagerClass):
             ```
 
         Args:
+            spark_session (pyspark.sql.SparkSession):
+                A SparkSession object to be used to run SparkSQL query for
+                grouping data
+
             df (pyspark.sql.DataFrame):
                 A target Spark DataFrame for applying the transformation
 
@@ -415,8 +420,7 @@ class SparkETLManager(ManagerClass):
         df.createOrReplaceTempView("tmp_extract_aggregate_statistics")
 
         possible_functions = ["sum", "mean", "max", "min", "count",
-                              "countDistinct", "variance", "stddev",
-                              "kurtosis", "skewness"]
+                              "variance", "stddev", "kurtosis", "skewness"]
         try:
             # Iterating over the attributes to build a single aggregation expr
             agg_query = ""
@@ -444,10 +448,13 @@ class SparkETLManager(ManagerClass):
 
             return spark_session.sql(final_query)
 
-        except Exception as e:
-            logger.error("Error on extracting statistical attributes from "
-                         f"DataFrame. Exception: {e}")
-            raise e
+        except AnalysisException as ae:
+            logger.error("Error on trying to aggregate data from DataFrame "
+                         f"using the following query:\n {final_query}. "
+                         "Possible reasons are: missing to pass group_by "
+                         "parameter or numeric_col argument doesn't exists "
+                         f"on the DataFrame. Exception: {ae}")
+            raise ae
 
     @staticmethod
     def add_partition_column(df: DataFrame,
