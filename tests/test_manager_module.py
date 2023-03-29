@@ -326,6 +326,8 @@ def test_correct_col_names_after_aggregating_data_with_all_possible_functions(
         df=df_fake,
         numeric_col=numeric_col,
         group_by=group_by,
+        round_result=True,
+        n_round=2,
         **kwargs_dict
     )
 
@@ -333,6 +335,35 @@ def test_correct_col_names_after_aggregating_data_with_all_possible_functions(
     expected_columns = [f"{f}_{numeric_col}" for f in agg_functions]
 
     assert all(c in df_agg.schema.fieldNames() for c in expected_columns)
+
+
+@pytest.mark.spark_manager_local
+@pytest.mark.agg_data
+def test_columns_on_groupby_list_are_part_of_schema_after_aggregating_data(
+    spark_manager_local,
+    df_fake,
+    spark_session,
+    numeric_col="integer_field",
+    group_by=["string_field", "boolean_field"]
+):
+    """
+    G: Given that an user wants to aggregate data from a DataFrame
+    W: When the agg_data() method is called to aggregate data using a list of
+       columns on group_by argument and any agg function
+    T: Then the group_by list must be on the returned DataFrame schema
+    """
+
+    # Aggregating data
+    df_agg = spark_manager_local.agg_data(
+        spark_session=spark_session,
+        df=df_fake,
+        numeric_col=numeric_col,
+        group_by=group_by,
+        sum=True
+    )
+
+    # Checking if group_by list are in schema
+    assert all(c in df_agg.schema.fieldNames() for c in group_by)
 
 
 @pytest.mark.spark_manager_local
@@ -556,7 +587,7 @@ def test_increasing_dataframe_partitions_with_repartition_method(
 
 @pytest.mark.spark_manager_local
 @pytest.mark.repartition_dataframe
-def test_trying_to_repartition_dataframe_with_current_partition_number(
+def test_trying_to_repartition_dataframe_with_current_number_of_partitions(
     spark_manager_local,
     df_fake
 ):
@@ -581,3 +612,31 @@ def test_trying_to_repartition_dataframe_with_current_partition_number(
     )
 
     assert df_repartitioned.rdd.getNumPartitions() == partitions_to_set
+
+
+@pytest.mark.spark_manager_local
+@pytest.mark.repartition_dataframe
+def test_trying_to_repartition_dataframe_with_negative_number_of_partitions(
+    spark_manager_local,
+    df_fake
+):
+    """
+    G: Given that an user wants to change the number of partitions in a
+       Spark DataFrame
+    W: When the repartition_dataframe() method is called with a negative
+       number of desired partitions on num_partition argument
+    T: Then no operation should be done and the same DataFrame must be
+       returned with no changes in its number of partitions
+    """
+
+    # Getting the current partitions number and setting a desired number
+    current_partitions = df_fake.rdd.getNumPartitions()
+    partitions_to_set = -1
+
+    # Calling the repartition method
+    df_repartitioned = spark_manager_local.repartition_dataframe(
+        df=df_fake,
+        num_partitions=partitions_to_set
+    )
+
+    assert df_repartitioned.rdd.getNumPartitions() == current_partitions
