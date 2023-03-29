@@ -22,7 +22,7 @@ from sparksnake.manager import SparkETLManager
 @pytest.mark.constructor
 def test_error_on_initializing_class_with_invalid_mode():
     """
-    G: Given that users want to initialize a SparkETLManager class object
+    G: Given that an user wants to initialize a SparkETLManager class object
     W: When the SparkETLManager class is initialized with a mode attribute
     different than the acceptable values
     T: Then a ValueError exception muset be raised
@@ -37,7 +37,7 @@ def test_error_on_initializing_class_with_invalid_mode():
 @pytest.mark.constructor
 def test_error_with_glue_mode_without_argvlist_or_datadict_attributes():
     """
-    G: Given that users want to initialize a SparkETLManager class object
+    G: Given that an user wants to initialize a SparkETLManager class object
     W: When the SparkETLManager class is initialized with mode="glue" but
     there's no argv_list or data_dict_attributes passed by the user
     T: Then a TypeError exception muset be raised
@@ -58,7 +58,7 @@ def test_casting_date_column_with_date_transform_method(
     date_format="yyyy-MM-dd"
 ):
     """
-    G: Given that users have a string column in a DataFrame that has date
+    G: Given that an user has a string column in a DataFrame that has date
     information and they need to cast it to date
     W: When the date_transform method is called with the following parameters:
         - date_col="name-of-the-string-column"
@@ -105,7 +105,7 @@ def test_casting_timestamp_column_with_date_transform_method(
     date_format="yyyy-MM-dd HH:mm:ss"
 ):
     """
-    G: Given that users have a string column in a DataFrame that has timestamp
+    G: Given that an user has a string column in a DataFrame that has timestamp
     information and they need to cast it to timestamp
     W: When the date_transform method is called with the following parameters:
         - date_col="name-of-the-string-column"
@@ -152,7 +152,7 @@ def test_error_on_casting_date_column_with_invalid_date_col_type(
     date_format="yyyy-MM-dd"
 ):
     """
-    G: Given that users have a string column in a DataFrame that has date
+    G: Given that an user has a string column in a DataFrame that has date
     information and they need to cast it to date
     W: When the date_transform method is called with an invalid date_col_type
     attribute (e.g. something different from "date" or "timestamp")
@@ -180,7 +180,7 @@ def test_error_on_casting_date_column_with_invalid_column_name(
     date_format="yyyy-MM-dd HH:mm:ss"
 ):
     """
-    G: Given that users have a string column in a DataFrame that has date
+    G: Given that an user has a string column in a DataFrame that has date
     information and they need to cast it to date
     W: When the date_transform method is called with a column name that
     doesn't exist on DataFrame
@@ -206,7 +206,7 @@ def test_correct_col_name_after_extracting_year_info_from_date(
     date_col="date_field"
 ):
     """
-    G: Given that a user wants to add a new column to an existing DataFrame
+    G: Given that an user wants to add a new column to an existing DataFrame
        with year information based on a date column
     W: When the date_transform() method is executed with kwarg year=True
     T: Then there might be a new DataFrame column named "year_{date_col}"
@@ -231,7 +231,7 @@ def test_correct_col_value_after_extracting_year_info_from_date(
     date_col="date_field"
 ):
     """
-    G: Given that a user wants to add a new column to an existing DataFrame
+    G: Given that an user wants to add a new column to an existing DataFrame
        with year information based on a date column
     W: When the date_transform() method is executed with kwarg year=True
     T: Then the new year_{date_col} field must have the expected year
@@ -262,7 +262,7 @@ def test_correct_col_names_after_extracting_all_date_information(
     date_col="date_field"
 ):
     """
-    G: Given that a user wants to add a new column to an existing DataFrame
+    G: Given that an user wants to add a new column to an existing DataFrame
        with all possible date information based on a date column
     W: When the date_transform() method is executed with kwargs year=True,
        quarter=True, month=True, dayofmonth=True, dayofweek=True,
@@ -306,7 +306,7 @@ def test_correct_col_names_after_aggregating_data_with_all_possible_functions(
     group_by="boolean_field"
 ):
     """
-    G: Given that a user wants to aggregate data from a DataFrame
+    G: Given that an user wants to aggregate data from a DataFrame
     W: When the agg_data() method is called to aggregate data using all
        possible functions available on method
     T: Then there might new columns with named matching the pattern
@@ -345,7 +345,7 @@ def test_aggregating_data_with_sum_function_returns_expected_value(
     group_by="boolean_field"
 ):
     """
-    G: Given that a user wants to aggregate data from a DataFrame
+    G: Given that an user wants to aggregate data from a DataFrame
     W: When the agg_data() method is called to aggregate data with sum
     T: Then sum_{numeric_col} column value must match the expected
     """
@@ -383,7 +383,7 @@ def test_error_on_calling_agg_data_method_with_invalid_numeric_col_reference(
     group_by="boolean_field"
 ):
     """
-    G: Given that a user wants to aggregate data from a DataFrame
+    G: Given that an user wants to aggregate data from a DataFrame
     W: When the agg_data() method is called with a column reference for
        numeric_col argument that doesn't exist on the target DataFrame
     T: Then a AnalysisException error must be raised
@@ -409,7 +409,7 @@ def test_error_on_calling_agg_data_method_with_invalid_group_by_reference(
     group_by="invalid_col"
 ):
     """
-    G: Given that a user wants to aggregate data from a DataFrame
+    G: Given that an user wants to aggregate data from a DataFrame
     W: When the agg_data() method is called with a column reference for
        group_by argument that doesn't exist on the target DataFrame
     T: Then a AnalysisException error must be raised
@@ -422,4 +422,77 @@ def test_error_on_calling_agg_data_method_with_invalid_group_by_reference(
             df=df_fake,
             numeric_col=numeric_col,
             group_by=group_by
+        )
+
+
+@pytest.mark.spark_manager_local
+@pytest.mark.add_partition_column
+def test_correct_col_name_after_adding_partition_with_add_partition_method(
+    spark_manager_local,
+    df_fake,
+    partition_name="execution_date",
+    partition_value=0
+):
+    """
+    G: Given that an user wants to add a new partition column to a DataFrame
+    W: When the add_partition_column() method is called
+    T: Then the partition column name must exists on the returned DataFrame
+    """
+
+    # Adding a partition column
+    df_fake_partitioned = spark_manager_local.add_partition_column(
+        df=df_fake,
+        partition_name=partition_name,
+        partition_value=partition_value
+    )
+
+    assert partition_name in df_fake_partitioned.schema.fieldNames()
+
+
+@pytest.mark.spark_manager_local
+@pytest.mark.add_partition_column
+def test_correct_col_name_after_adding_partition_with_add_partition_method(
+    spark_manager_local,
+    df_fake,
+    partition_name="execution_date",
+    partition_value=0
+):
+    """
+    G: Given that an user wants to add a new partition column to a DataFrame
+    W: When the add_partition_column() method is called
+    T: Then the partition column value must match the partition_value argument
+    """
+
+    # Adding a partition column
+    df_fake_partitioned = spark_manager_local.add_partition_column(
+        df=df_fake,
+        partition_name=partition_name,
+        partition_value=partition_value
+    )
+
+    assert df_fake_partitioned.select(partition_name).take(1)[0][0] == 0
+
+
+@pytest.mark.spark_manager_local
+@pytest.mark.add_partition_column
+def test_error_on_calling_add_partition_method_with_invalid_partition_name(
+    spark_manager_local,
+    df_fake,
+    partition_name=0,
+    partition_value=0
+):
+    """
+    G: Given that an user wants to add a new partition column to a DataFrame
+    W: When the add_partition_column() method is called with an invalid value
+       for partition_name argument (e.g. an integer number instead of a string
+       column name reference)
+    T: Then an Exception must be raised
+    """
+
+    # Trying to execute the method and caughting exception
+    with pytest.raises(Exception):
+        _ = spark_manager_local.add_partition_column(
+            df=df_fake,
+            partition_name=partition_name,
+            partition_value=partition_value
         )

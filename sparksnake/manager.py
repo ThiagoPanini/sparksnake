@@ -505,9 +505,11 @@ class SparkETLManager(ManagerClass):
             df_partitioned = df.withColumn(partition_name,
                                            lit(partition_value))
             return df_partitioned
+
         except Exception as e:
             logger.error("Error on adding a partition colum to the DataFrame "
                          f"using the .withColumn() method. Exception: {e}")
+            raise e
 
     @staticmethod
     def repartition_dataframe(df: DataFrame, num_partitions: int) -> DataFrame:
