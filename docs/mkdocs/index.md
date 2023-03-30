@@ -1,10 +1,14 @@
-# sparksnake
+# Sparksnake: Taking Spark to the Next Level
 
 ## Overview
 
-The *sparksnake* library provides an easy, fast, and efficient way to use Spark features inside analytics services on AWS. With *sparksnake*, it is possible to use classes, methods and functions developed in pyspark to simplify, as much as possible, the journey of building Spark applications along all the particularities found in AWS services, such as Glue and EMR, for example.
+The *sparksnake* library provides a set of tools to enhance the development of Spark applications, specially if they are meant to be deployed and used in AWS services, such as Glue and EMR. The idea behind *sparksnake* is to delivery methods written in `pyspark` that make everything easier: the user will have the ability to execute common Spark operations with a few lines of code.
 
-Do you want to take your job Glue or your EMR cluster to the next level? Take a look at *sparksnake*!
+- Have you ever wanted to improve your Spark code with log messages and exception handling?
+- Have you ever wanted to go in a deep dive in AWS services with Spark but you got stuck setting up your code?
+- Have you ever wanted to optimize your 1k+ lines of Spark code deployed on AWS?
+
+✨ Try *sparksnake*!
 
 
 <div align="center">
@@ -30,8 +34,6 @@ Do you want to take your job Glue or your EMR cluster to the next level? Take a 
     <img src="https://img.shields.io/pypi/status/sparksnake?color=purple" alt="Shield sparksnake PyPI status">
   </a>
   
-  <img src="https://img.shields.io/github/commit-activity/m/ThiagoPanini/sparksnake?color=purple" alt="Shield github commit activity">
-  
   <img src="https://img.shields.io/github/last-commit/ThiagoPanini/sparksnake?color=purple" alt="Shield github last commit">
 
   <br>
@@ -50,58 +52,22 @@ Do you want to take your job Glue or your EMR cluster to the next level? Take a 
 
 ___
 
+
 ## Features
 
-- 🤖 Enhanced development experience of Spark Applications to be deployed as jobs in AWS services like Glue and EMR
-- 🌟 Possibility to use common Spark operations for improving ETL steps using custom classes and methods
-- ⚙️ No need to think too much into the hard and complex service setup (e.g. with *sparksnake* you can have all elements for a Glue Job on AWS with a single line of code)
-- 👁️‍🗨️ Application observability improvement with detailed log messages in CloudWatch
-- 🛠️ Exception handling already embedded in library methods
+- 👋 Improvement of ETL jobs by making it possible to use common Spark operations in the touch of a hand
+- 🚀 Available to use in different operation modes, such as "local" or in an AWS service like Glue and EMR
+- ⏳ Users can focus more on developing business rules than on service/Spark setup
+- 👁️‍🗨️ Enhanced observability by providing detailed log messages on CloudWatch and exception handlers
+- 🛠️ Improved resilience by handling exceptions on methods
 
 
-## Getting Started
+## Reat the Docs
 
-The *sparksnake* latest version is already published in [PyPI](https://pypi.org/project/sparksnake/) and available free of charge for anyone interested in improving the creation of their Spark applications using AWS services such as Glue and EMR. To start your journey, simply perform your installation using the following command:
+- Check the [Quickstart](./quickstart/basic-tutorial.md) section to start using *sparsnake*
+- In the [Features](./features/demo-glue.md) you will find usage demos to help you extract the full power of *sparksnake*
+- If you want to understand the library in details, check the [Official Docs](./mkdocstrings/gluejobmanager.md) section!
 
-```bash
-pip install sparksnake
-```
-
-??? tip "About Python virtual environments"
-    In general, it's a good practice create a [virtual environment](https://docs.python.org/3/library/venv.html) before the start of every Python project. Creating a venv for each Python project allows, among other advantages, to have an isolated environment with more refined control over the dependencies used.
-    
-    ??? example "Creating virtual environments"
-        To create a Python virtual environment, run the following code in a folder of your preference (maybe one you can use for organizing all your further virtual environments):
-
-        ```bash
-        python -m venv <venv_name>
-        ```
-
-        Where `<venv_name>` should be replaced by the name chosen for the virtual environment to be created. It is common to have virtual environment names associated with projects (ex: `project_venv`)
-
-
-    ??? example "Accessing virtual environments"
-        Once created, the environment needs to be explicitly accessed by the user to ensure that all subsequent actions related to installing libraries are actually performed inside of the isolated environment created.
-
-        If the operating system used is Windows, then use the command below to access the Python virtual environment:
-
-        ```bash
-        # Accessing venvs on Windows
-        <venv_path>/Scripts/activate
-        ```
-
-        In case of use of a Linux operating system (or Git Bash in Windows), the command has minor changes and is given by:
-
-        ```bash
-        # Accessing venvs on Linux
-        source <venv_path>/Scripts/activate
-        ```
-
-        Where `<venv_path>` is the location reference of the newly created virtual environment. For example, if you created a virtual environment named *test_venv* name in your user directory, then `<venv_path>` can be replaced by `C:\Users\username\test_venv` on Windows or simply `~/test_venv` on Linux.
-        
-    
-    For more information, this [excellent Real Python blog article](https://realpython.com/python-virtual-environments-a-primer/) may shed light on a number of questions involving the creation and use of Python virtual environments.
-    
 
 ## Contacts
 
