@@ -139,7 +139,7 @@ Now that we initialized a Glue Job and read all data sources as Spark DataFrames
 
 ## Extracting Date Attributes
 
-One of the features available in *sparksnake* allows users to enrich a Spark DataFrame with a series of date attributes extracted from a DataFrame column that represents a date information. In other words, this is an easy and efficient way to get new attributes in a DataFrame like year, month, day, quarter, day of the week and much more with the power of the method `extract_date_attributes()`.
+One of the features available in *sparksnake* allows users to enrich a Spark DataFrame with a series of date attributes extracted from a DataFrame column that represents a date information. In other words, this is an easy and efficient way to get new attributes in a DataFrame like year, month, day, quarter, day of the week and much more with the power of the method `date_transform()`.
 
 To see how this work in practice, let's create a simplified version of the `df_orders` DataFrame selecting only a few attributes for demo purposes.
 
@@ -152,7 +152,7 @@ Now the target DataFrame for the demo has only two columns: order_id and dt_comp
 ??? example "Getting date attributes from a date column in a DataFrame"
     :clapper: **Demonstration:**
 
-    ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/main/docs/assets/gifs/sparksnake-extract_date_attributes.gif)
+    ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/main/docs/assets/gifs/sparksnake-date_transform.gif)
 
     ___
 
@@ -174,7 +174,7 @@ Now the target DataFrame for the demo has only two columns: order_id and dt_comp
     )
 
     # Extracting date attributes from a date DataFrame column
-    df_orders_date = spark_manager.extract_date_attributes(
+    df_orders_date = spark_manager.date_transform(
         df=df_orders_simp,
         date_col="dt_compra",
         convert_string_to_date=False,
@@ -197,6 +197,8 @@ Now the target DataFrame for the demo has only two columns: order_id and dt_comp
         To bring a complte view of this feature, the video below uses all the date attributes flag available in the method to enrich a DataFrame with all possibilities.
 
         ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/main/docs/assets/gifs/sparksnake-opt-extract_date_attributes.gif)
+
+        Obs: the video above was recorder when this method was called `extract_date_attributes()` and not `date_transform()` (current version).
 
 
 ## Extracting Statistical Attributes
