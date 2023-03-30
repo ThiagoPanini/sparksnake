@@ -152,7 +152,7 @@ Now the target DataFrame for the demo has only two columns: order_id and dt_comp
 ??? example "Getting date attributes from a date column in a DataFrame"
     :clapper: **Demonstration:**
 
-    ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/main/docs/assets/gifs/sparksnake-date_transform.gif)
+    ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/docs/improving-library-docs-page/docs/assets/gifs/sparksnake-date_transform.gif)
 
     ___
 
@@ -203,7 +203,7 @@ Now the target DataFrame for the demo has only two columns: order_id and dt_comp
 
 ## Extracting Statistical Attributes
 
-Another powerful feature inside *sparksnake* allows users to extract a series of statistical attributes based on a numeric column and a set of columns to be grouped in the aggregation process. With the method `extract_aggregate_statistics()` the users can enrich their data analysis and get specialized DataFrames to answear all possible business questions.
+Another powerful feature inside *sparksnake* allows users to extract a series of statistical attributes based on a numeric column and a set of columns to be grouped in the aggregation process. With the method `agg_data()` the users can enrich their data analysis and get specialized DataFrames to answear all possible business questions.
 
 To see this in practice, let's now use the `df_payments` DataFrame with payments data of online orders.
 
@@ -215,7 +215,7 @@ The columns of the DataFrame show an interesting possibility of applying analyti
 ??? example "Getting statistical attributes from a DataFrame"
     :clapper: **Demonstration:**
 
-    ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/main/docs/assets/gifs/sparksnake-extract_aggregate_statistics.gif)
+    ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/docs/improving-library-docs-page/docs/assets/gifs/sparksnake-agg_data.gif)
 
     ___
 
@@ -231,7 +231,7 @@ The columns of the DataFrame show an interesting possibility of applying analyti
     :snake: **Code**
     
     ```python
-    df_payments_stats = spark_manager.extract_aggregate_statistics(
+    df_payments_stats = spark_manager.agg_data(
         df=df_payments,
         numeric_col="payment_value",
         group_by="payment_type",
