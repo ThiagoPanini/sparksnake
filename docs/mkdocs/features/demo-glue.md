@@ -139,7 +139,7 @@ Now that we initialized a Glue Job and read all data sources as Spark DataFrames
 
 ## Extracting Date Attributes
 
-One of the features available in *sparksnake* allows users to enrich a Spark DataFrame with a series of date attributes extracted from a DataFrame column that represents a date information. In other words, this is an easy and efficient way to get new attributes in a DataFrame like year, month, day, quarter, day of the week and much more with the power of the method `extract_date_attributes()`.
+One of the features available in *sparksnake* allows users to enrich a Spark DataFrame with a series of date attributes extracted from a DataFrame column that represents a date information. In other words, this is an easy and efficient way to get new attributes in a DataFrame like year, month, day, quarter, day of the week and much more with the power of the method `date_transform()`.
 
 To see how this work in practice, let's create a simplified version of the `df_orders` DataFrame selecting only a few attributes for demo purposes.
 
@@ -152,7 +152,7 @@ Now the target DataFrame for the demo has only two columns: order_id and dt_comp
 ??? example "Getting date attributes from a date column in a DataFrame"
     :clapper: **Demonstration:**
 
-    ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/main/docs/assets/gifs/sparksnake-extract_date_attributes.gif)
+    ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/main/docs/assets/gifs/sparksnake-date_transform.gif)
 
     ___
 
@@ -174,7 +174,7 @@ Now the target DataFrame for the demo has only two columns: order_id and dt_comp
     )
 
     # Extracting date attributes from a date DataFrame column
-    df_orders_date = spark_manager.extract_date_attributes(
+    df_orders_date = spark_manager.date_transform(
         df=df_orders_simp,
         date_col="dt_compra",
         convert_string_to_date=False,
@@ -189,7 +189,7 @@ Now the target DataFrame for the demo has only two columns: order_id and dt_comp
 
     ___
 
-    :thinking: Learn more at [SparkETLManager.extract_date_attributes()](../../mkdocstrings/SparkETLManager/#sparksnake.manager.SparkETLManager.extract_date_attributes)
+    :thinking: Learn more at [SparkETLManager.date_transform()](../../mkdocstrings/SparkETLManager/#sparksnake.manager.SparkETLManager.date_transform)
 
     ___
 
@@ -198,10 +198,12 @@ Now the target DataFrame for the demo has only two columns: order_id and dt_comp
 
         ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/main/docs/assets/gifs/sparksnake-opt-extract_date_attributes.gif)
 
+        Obs: the video above was recorder when this method was called `extract_date_attributes()` and not `date_transform()` (current version).
+
 
 ## Extracting Statistical Attributes
 
-Another powerful feature inside *sparksnake* allows users to extract a series of statistical attributes based on a numeric column and a set of columns to be grouped in the aggregation process. With the method `extract_aggregate_statistics()` the users can enrich their data analysis and get specialized DataFrames to answear all possible business questions.
+Another powerful feature inside *sparksnake* allows users to extract a series of statistical attributes based on a numeric column and a set of columns to be grouped in the aggregation process. With the method `agg_data()` the users can enrich their data analysis and get specialized DataFrames to answear all possible business questions.
 
 To see this in practice, let's now use the `df_payments` DataFrame with payments data of online orders.
 
@@ -213,7 +215,7 @@ The columns of the DataFrame show an interesting possibility of applying analyti
 ??? example "Getting statistical attributes from a DataFrame"
     :clapper: **Demonstration:**
 
-    ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/main/docs/assets/gifs/sparksnake-extract_aggregate_statistics.gif)
+    ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/main/docs/assets/gifs/sparksnake-agg_data.gif)
 
     ___
 
@@ -229,7 +231,7 @@ The columns of the DataFrame show an interesting possibility of applying analyti
     :snake: **Code**
     
     ```python
-    df_payments_stats = spark_manager.extract_aggregate_statistics(
+    df_payments_stats = spark_manager.agg_data(
         df=df_payments,
         numeric_col="payment_value",
         group_by="payment_type",
@@ -248,7 +250,7 @@ The columns of the DataFrame show an interesting possibility of applying analyti
 
     ___
 
-    :thinking: Learn more at [SparkETLManager.extract_aggregate_statistics()](../../mkdocstrings/SparkETLManager/#sparksnake.manager.SparkETLManager.extract_aggregate_statistics)
+    :thinking: Learn more at [SparkETLManager.agg_data()](../../mkdocstrings/SparkETLManager/#sparksnake.manager.SparkETLManager.agg_data)
 
 ## Dropping Partitions in S3
 

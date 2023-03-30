@@ -63,7 +63,9 @@ theme:
 nav:
   - Home:
     - sparksnake: index.md
-    - Motivation: motivation.md
+    - Project Story: story.md
+  - Quickstart:
+    - Getting Started: quickstart/gettingstarted.md
   - Features:
     - Library Structure: features/lib-structure.md
     - Developing Glue Jobs: features/demo-glue.md
