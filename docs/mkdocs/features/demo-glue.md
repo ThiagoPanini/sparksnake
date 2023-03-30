@@ -189,7 +189,7 @@ Now the target DataFrame for the demo has only two columns: order_id and dt_comp
 
     ___
 
-    :thinking: Learn more at [SparkETLManager.extract_date_attributes()](../../mkdocstrings/SparkETLManager/#sparksnake.manager.SparkETLManager.extract_date_attributes)
+    :thinking: Learn more at [SparkETLManager.date_transform()](../../mkdocstrings/SparkETLManager/#sparksnake.manager.SparkETLManager.date_transform)
 
     ___
 
@@ -248,7 +248,7 @@ The columns of the DataFrame show an interesting possibility of applying analyti
 
     ___
 
-    :thinking: Learn more at [SparkETLManager.extract_aggregate_statistics()](../../mkdocstrings/SparkETLManager/#sparksnake.manager.SparkETLManager.extract_aggregate_statistics)
+    :thinking: Learn more at [SparkETLManager.agg_data()](../../mkdocstrings/SparkETLManager/#sparksnake.manager.SparkETLManager.agg_data)
 
 ## Dropping Partitions in S3
 
