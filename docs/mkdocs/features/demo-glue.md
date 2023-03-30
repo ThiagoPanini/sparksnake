@@ -152,7 +152,7 @@ Now the target DataFrame for the demo has only two columns: order_id and dt_comp
 ??? example "Getting date attributes from a date column in a DataFrame"
     :clapper: **Demonstration:**
 
-    ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/docs/improving-library-docs-page/docs/assets/gifs/sparksnake-date_transform.gif)
+    ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/main/docs/assets/gifs/sparksnake-date_transform.gif)
 
     ___
 
@@ -215,7 +215,7 @@ The columns of the DataFrame show an interesting possibility of applying analyti
 ??? example "Getting statistical attributes from a DataFrame"
     :clapper: **Demonstration:**
 
-    ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/docs/improving-library-docs-page/docs/assets/gifs/sparksnake-agg_data.gif)
+    ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/main/docs/assets/gifs/sparksnake-agg_data.gif)
 
     ___
 
