@@ -2,7 +2,7 @@
 
 ## Overview
 
-The *sparksnake* library provides a set of tools to enhance the development of Spark applications, specially if they are meant to be deployed and used in AWS services, such as Glue and EMR. The idea behind *sparksnake* is to delivery methods written in `pyspark` that make everything easier: the user will have the ability to execute common Spark operations with a few lines of code.
+The *sparksnake* library provides a set of tools to enhance the development of Spark applications, specially if they are meant to be deployed and used in AWS services, such as Glue and EMR.
 
 - Have you ever wanted to improve your Spark code with log messages and exception handling?
 - Have you ever wanted to go in a deep dive in AWS services with Spark but you got stuck setting up your code?
@@ -12,13 +12,9 @@ The *sparksnake* library provides a set of tools to enhance the development of S
 
 
 <div align="center">
-    <br><img src="https://github.com/ThiagoPanini/sparksnake/blob/main/docs/assets/imgs/logo.png?raw=true" alt="sparksnake-logo" width=200 height=200>
+    <br><img src="https://github.com/ThiagoPanini/sparksnake/blob/main/docs/assets/imgs/header-readme.png?raw=true" alt="sparksnake-logo">
 </div>
 
-<div align="center">
-    <i>sparksnake<br>
-    Python Library</i>
-</div>
 
 <div align="center">  
   <br>
@@ -55,19 +51,34 @@ ___
 
 ## Features
 
-- 👋 Improvement of ETL jobs by making it possible to use common Spark operations in the touch of a hand
-- 🚀 Available to use in different operation modes, such as "local" or in an AWS service like Glue and EMR
-- ⏳ Users can focus more on developing business rules than on service/Spark setup
+- 🤖 Apply common Spark operations using a few lines of code
+- 💻 Start developing your Spark applications locally using the "local" mode or in any AWS services that uses Spark
+- 💡 Use methods available to turn your life as easy as possible
+- ⏳ You don't need to spend time setting up your Spark applications (locally or in a Glue job, for example)
 - 👁️‍🗨️ Enhanced observability by providing detailed log messages on CloudWatch and exception handlers
-- 🛠️ Improved resilience by handling exceptions on methods
 
 
-## Reat the Docs
+## How Does it Work?
 
+Whenever users need to simplify the development of their Spark applications, the **sparksnake** Python library can be used. It is available on [PyPI]() and can be installed using the `pip install sparksnake` command. So, in any Python file, users can import the package and start the creation of their application by starting the `SparkManager` class using a chosen mode based on where this Spark application will be deployed.
+
+???+ question "What do you mean by a 'chosen mode'?"
+    Well, the idea is quite simple: the **sparksnake** library was thought to help users to build their Spark applications regardless on where it will be deployed. In other words, if you are running Spark applications locally or in AWS services like Glue and EMR, sparksnake can be fit perfect for you.
+
+    Based on this strategy, the library can be set with a `mode` attribute that handles class inheritance and enables all specific features for users according to the environment where Spark is running. You will certainly find more information about this huge feature along this documentation.
+
+## Combining Solutions
+
+The *sparksnake* Python package isn't alone. There are other complementary open source solutions that can be put together to enable the full power of learning analytics on AWS. [Check it out](https://github.com/ThiagoPanini) if you think they could be useful for you!
+
+![A diagram showing how its possible to use other solutions like datadelivery, terraglue and sparksnake](https://github.com/ThiagoPanini/datadelivery/blob/main/docs/assets/imgs/products-overview-v2.png?raw=true)
+
+## Read the Docs
+
+- How about the [story](story.md) about the library creation? I think you will like it!
 - Check the [Quickstart](./quickstart/basic-tutorial.md) section to start using *sparsnake*
-- In the [Features](./features/demo-glue.md) you will find usage demos to help you extract the full power of *sparksnake*
-- If you want to understand the library in details, check the [Official Docs](./mkdocstrings/gluejobmanager.md) section!
-
+- At [Features](./features/demo-glue.md) page you will find usage demos to help you extract the full power of *sparksnake*
+- The [Official Docs](./mkdocstrings/gluejobmanager.md) page brings all modules, classes and methods documentation in details
 
 ## Contacts
 

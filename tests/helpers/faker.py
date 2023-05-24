@@ -1,6 +1,6 @@
 """Creates fake Spark DataFrames to be used on test cases.
 
-This module is mainly used by a confest file for creating fixtures using fake
+This module is mainly used by a conftest file for creating fixtures using fake
 Spark DataFrames. The idea behind this script file is to provide data to be
 used to test features from other library modules.
 
