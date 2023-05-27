@@ -2,10 +2,10 @@
 
 ## Overview
 
-The *sparksnake* library provides a set of tools to enhance the development of Spark applications, specially if they are meant to be deployed and used in AWS services, such as Glue and EMR.
+The *sparksnake* is a Python library that provides a set of tools to enhance the development of Spark applications. From beginners to experienced users, everyone who uses Spark in a local environment or even in a cloud provider can enjoy *sparksnake's* features and take the development of their applications to the next level!
 
-- Have you ever wanted to improve your Spark code with log messages and exception handling?
-- Have you ever wanted to go in a deep dive in AWS services with Spark but you got stuck setting up your code?
+- Have you ever wanted to use pre built functions for common Spark operations?
+- Have you ever wanted to deep dive into AWS services like Glue and EMR but got stuck on how to set up the service?
 - Have you ever wanted to optimize your 1k+ lines of Spark code deployed on AWS?
 
 ✨ Try *sparksnake*!
@@ -51,21 +51,20 @@ ___
 
 ## Features
 
-- 🤖 Apply common Spark operations using a few lines of code
+- 🤖 Apply common Spark operations using few lines of code
 - 💻 Start developing your Spark applications locally using the "local" mode or in any AWS services that uses Spark
-- 💡 Use methods available to turn your life as easy as possible
-- ⏳ You don't need to spend time setting up your Spark applications (locally or in a Glue job, for example)
-- 👁️‍🗨️ Enhanced observability by providing detailed log messages on CloudWatch and exception handlers
+- ⏳ Stop spending time setting up the boring stuff of your Spark applications
+- 💡 Apply the best practices on your application by structuring your code following the best practices
+- 👁️‍🗨️ Improve your aplication's observability by using detailed log messages on CloudWatch and exception handlers
 
 
 ## How Does it Work?
 
-Whenever users need to simplify the development of their Spark applications, the **sparksnake** Python library can be used. It is available on [PyPI]() and can be installed using the `pip install sparksnake` command. So, in any Python file, users can import the package and start the creation of their application by starting the `SparkManager` class using a chosen mode based on where this Spark application will be deployed.
+Whenever users need to simplify the development of their Spark applications, the *sparksnake* Python library can be used. It is available on [PyPI](https://pypi.org/project/sparksnake/) and can be installed using the `pip install sparksnake` command. One of the main goals of *sparksnake* is to put together common Spark operations as class methods that follows the best practices and can be used in any pyspark application.
 
-???+ question "What do you mean by a 'chosen mode'?"
-    Well, the idea is quite simple: the **sparksnake** library was thought to help users to build their Spark applications regardless on where it will be deployed. In other words, if you are running Spark applications locally or in AWS services like Glue and EMR, sparksnake can be fit perfect for you.
+The *sparksnake* library also helps users that are deploying Spark applications on AWS services like Glue and EMR by providing an elegant and easy way to execute specific Spark operations used on those services. For example, you can initialize a Glue job, get all job arguments and get all session and context elements using a single `init_job()` method.
 
-    Based on this strategy, the library can be set with a `mode` attribute that handles class inheritance and enables all specific features for users according to the environment where Spark is running. You will certainly find more information about this huge feature along this documentation.
+But don't worry! Everything you need to know about *sparksnake* is on this documentation page. Enjoy the read and don't miss the oportunity to start using this huge solution.
 
 ## Combining Solutions
 
@@ -77,10 +76,10 @@ The *sparksnake* Python package isn't alone. There are other complementary open 
 
 - How about the [story](story.md) about the library creation? I think you will like it!
 - Check the [Quickstart](./quickstart/basic-tutorial.md) section to start using *sparsnake*
-- At [Features](./features/demo-glue.md) page you will find usage demos to help you extract the full power of *sparksnake*
+- In the [Features](./features/demo-glue.md) page you will find usage demos to help you to extract the full power of *sparksnake*
 - The [Official Docs](./mkdocstrings/gluejobmanager.md) page brings all modules, classes and methods documentation in details
 
-## Contacts
+## Contact Me
 
 - :fontawesome-brands-github: [@ThiagoPanini](https://github.com/ThiagoPanini)
 - :fontawesome-brands-linkedin: [Thiago Panini](https://www.linkedin.com/in/thiago-panini/)
