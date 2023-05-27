@@ -76,7 +76,6 @@ nav:
       - Log: mkdocstrings/utils/log.md
     - Tester:
       - Dataframes: mkdocstrings/tester/dataframes.md
-      - Faker: mkdocstrings/tester/faker.md
 
 # Setting up MkDocs extensions
 markdown_extensions:
