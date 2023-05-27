@@ -1,57 +1,54 @@
-"""
-Módulo responsável por auxiliar na configuração de objetos
-de log instanciados via Python e utilizados no decorrer
-dos módulos e funções para proporcionar um melhor
-observability dos processos.
+"""Helps user to create and configure their logger object
+
+This module can be used to improve observability in log messages by providing
+and easy way to create and retrieve logger objects with a given configuration.
 
 ___
 """
 
-# Importando bibliotecas
+# Importing libraries
 import logging
 
 
-# Função para configuração de log
+# Creating and configuring logs
 def log_config(
     logger_name: str = __file__,
     logger_level: int = logging.INFO,
     logger_date_format: str = "%Y-%m-%d %H:%M:%S"
 ) -> logging.Logger:
-    """
-    Configuração de logs.
+    """Logger object configuration.
 
-    Função criada para facilitar a criação de configuração
-    de uma instância de Logger do Python utilizada no
-    decorrer da aplicação Spark para registros de logs
-    das atividades e das funcionalidades desenvolvidas.
+    This function can be used in any Python application in order to improve log
+    proccesses and enhance software observability. It uses the logging built-in
+    Python package to retrieve users a basic logger object with a given
+    configuration.
 
     Examples:
-        # Importando módulo
-        from utils.log import log_config
-
-        # Instanciando e configurando logger
+        ```python
+        # Getting and configuring the logger object
         logger = log_config(logger)
+        ```
 
     Args:
-        logger_name (str): Referência do objeto logger criado
-        logger_level (int): Tipo padrão do logger configurado
-        logger_date_format (str): Formato padrão de datas das mensagens
+        logger_name (str): A name for the logger object
+        logger_level (int): The type of the logger object
+        logger_date_format (str): Message format of the logger object
 
     Returns:
-        Objeto logger já configurado para o usuário
+        A preconfigured logger object
     """
 
-    # Instanciando objeto de logging
+    # Creating a logger object and setting its level
     logger = logging.getLogger(logger_name)
     logger.setLevel(logger_level)
 
-    # Configurando formato das mensagens no objeto
+    # Setting the format message
     log_format = "%(levelname)s;%(asctime)s;%(filename)s;"
     log_format += "%(lineno)d;%(message)s"
     formatter = logging.Formatter(log_format,
                                   datefmt=logger_date_format)
 
-    # Configurando stream handler do objeto de log
+    # Setting up the stream handler
     stream_handler = logging.StreamHandler()
     stream_handler.setFormatter(formatter)
     logger.addHandler(stream_handler)

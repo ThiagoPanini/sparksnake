@@ -72,6 +72,10 @@ nav:
   - Official Docs:
     - SparkETLManager class: mkdocstrings/sparketlmanager.md
     - GlueJobManager class: mkdocstrings/gluejobmanager.md
+    - Utils:
+      - Log: mkdocstrings/utils/log.md
+    - Tester:
+      - Dataframes: mkdocstrings/tester/dataframes.md
 
 # Setting up MkDocs extensions
 markdown_extensions:
@@ -102,4 +106,6 @@ extra_css:
 
 # Plugins
 plugins:
+  - search:
+      lang: en
   - mkdocstrings
