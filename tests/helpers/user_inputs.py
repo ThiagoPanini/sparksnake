@@ -43,3 +43,57 @@ FAKE_DATA_DICT = {
         }
     }
 }
+
+# A fake DataFrame schema object to create Spark DataFrames for test purposes
+FAKE_SCHEMA_INFO = [
+    {
+        "Name": "string_field",
+        "Type": "string",
+        "nullable": True
+    },
+    {
+        "Name": "int_field",
+        "Type": "int",
+        "nullable": True
+    },
+    {
+        "Name": "long_field",
+        "Type": "long",
+        "nullable": True
+    },
+    {
+        "Name": "decimal_field",
+        "Type": "decimal",
+        "nullable": True
+    },
+    {
+        "Name": "float_field",
+        "Type": "float",
+        "nullable": True
+    },
+    {
+        "Name": "double_field",
+        "Type": "double",
+        "nullable": True
+    },
+    {
+        "Name": "boolean_field",
+        "Type": "boolean",
+        "nullable": True
+    },
+    {
+        "Name": "date_field",
+        "Type": "string",
+        "nullable": True
+    },
+    {
+        "Name": "timestamp_field",
+        "Type": "string",
+        "nullable": True
+    },
+    {
+        "Name": "string_field",
+        "Type": "string",
+        "nullable": True
+    },
+]

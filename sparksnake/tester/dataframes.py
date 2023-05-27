@@ -1,65 +1,28 @@
-"""Helps users to create Spark DataFrames to be used on unit tests.
+"""Handling operations that help users to improve their test cases.
 
-This Python file handles useful functions that can be used to create Spark
-DataFrames based on JSON files containing definitions about source DataFrames
-and expected DataFrames from transformation methods.
-
-The JSON files must be configured by users and stored on configs/ folder. This
-module then defines functions to read those JSON files and return Spark
-DataFrames based on how users configured schema information on the files.
+This module puts together some useful functions created in order to provid
+an easy way to fake Spark DataFrames objects. Its features can be imported
+and applied on every scenario that demands the creation of fake data rows,
+fake schema or even fake Spark DataFrame objects (for example, a conftest
+file that defined fixtures for unit test cases).
 
 ___
 """
 
 # Importing libraries
-import json
-import findspark
-
 from pyspark.sql import SparkSession, DataFrame
 from pyspark.sql.types import StructType, StructField, StringType,\
     IntegerType, LongType, DecimalType, FloatType, DoubleType, BooleanType,\
     DateType, TimestampType
 
+from faker import Faker
+from decimal import Decimal
+from random import randrange
 
-# Getting the active SparkSession
-findspark.init()
-spark = SparkSession.builder.getOrCreate()
 
-
-# Creating a Python dictionary based on the read of a JSON file
-def get_json_data_info(
-    json_path: str,
-    json_main_key: str = "dataframes"
-) -> list:
-    """Reads a JSON file with predefined data from job data sources.
-
-    This functions receives a path from a JSON file and a main key in order to
-    return a Python list object gotten after executing the json.load() method.
-
-    Examples:
-        ```python
-        json_data_info = get_json_data_info(
-            json_path="../configs/source_schemas.json",
-            json_main_key="dataframes"
-        )
-        ```
-
-    Args:
-        json_path (str):
-            The path for the JSON file provided by user with all information
-            needed to create Spark DataFrames for all source data for the job
-
-        json_main_key (str):
-            The main key of the JSON file according to how the JSON file was
-            configured
-
-    Returns:
-        A Python list containing all information of data sources put in\
-        the JSON file.
-    """
-
-    with open(json_path, "r") as f:
-        return json.load(f)[json_main_key]
+# Creating a faker object
+faker = Faker()
+Faker.seed(42)
 
 
 # Parsing a string for a dtype into a valid Spark dtype
@@ -112,7 +75,12 @@ def parse_string_to_spark_dtype(dtype: str):
 
 
 # Creating a valid Spark DataFrame schema from a list with fields information
-def create_spark_schema_from_schema_info(schema_info: list) -> StructType:
+def generate_dataframe_schema(
+    schema_info: list,
+    attribute_name_key: str = "Name",
+    dtype_key: str = "Type",
+    nullable_key: str = "nullable"
+) -> StructType:
     """Generates a StructType Spark schema based on a list of fields info.
 
     This function receives a preconfigured Python list extracted from a JSON
@@ -124,25 +92,38 @@ def create_spark_schema_from_schema_info(schema_info: list) -> StructType:
     Examples:
         ```python
         # Showing an example of a input schema list
-        schema_list = [
+        schema_info = [
             {
-                "attribute": "idx",
-                "dtype": "int",
+                "Name": "idx",
+                "Type": "int",
                 "nullable": true
             },
             {
-                "attribute": "order_id",
-                "dtype": "string",
+                "Name": "order_id",
+                "Type": "string",
                 "nullable": true
             }
         ]
 
         # Returning a valid Spark schema object based on a dictionary
-        schema = create_spark_schema_from_dict(schema_info)
+        schema = generate_dataframe_schema(schema_info)
         ```
 
     Args:
-        schema_info (list): A list with information about fields of a DataFrame
+        schema_info (list):
+            A list with information about fields of a DataFrame
+
+        attribute_name_key (str):
+            A string identification of the attribute name defined on every
+            attribute dictionary
+
+        dtype_key (str):
+            A string identification of the attribute type defined on every
+            attribute dictionary
+
+        nullable_key (bool):
+            A boolean flag that tells if the given attribute defined in
+            the dictionary can hold null values
 
     Returns:
         A StructType object structured in such a way that makes it possible to\
@@ -152,83 +133,182 @@ def create_spark_schema_from_schema_info(schema_info: list) -> StructType:
     # Extracing the schema based on the preconfigured dict info
     schema = StructType([
         StructField(
-            field_info["attribute"],
-            parse_string_to_spark_dtype(field_info["dtype"])(),
-            nullable=field_info["nullable"]
+            field_info[attribute_name_key],
+            parse_string_to_spark_dtype(field_info[dtype_key])(),
+            nullable=field_info[nullable_key]
+            if nullable_key in field_info.keys() else True
         ) for field_info in schema_info
     ])
 
     return schema
 
 
-# Creating a dictionary with DataFrames to mock all sources
-def create_spark_dataframe_from_json_info(
-    json_path: str,
-    json_main_key: str = "dataframes",
-    spark: SparkSession = spark,
-) -> dict:
-    """Creates a dictionary of Spark DataFrames based on inputs on a JSON file.
+# Generating fake data based on native Spark data types and the Faker library
+def generate_fake_data_from_schema(
+    schema: StructType,
+    n_rows: int = 5
+) -> tuple:
+    """Generates fake data based on a Struct Type Spark schema object.
 
-    This function receives the path for a user defined JSON file containing
-    all information needed to specify all the sources to be on the Glue job
-    deployed and also testes on the pipeline in order to return a dictionary
-    of Spark DataFrames based on configs provided by users on the JSON file.
+    This function receives a predefined DataFrame schema in order to return
+    a list of tuples with fake data generated based on attribute types and
+    the Faker library. The way the fake data is structured makes it easy to
+    create Spark DataFrames to be used for test purposes.
 
     Examples:
         ```python
-        # Defining the path for the JSON file that defines all source data
-        json_path = "../configs/source_schemas.json"
+        # Defining a list with attributes info to be used on schema creation
+        schema_info = [
+            {
+                "Name": "idx",
+                "Type": "int",
+                "nullable": true
+            },
+            {
+                "Name": "order_id",
+                "Type": "string",
+                "nullable": true
+            }
+        ]
 
-        # Getting a dictionary of Spark DataFrames based on user configs
-        source_dataframes = create_spark_dataframe_from_json_info(json_path)
+        # Returning a valid Spark schema object based on a dictionary
+        schema = generate_dataframe_schema(schema_info)
+
+        # Generating fake data based on a Spark DataFrame schema
+        fake_data = generate_fake_data_from_schema(schema=schema, n_rows=10)
         ```
 
     Args:
-        json_path (str):
-            The path for the JSON file provided by user with all information
-            needed to create Spark DataFrames for all source data for the job
-
-        spark (pyspark.sql.SparkSession):
-            A SparkSession object to call Spark methods
+        schema (StructType): a Spark DataFrame schema
+        n_rows (int): the number of fake rows to be generated
 
     Returns:
-        A Python dictionary composed by multiple DataFrame objects based on\
-        inputs provided by users on the JSON file.
+        A list of tuples where each tuple representes a row with fake data\
+        generated using the Faker library according to each data type of\
+        the given Spark DataFrame schema. For example, for a string attribute\
+        the fake data will be generated using the `faker.word()` method. For a\
+        date attribute, the fake data will be generated using the\
+        `faker.date_this_year()`. And so it goes on for all other dtypes.
     """
 
-    # Reading JSON file with all schemas definition
-    json_data_info = get_json_data_info(
-        json_path=json_path,
-        json_main_key=json_main_key
+    # Creating fake data based on each schema attribute
+    fake_data_list = []
+    for _ in range(n_rows):
+        # Iterting over columns and faking data
+        fake_row = []
+        for field in schema:
+            dtype = field.dataType.typeName()
+            if dtype == "string":
+                fake_row.append(faker.word())
+            elif dtype == "integer":
+                fake_row.append(randrange(-10000, 10000))
+            elif dtype == "long":
+                fake_row.append(randrange(-10000, 10000))
+            elif dtype == "decimal":
+                fake_row.append(Decimal(randrange(1, 100000)))
+            elif dtype == "boolean":
+                fake_row.append(faker.boolean())
+            elif dtype == "date":
+                fake_row.append(faker.date_this_year())
+            elif dtype == "timestamp":
+                fake_row.append(faker.date_time_this_year())
+
+        # Appending the row to the data list
+        fake_data_list.append(fake_row)
+
+    # Generating a list of tuples
+    return [tuple(row) for row in fake_data_list]
+
+
+# Generating Spark DataFrame objects with fake data
+def generate_fake_dataframe(
+    spark_session: SparkSession,
+    schema_info: list,
+    attribute_name_key: str = "Name",
+    dtype_key: str = "Type",
+    nullable_key: str = "nullable",
+    n_rows: int = 5
+) -> DataFrame:
+    """Creates a Spark DataFrame with fake data using Faker.
+
+    This function receives a list of dictionaries, each one populated with
+    information about the desired attributes defined in order to create a
+    Spark DataFrame with fake data. So, this list of dictionaries (schema_info
+    function argument) is used to create a StructType Spark DataFrame schema
+    object and this objects is used to generate fake data using Faker and based
+    on the type of the attributes defined on the schema. Finally, with the
+    schema object and the fake data, this function returns a Spark DataFrame
+    that can be used for any purposes.
+
+    This function calls the generate_dataframe_schema() and
+    generate_fake_data_from_schema() in order to execute all the the steps
+    explained above.
+
+    Examples:
+        ```python
+        # Defining a list with attributes info to be used on schema creation
+        schema_info = [
+            {
+                "Name": "idx",
+                "Type": "int",
+                "nullable": true
+            },
+            {
+                "Name": "order_id",
+                "Type": "string",
+                "nullable": true
+            }
+        ]
+
+        # Generating a Spark DataFrame object with fake data
+        fake_df = generate_fake_dataframe(schema_info)
+        ```
+
+    Args:
+        spark_session (SparkSession):
+            A SparkSession object that is used to call createDataFrame method
+
+        schema_info (list):
+            A list with information about fields of a DataFrame. Check the
+            generate_dataframe_schema() for more details.
+
+        attribute_name_key (str):
+            A string identification of the attribute name defined on every
+            attribute dictionary. Check the generate_dataframe_schema() for
+            more details.
+
+        dtype_key (str):
+            A string identification of the attribute type defined on every
+            attribute dictionary. Check the generate_dataframe_schema() for
+            more details.
+
+        nullable_key (bool):
+            A boolean flag that tells if the given attribute defined in
+            the dictionary can hold null values. Check the
+            generate_dataframe_schema() for more details.
+
+        n_rows (int):
+            The number of fake rows to be generated. Check the
+            generate_fake_data_from_schema() for more details.
+
+    Returns:
+        A new Spark DataFrame with fake data generated by Faker providers and
+        Python built-in libraries.
+    """
+
+    # Returning a valid Spark schema object based on a dictionary
+    schema = generate_dataframe_schema(
+        schema_info=schema_info,
+        attribute_name_key=attribute_name_key,
+        dtype_key=dtype_key,
+        nullable_key=nullable_key
     )
 
-    # Creating an empty dict to store all source DataFrames
-    sources_dataframes = {}
+    # Generating fake data based on a Spark DataFrame schema
+    fake_data = generate_fake_data_from_schema(schema=schema, n_rows=n_rows)
 
-    # Iterating over all source schemas in order to create Spark DataFrames
-    for source_data in json_data_info:
-        # Returning a valid Spark DataFrame schema
-        schema = create_spark_schema_from_schema_info(source_data["schema"])
-
-        # Checking if users want to create an empty DataFrame
-        if source_data["empty"]:
-            # Creating a list of empty tuples to fill Dataframe with null data
-            data = [tuple([None] * len(source_data["schema"]))]
-        else:
-            # Checks if users want to fill DataFrames with fake data
-            if source_data["fake_data"]:
-                pass  # ToDo: function to fake data based on dtype using faker
-            else:
-                # Using data provided by users in the JSON file
-                data = [tuple(row) for row in source_data["data"]]
-
-        # Creating a Spark DataFrame and adding a new entry on dictionary
-        df_reference = source_data["dataframe_reference"]
-        sources_dataframes[df_reference] = spark.createDataFrame(
-            data=data, schema=schema
-        )
-
-    return sources_dataframes
+    # Returning a fake Spark DataFrame
+    return spark_session.createDataFrame(data=fake_data, schema=schema)
 
 
 # Comparing Spark schemas based on custom conditions
