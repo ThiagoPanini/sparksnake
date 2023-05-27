@@ -11,12 +11,14 @@ import sys
 import pytest
 
 from sparksnake.manager import SparkETLManager
-from sparksnake.tester.dataframes import generate_fake_dataframe
+from sparksnake.tester.dataframes import generate_fake_dataframe,\
+    generate_dataframe_schema
 
 from tests.helpers.user_inputs import FAKE_ARGV_LIST, FAKE_DATA_DICT,\
     FAKE_SCHEMA_INFO
 
 from pyspark.sql import SparkSession, DataFrame
+from pyspark.sql.types import StructType
 
 
 # Getting the active SparkSession object (or creating one)
@@ -57,3 +59,9 @@ def df_fake(spark_session) -> DataFrame:
         spark_session=spark_session,
         schema_info=FAKE_SCHEMA_INFO
     )
+
+
+# A StructType schema object based on a predefined list of attributes
+@pytest.fixture()
+def fake_schema() -> StructType:
+    return generate_dataframe_schema(schema_info=FAKE_SCHEMA_INFO)

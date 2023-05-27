@@ -8,9 +8,13 @@ ___
 
 # Importing libraries
 import pytest
+
 from sparksnake.tester.dataframes import parse_string_to_spark_dtype
+
+from tests.helpers.user_inputs import FAKE_SCHEMA_INFO
+
 from pyspark.sql.types import StringType, IntegerType, LongType, DecimalType,\
-    FloatType, DoubleType, BooleanType, DateType, TimestampType
+    FloatType, DoubleType, BooleanType, DateType, TimestampType, StructType
 
 
 @pytest.mark.tester
@@ -193,3 +197,64 @@ def test_error_when_trying_to_parse_an_invalid_string_to_spark_dtype():
 
     with pytest.raises(TypeError):
         _ = parse_string_to_spark_dtype(dtype="foo")
+
+
+@pytest.mark.tester
+@pytest.mark.dataframes
+@pytest.mark.generate_dataframe_schema
+def test_function_generate_dataframe_schema_returns_a_structtype_object(
+    fake_schema
+):
+    """
+    G: Given that users want to create a Spark DataFrame schema object using
+       a predefined schema list with attributes info
+    W: When the funtion generate_dataframe_schema() is called
+    T: Then the return object must be a StructType object
+    """
+
+    assert type(fake_schema) is StructType
+
+
+@pytest.mark.tester
+@pytest.mark.dataframes
+@pytest.mark.generate_dataframe_schema
+def test_schema_object_generated_contains_all_predefined_field_names(
+    fake_schema
+):
+    """
+    G: Given that users want to create a Spark DataFrame schema object using
+       a predefined schema list with attributes info
+    W: When the funtion generate_dataframe_schema() is called
+    T: Then the schema object returned must have all field names previously
+       defined by user on the list used to generate the schema
+    """
+
+    # Extracting the field names of the user predefined attributes list
+    expected_field_names = [field["Name"] for field in FAKE_SCHEMA_INFO]
+
+    assert fake_schema.fieldNames() == expected_field_names
+
+
+@pytest.mark.tester
+@pytest.mark.dataframes
+@pytest.mark.generate_dataframe_schema
+def test_schema_object_generated_contains_all_predefined_data_types(
+    fake_schema
+):
+    """
+    G: Given that users want to create a Spark DataFrame schema object using
+       a predefined schema list with attributes info
+    W: When the funtion generate_dataframe_schema() is called
+    T: Then the schema object returned must have all data types previously
+       defined by user on the list used to generate the schema
+    """
+
+    # Extracting the field names of the user predefined attributes list
+    expected_dtypes = [
+        parse_string_to_spark_dtype(f["Type"]) for f in FAKE_SCHEMA_INFO
+    ]
+
+    # Extracting the data types on the returned schema
+    schema_dtypes = [type(field.dataType) for field in fake_schema]
+
+    assert schema_dtypes == expected_dtypes
