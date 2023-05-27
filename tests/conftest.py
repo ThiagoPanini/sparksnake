@@ -11,18 +11,16 @@ import sys
 import pytest
 
 from sparksnake.manager import SparkETLManager
+from sparksnake.tester.dataframes import generate_fake_dataframe
 
-from tests.helpers.faker import fake_dataframe
 from tests.helpers.user_inputs import FAKE_ARGV_LIST, FAKE_DATA_DICT,\
-    FAKE_SCHEMA_DTYPES
+    FAKE_SCHEMA_INFO
 
 from pyspark.sql import SparkSession, DataFrame
 
 
-# Creating a SparkSession object
-spark = SparkSession.builder\
-    .appName("sparksnake-conftest-file")\
-    .getOrCreate()
+# Getting the active SparkSession object (or creating one)
+spark = SparkSession.builder.getOrCreate()
 
 
 # Returning the SparkSession object as a fixture
@@ -54,5 +52,8 @@ def spark_manager_glue() -> SparkETLManager:
 
 # A fake Spark DataFrame object
 @pytest.fixture()
-def df_fake() -> DataFrame:
-    return fake_dataframe(spark, FAKE_SCHEMA_DTYPES)
+def df_fake(spark_session) -> DataFrame:
+    return generate_fake_dataframe(
+        spark_session=spark_session,
+        schema_info=FAKE_SCHEMA_INFO
+    )

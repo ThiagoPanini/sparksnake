@@ -17,12 +17,15 @@ from pyspark.sql.types import StructType, StructField, StringType,\
 
 from faker import Faker
 from decimal import Decimal
-from random import randrange
+from random import random, randrange
 
 
 # Creating a faker object
 faker = Faker()
 Faker.seed(42)
+
+# Getting the active SparkSession object (or creating one)
+spark = SparkSession.builder.getOrCreate()
 
 
 # Parsing a string for a dtype into a valid Spark dtype
@@ -200,12 +203,14 @@ def generate_fake_data_from_schema(
             dtype = field.dataType.typeName()
             if dtype == "string":
                 fake_row.append(faker.word())
-            elif dtype == "integer":
+            elif dtype in ("int", "integer"):
                 fake_row.append(randrange(-10000, 10000))
-            elif dtype == "long":
+            elif dtype in ("bigint", "long"):
                 fake_row.append(randrange(-10000, 10000))
             elif dtype == "decimal":
                 fake_row.append(Decimal(randrange(1, 100000)))
+            elif dtype in ("float", "double"):
+                fake_row.append(float(random() * randrange(1, 100000)))
             elif dtype == "boolean":
                 fake_row.append(faker.boolean())
             elif dtype == "date":

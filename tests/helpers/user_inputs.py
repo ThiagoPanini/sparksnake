@@ -52,7 +52,7 @@ FAKE_SCHEMA_INFO = [
         "nullable": True
     },
     {
-        "Name": "int_field",
+        "Name": "integer_field",
         "Type": "int",
         "nullable": True
     },
@@ -83,17 +83,12 @@ FAKE_SCHEMA_INFO = [
     },
     {
         "Name": "date_field",
-        "Type": "string",
+        "Type": "date",
         "nullable": True
     },
     {
         "Name": "timestamp_field",
-        "Type": "string",
-        "nullable": True
-    },
-    {
-        "Name": "string_field",
-        "Type": "string",
-        "nullable": True
-    },
+        "Type": "timestamp",
+        "nullable": False
+    }
 ]
