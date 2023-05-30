@@ -12,7 +12,7 @@ from decimal import Decimal
 from datetime import date, datetime
 
 from sparksnake.tester.dataframes import parse_string_to_spark_dtype,\
-   compare_dataframe_schemas, generate_fake_dataframe
+    compare_dataframe_schemas, generate_fake_dataframe
 
 from tests.helpers.user_inputs import FAKE_SCHEMA_INFO
 
