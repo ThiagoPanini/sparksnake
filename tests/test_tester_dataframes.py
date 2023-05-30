@@ -8,6 +8,8 @@ ___
 
 # Importing libraries
 import pytest
+from decimal import Decimal
+from datetime import date, datetime
 
 from sparksnake.tester.dataframes import parse_string_to_spark_dtype
 
@@ -15,6 +17,7 @@ from tests.helpers.user_inputs import FAKE_SCHEMA_INFO
 
 from pyspark.sql.types import StringType, IntegerType, LongType, DecimalType,\
     FloatType, DoubleType, BooleanType, DateType, TimestampType, StructType
+from pyspark.sql import DataFrame
 
 
 @pytest.mark.tester
@@ -258,3 +261,92 @@ def test_schema_object_generated_contains_all_predefined_data_types(
     schema_dtypes = [type(field.dataType) for field in fake_schema]
 
     assert schema_dtypes == expected_dtypes
+
+
+@pytest.mark.tester
+@pytest.mark.dataframes
+@pytest.mark.generate_fake_data_from_schema
+def test_function_generate_fake_data_from_schema_returns_a_list(fake_data):
+    """
+    G: Given that users want to generate fake data based on a DataFrame schema
+    W: When the function generate_fake_data_from_schema() is called
+    T: Then the returned object must be a list
+    """
+
+    assert type(fake_data) is list
+
+
+@pytest.mark.tester
+@pytest.mark.dataframes
+@pytest.mark.generate_fake_data_from_schema
+def test_function_generate_fake_data_from_schema_returns_a_list_of_tuples(
+    fake_data
+):
+    """
+    G: Given that users want to generate fake data based on a DataFrame schema
+    W: When the function generate_fake_data_from_schema() is called
+    T: Then all elements for the returned list must be tuples
+    """
+
+    # Extracting the type of the inner elements of the fake_data list
+    fake_data_inner_elements = [type(row) for row in fake_data]
+    fake_data_inner_elements_type = list(set(fake_data_inner_elements))[0]
+
+    assert fake_data_inner_elements_type is tuple
+
+
+@pytest.mark.tester
+@pytest.mark.dataframes
+@pytest.mark.generate_fake_data_from_schema
+def test_function_generate_fake_data_from_schema_returns_correct_num_of_rows(
+    fake_data
+):
+    """
+    G: Given that users want to generate fake data based on a DataFrame schema
+    W: When the function generate_fake_data_from_schema() is called with
+       n_rows=5 to generate exactly 5 rows
+    T: Then the returned object must be a list with 5 elements
+    """
+
+    assert len(fake_data) == 5
+
+
+@pytest.mark.tester
+@pytest.mark.dataframes
+@pytest.mark.generate_fake_data_from_schema
+def test_function_generate_fake_data_from_schema_returns_expected_data_types(
+    fake_data
+):
+    """
+    G: Given that users want to generate fake data based on a DataFrame schema
+    W: When the function generate_fake_data_from_schema() with a predefined
+       schema
+    T: Then the elements returned in the list must have a set of expected
+       data types based on the input schema provided
+    """
+
+    # Extracting data types of the generated fake data
+    fake_data_types = [[type(element) for element in row] for row in fake_data]
+
+    # Getting a sample row to compare
+    row_data_types = fake_data_types[0]
+
+    # Creating an expected list of data types
+    expec_types = [str, int, int, Decimal, float, float, bool, date, datetime]
+
+    assert row_data_types == expec_types
+
+
+@pytest.mark.tester
+@pytest.mark.dataframes
+@pytest.mark.generate_fake_dataframe
+def test_function_generate_fake_dataframe_returns_a_spark_dataframe_object(
+    df_fake
+):
+    """
+    G: Given users want to generate a fake Spark DataFrame object
+    W: When the function generate_fake_dataframe() is called
+    T: Then the return must be a Spark DataFrame object
+    """
+
+    assert type(df_fake) is DataFrame
