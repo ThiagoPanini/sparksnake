@@ -175,15 +175,10 @@ class SparkETLManager(ManagerClass):
 
         # Looking out for local mode
         elif self.mode == "local":
-            # Checking if user wants to pass its own SparkSession object
-            if "spark" in kwargs and type(kwargs["spark"]) is SparkSession:
-                self.spark = kwargs["spark"]
-            else:
-                logger.info("Creating a SparkSession object to be used in a "
-                            "local environment")
-                self.spark = SparkSession.builder\
-                    .appName("sparksnake-app")\
-                    .getOrCreate()
+            # Getting or creating a SparkSession object as a class attribute
+            logger.info("Getting or creating a SparkSession object to be used "
+                        "in the local environment")
+            self.spark = SparkSession.builder.getOrCreate()
 
             # Logging initialization message
             logger.info("The class was succesfully initialized with 'local' "
