@@ -1,10 +1,10 @@
 # Project main info
 site_name: sparksnake
-site_url: https://sparksnake.readthedocs.io/pt/latest/
+site_url: https://sparksnake.readthedocs.io/en/latest/
 site_author: Thiago Panini
 site_description: >-
-  Componentes e elementos criados para facilitar a jornada de
-  construção de jobs Glue na AWS
+  A Python package with useful features delivered in order to make
+  the journey of building Spark applications a lot more easier
 
 # Source repo info
 repo_name: ThiagoPanini/sparksnake
@@ -36,14 +36,14 @@ theme:
       accent: indigo
       toggle:
         icon: material/weather-sunny
-        name: Clique para alterar para modo noturno
+        name: Tap for dark mode
     - media: "(prefers-color-scheme: dark)"
       scheme: slate
       primary: deep purple
       accent: deep purple
       toggle:
         icon: material/weather-night
-        name: Clique para alterar para modo claro
+        name: Tap for light mode
 
   # Setting up template features
   features:
