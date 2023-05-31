@@ -316,8 +316,55 @@ def generate_fake_dataframe(
     return spark_session.createDataFrame(data=fake_data, schema=schema)
 
 
+# Generating multiple DataFrames based on a user defined Python dictionary
+def generate_dataframes_dict(
+    definition_dict: dict,
+    spark_session: SparkSession
+) -> dict:
+    # Defining a dictionary to hold all DataFrame objects
+    dfs_dict = {}
+
+    # Iterating over all source dataframe definition
+    for df_key in definition_dict:
+        # Getting the dictionary definition for the given DataFrame of the loop
+        df_info = definition_dict[df_key]
+
+        # Collecting the schema definition from the dictionary
+        schema_info = df_info["fields"]
+
+        # Checking if the DataFrame will be created with fake data
+        if bool(df_info["fake_data"]):
+            df = generate_fake_dataframe(
+                spark_session=spark_session,
+                schema_info=schema_info
+            )
+
+        # Checking if the DataFrame will be empty
+        elif bool(df_info["empty"]):
+            # Generating a schema object and setting the empty data list
+            schema = generate_dataframe_schema(schema_info=schema_info)
+            data = [()]
+
+            # Creating the DataFrame object
+            df = spark.createDataFrame(data=data, schema=schema)
+
+        # Checking if the DataFrame rows were provided
+        else:
+            # Generating a schema object and getting the data provided
+            schema = generate_dataframe_schema(schema_info=schema_info)
+            data = df_info["data"]
+
+            # Creating the DataFrame object
+            df = spark.createDataFrame(data=data, schema=schema)
+
+        # Adding the DataFrame object into the dictionary
+        dfs_dict[df_info["dataframe_reference"]] = df
+
+    return dfs_dict
+
+
 # Comparing Spark schemas based on custom conditions
-def compare_dataframe_schemas(
+def compare_schemas(
     df1: DataFrame,
     df2: DataFrame,
     compare_nullable_info: bool = False

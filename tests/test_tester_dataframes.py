@@ -12,7 +12,7 @@ from decimal import Decimal
 from datetime import date, datetime
 
 from sparksnake.tester.dataframes import parse_string_to_spark_dtype,\
-    compare_dataframe_schemas, generate_fake_dataframe
+    compare_schemas, generate_fake_dataframe
 
 from tests.helpers.user_inputs import FAKE_SCHEMA_INFO
 
@@ -355,27 +355,27 @@ def test_function_generate_fake_dataframe_returns_a_spark_dataframe_object(
 
 @pytest.mark.tester
 @pytest.mark.dataframes
-@pytest.mark.compare_dataframe_schemas
+@pytest.mark.compare_schemas
 def test_compare_schemas_returns_true_when_comparing_equal_schemas(df_fake):
     """
     G: Given that users want to compare two Spark DataFrame's schemas
-    W: When the function compare_dataframe_schemas() is called with two Spark
+    W: When the function compare_schemas() is called with two Spark
        DataFrames with the same schema
     T: Then the return must be True
     """
 
-    assert compare_dataframe_schemas(df1=df_fake, df2=df_fake)
+    assert compare_schemas(df1=df_fake, df2=df_fake)
 
 
 @pytest.mark.tester
 @pytest.mark.dataframes
-@pytest.mark.compare_dataframe_schemas
+@pytest.mark.compare_schemas
 def test_compare_schemas_returns_false_when_comparing_different_schemas(
     spark_session
 ):
     """
     G: Given that users want to compare two Spark DataFrame's schemas
-    W: When the function compare_dataframe_schemas() is called with two Spark
+    W: When the function compare_schemas() is called with two Spark
        DataFrames with different schema
     T: Then the return must be False
     """
@@ -413,18 +413,18 @@ def test_compare_schemas_returns_false_when_comparing_different_schemas(
     df_fake_2 = generate_fake_dataframe(spark_session, fake_schema_2)
 
     # Comparing both DataFrames
-    assert not compare_dataframe_schemas(df1=df_fake_1, df2=df_fake_2)
+    assert not compare_schemas(df1=df_fake_1, df2=df_fake_2)
 
 
 @pytest.mark.tester
 @pytest.mark.dataframes
-@pytest.mark.compare_dataframe_schemas
+@pytest.mark.compare_schemas
 def test_compare_schemas_nullable_info_return_false_when_nullable_is_diff(
     spark_session
 ):
     """
     G: Given that users want to compare two Spark DataFrame's schemas
-    W: When the function compare_dataframe_schemas() is called with two Spark
+    W: When the function compare_schemas() is called with two Spark
        DataFrames with schemas having the same attributes and the same data
        types but different nullable flag (considering the function is called
        with flag compare_nullable_info=True)
@@ -464,7 +464,7 @@ def test_compare_schemas_nullable_info_return_false_when_nullable_is_diff(
     df_fake_2 = generate_fake_dataframe(spark_session, fake_schema_2)
 
     # Comparing both DataFrames
-    assert not compare_dataframe_schemas(
+    assert not compare_schemas(
         df1=df_fake_1,
         df2=df_fake_2,
         compare_nullable_info=True
