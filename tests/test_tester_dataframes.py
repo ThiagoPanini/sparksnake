@@ -8,13 +8,17 @@ ___
 
 # Importing libraries
 import pytest
+from decimal import Decimal
+from datetime import date, datetime
 
-from sparksnake.tester.dataframes import parse_string_to_spark_dtype
+from sparksnake.tester.dataframes import parse_string_to_spark_dtype,\
+    compare_dataframe_schemas, generate_fake_dataframe
 
 from tests.helpers.user_inputs import FAKE_SCHEMA_INFO
 
 from pyspark.sql.types import StringType, IntegerType, LongType, DecimalType,\
     FloatType, DoubleType, BooleanType, DateType, TimestampType, StructType
+from pyspark.sql import DataFrame
 
 
 @pytest.mark.tester
@@ -258,3 +262,210 @@ def test_schema_object_generated_contains_all_predefined_data_types(
     schema_dtypes = [type(field.dataType) for field in fake_schema]
 
     assert schema_dtypes == expected_dtypes
+
+
+@pytest.mark.tester
+@pytest.mark.dataframes
+@pytest.mark.generate_fake_data_from_schema
+def test_function_generate_fake_data_from_schema_returns_a_list(fake_data):
+    """
+    G: Given that users want to generate fake data based on a DataFrame schema
+    W: When the function generate_fake_data_from_schema() is called
+    T: Then the returned object must be a list
+    """
+
+    assert type(fake_data) is list
+
+
+@pytest.mark.tester
+@pytest.mark.dataframes
+@pytest.mark.generate_fake_data_from_schema
+def test_function_generate_fake_data_from_schema_returns_a_list_of_tuples(
+    fake_data
+):
+    """
+    G: Given that users want to generate fake data based on a DataFrame schema
+    W: When the function generate_fake_data_from_schema() is called
+    T: Then all elements for the returned list must be tuples
+    """
+
+    # Extracting the type of the inner elements of the fake_data list
+    fake_data_inner_elements = [type(row) for row in fake_data]
+    fake_data_inner_elements_type = list(set(fake_data_inner_elements))[0]
+
+    assert fake_data_inner_elements_type is tuple
+
+
+@pytest.mark.tester
+@pytest.mark.dataframes
+@pytest.mark.generate_fake_data_from_schema
+def test_function_generate_fake_data_from_schema_returns_correct_num_of_rows(
+    fake_data
+):
+    """
+    G: Given that users want to generate fake data based on a DataFrame schema
+    W: When the function generate_fake_data_from_schema() is called with
+       n_rows=5 to generate exactly 5 rows
+    T: Then the returned object must be a list with 5 elements
+    """
+
+    assert len(fake_data) == 5
+
+
+@pytest.mark.tester
+@pytest.mark.dataframes
+@pytest.mark.generate_fake_data_from_schema
+def test_function_generate_fake_data_from_schema_returns_expected_data_types(
+    fake_data
+):
+    """
+    G: Given that users want to generate fake data based on a DataFrame schema
+    W: When the function generate_fake_data_from_schema() with a predefined
+       schema
+    T: Then the elements returned in the list must have a set of expected
+       data types based on the input schema provided
+    """
+
+    # Extracting data types of the generated fake data
+    fake_data_types = [[type(element) for element in row] for row in fake_data]
+
+    # Getting a sample row to compare
+    row_data_types = fake_data_types[0]
+
+    # Creating an expected list of data types
+    expec_types = [str, int, int, Decimal, float, float, bool, date, datetime]
+
+    assert row_data_types == expec_types
+
+
+@pytest.mark.tester
+@pytest.mark.dataframes
+@pytest.mark.generate_fake_dataframe
+def test_function_generate_fake_dataframe_returns_a_spark_dataframe_object(
+    df_fake
+):
+    """
+    G: Given users want to generate a fake Spark DataFrame object
+    W: When the function generate_fake_dataframe() is called
+    T: Then the return must be a Spark DataFrame object
+    """
+
+    assert type(df_fake) is DataFrame
+
+
+@pytest.mark.tester
+@pytest.mark.dataframes
+@pytest.mark.compare_dataframe_schemas
+def test_compare_schemas_returns_true_when_comparing_equal_schemas(df_fake):
+    """
+    G: Given that users want to compare two Spark DataFrame's schemas
+    W: When the function compare_dataframe_schemas() is called with two Spark
+       DataFrames with the same schema
+    T: Then the return must be True
+    """
+
+    assert compare_dataframe_schemas(df1=df_fake, df2=df_fake)
+
+
+@pytest.mark.tester
+@pytest.mark.dataframes
+@pytest.mark.compare_dataframe_schemas
+def test_compare_schemas_returns_false_when_comparing_different_schemas(
+    spark_session
+):
+    """
+    G: Given that users want to compare two Spark DataFrame's schemas
+    W: When the function compare_dataframe_schemas() is called with two Spark
+       DataFrames with different schema
+    T: Then the return must be False
+    """
+
+    # Defining the attributes for the first fake DataFrame
+    fake_schema_1 = [
+        {
+            "Name": "id",
+            "Type": "string",
+            "nullable": True
+        },
+        {
+            "Name": "value",
+            "Type": "integer",  # This is the difference!
+            "nullable": True
+        }
+    ]
+
+    # Defining the attributes for the second fake DataFrame
+    fake_schema_2 = [
+        {
+            "Name": "id",
+            "Type": "string",
+            "nullable": True
+        },
+        {
+            "Name": "value",
+            "Type": "string",
+            "nullable": True
+        }
+    ]
+
+    # Creating fake DataFrames
+    df_fake_1 = generate_fake_dataframe(spark_session, fake_schema_1)
+    df_fake_2 = generate_fake_dataframe(spark_session, fake_schema_2)
+
+    # Comparing both DataFrames
+    assert not compare_dataframe_schemas(df1=df_fake_1, df2=df_fake_2)
+
+
+@pytest.mark.tester
+@pytest.mark.dataframes
+@pytest.mark.compare_dataframe_schemas
+def test_compare_schemas_nullable_info_return_false_when_nullable_is_diff(
+    spark_session
+):
+    """
+    G: Given that users want to compare two Spark DataFrame's schemas
+    W: When the function compare_dataframe_schemas() is called with two Spark
+       DataFrames with schemas having the same attributes and the same data
+       types but different nullable flag (considering the function is called
+       with flag compare_nullable_info=True)
+    T: Then the return must be False
+    """
+
+    # Defining the attributes for the first fake DataFrame
+    fake_schema_1 = [
+        {
+            "Name": "id",
+            "Type": "string",
+            "nullable": True
+        },
+        {
+            "Name": "value",
+            "Type": "integer",
+            "nullable": True
+        }
+    ]
+
+    # Defining the attributes for the second fake DataFrame
+    fake_schema_2 = [
+        {
+            "Name": "id",
+            "Type": "string",
+            "nullable": True
+        },
+        {
+            "Name": "value",
+            "Type": "integer",
+            "nullable": False  # This is the difference!
+        }
+    ]
+
+    # Creating fake DataFrames
+    df_fake_1 = generate_fake_dataframe(spark_session, fake_schema_1)
+    df_fake_2 = generate_fake_dataframe(spark_session, fake_schema_2)
+
+    # Comparing both DataFrames
+    assert not compare_dataframe_schemas(
+        df1=df_fake_1,
+        df2=df_fake_2,
+        compare_nullable_info=True
+    )
