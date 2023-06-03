@@ -81,3 +81,65 @@ FAKE_SCHEMA_INFO = [
         "nullable": False
     }
 ]
+
+# A fake dictionary with multiple info about DataFrames to be created
+FAKE_DATAFRAMES_DEFINITION = {
+    "tbl_with_fake_data": {
+        "name": "tbl_with_fake_data",
+        "dataframe_reference": "df_with_fake_data",
+        "empty": False,
+        "fake_data": True,
+        "fields": [
+            {
+                "Name": "idx",
+                "Type": "int",
+                "nullable": True
+            },
+            {
+                "Name": "category",
+                "Type": "string",
+                "nullable": True
+            }
+        ]
+    },
+    "tbl_with_empty_data": {
+        "name": "tbl_with_empty_data",
+        "dataframe_reference": "df_with_empty_data",
+        "empty": True,
+        "fake_data": False,
+        "fields": [
+            {
+                "Name": "idx",
+                "Type": "int",
+                "nullable": True
+            },
+            {
+                "Name": "category",
+                "Type": "string",
+                "nullable": True
+            }
+        ]
+    },
+    "tbl_with_predefined_data": {
+        "name": "tbl_with_predefined_data",
+        "dataframe_reference": "df_with_predefined_data",
+        "empty": False,
+        "fake_data": False,
+        "fields": [
+            {
+                "Name": "idx",
+                "Type": "int",
+                "nullable": True
+            },
+            {
+                "Name": "category",
+                "Type": "string",
+                "nullable": True
+            }
+        ],
+        "data": [
+            (1, "foo"),
+            (2, "bar")
+        ]
+    },
+}

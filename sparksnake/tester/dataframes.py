@@ -343,7 +343,7 @@ def generate_dataframes_dict(
         elif bool(df_info["empty"]):
             # Generating a schema object and setting the empty data list
             schema = generate_dataframe_schema(schema_info=schema_info)
-            data = [()]
+            data = []
 
             # Creating the DataFrame object
             df = spark.createDataFrame(data=data, schema=schema)

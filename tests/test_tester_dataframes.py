@@ -14,7 +14,8 @@ from datetime import date, datetime
 from sparksnake.tester.dataframes import parse_string_to_spark_dtype,\
     compare_schemas, generate_fake_dataframe
 
-from tests.helpers.user_inputs import FAKE_SCHEMA_INFO
+from tests.helpers.user_inputs import FAKE_SCHEMA_INFO,\
+    FAKE_DATAFRAMES_DEFINITION
 
 from pyspark.sql.types import StringType, IntegerType, LongType, DecimalType,\
     FloatType, DoubleType, BooleanType, DateType, TimestampType, StructType
@@ -418,7 +419,7 @@ def test_compare_schemas_returns_false_when_comparing_different_schemas(
 
 @pytest.mark.tester
 @pytest.mark.dataframes
-@pytest.mark.compare_schemas
+@pytest.mark.generate_dataframes_dict
 def test_compare_schemas_nullable_info_return_false_when_nullable_is_diff(
     spark_session
 ):
@@ -469,3 +470,76 @@ def test_compare_schemas_nullable_info_return_false_when_nullable_is_diff(
         df2=df_fake_2,
         compare_nullable_info=True
     )
+
+
+@pytest.mark.tester
+@pytest.mark.dataframes
+@pytest.mark.generate_dataframes_dict
+def test_function_generate_dataframes_dict_returns_a_python_dictionary(
+    dataframes_dict: dict
+):
+    """
+    G: Given that users want to generate multiple DataFrame objects based in
+       one dictionary definition with user configuration provided
+    W: When the function generate_dataframes_dict() is called
+    T: Then the return must be a Python dictionary
+    """
+
+    assert type(dataframes_dict) is dict
+
+
+@pytest.mark.tester
+@pytest.mark.dataframes
+@pytest.mark.generate_dataframes_dict
+def test_dataframes_dict_has_the_expected_number_of_dataframe_objects(
+    dataframes_dict: dict
+):
+    """
+    G: Given that users want to generate multiple DataFrame objects based in
+       one dictionary definition with user configuration provided
+    W: When the function generate_dataframes_dict() is called
+    T: Then the length of the returned dictionary (i.e the number of DataFrame)
+       objects matchs the same as defined on the inputs dictionary used to
+       generate the DataFrames
+    """
+
+    assert len(dataframes_dict) == len(FAKE_DATAFRAMES_DEFINITION)
+
+
+@pytest.mark.tester
+@pytest.mark.dataframes
+@pytest.mark.generate_dataframes_dict
+def test_dataframes_dict_has_spark_dataframes_objects_in_its_content(
+    dataframes_dict: dict
+):
+    """
+    G: Given that users want to generate multiple DataFrame objects based in
+       one dictionary definition with user configuration provided
+    W: When the function generate_dataframes_dict() is called
+    T: Then the returned dictionary must have Spark DataFrame objects
+    """
+
+    # Extracting the type of the dictionary values
+    dict_objects = [type(value) for value in list(dataframes_dict.values())]
+    object_type = list(set(dict_objects))[0]
+
+    assert object_type is DataFrame
+
+
+@pytest.mark.tester
+@pytest.mark.dataframes
+@pytest.mark.generate_dataframes_dict
+def test_function_generate_dataframes_dict_generates_empty_df_when_told_to(
+    dataframes_dict: dict,
+    empty_data_dataframe_reference: str = "df_with_empty_data"
+):
+    """
+    G: Given that users want to generate multiple DataFrame objects based in
+       one dictionary definition with user configuration provided
+    W: When the function generate_dataframes_dict() is called with a
+       predefined user input that has at least one dataframe definition
+       with the empty data flag equals to True
+    T: Then this dataframe must not have any data
+    """
+
+    assert dataframes_dict[empty_data_dataframe_reference].count() == 0
