@@ -321,6 +321,93 @@ def generate_dataframes_dict(
     definition_dict: dict,
     spark_session: SparkSession
 ) -> dict:
+    """Generates a Python dictionary with multiple Spark DataFrame objects.
+
+    This function uses a predefined Python dictionary with all information
+    needed to create Spark DataFrames then it checks all flags and
+    conditions in order to delivery to users another Python dictionary made
+    by Spark DataFrame objects created with all user preconfigured info.
+
+    An example of a dictionary that can be used to simulate DataFrames can
+    be found below:
+
+    Example of a dictionary used to create DataFrames:
+    ```python
+    SOURCE_DATAFRAMES_DEFINITION = {
+        "tbl_name": {
+            "name": "tbl_name",
+            "dataframe_reference": "df_mocked",
+            "empty": False,
+            "fake_data": False,
+            "fields": [
+                {
+                    "Name": "idx",
+                    "Type": "int",
+                    "nullable": True
+                },
+                {
+                    "Name": "category",
+                    "Type": "string",
+                    "nullable": True
+                }
+            ],
+            "data": [
+                (1, "foo"),
+                (2, "bar")
+            ]
+        }
+    }
+    ```
+
+    In this approach, the dictionary is used to simulate and configure all
+    elements of all datasets/tables to be created and returned as Spark
+    DataFrame objects. In other words, users will be able to configure a
+    Python dictionary with some predefined keys in order to generate DataFrame
+    objects with a user defined schema that can simulate all tables that are
+    part of the ETL process.
+
+    The aforementioned dictionary accepts the following keys:
+
+    - "name": a name reference for the data structure to be simulated
+    - "dataframe_reference": a name reference for the DataFrame
+    - "empty": a boolean flag that indicates the creation of an empty df
+    - "fake_data": a boolean flag to set fake data for the DataFrame
+    - "fields": sets the schema of the data structure (check the example above)
+    - "data": sets the data of the data structure (check the example above)
+
+    So, the generate_dataframes_dict() function can be called as the following
+    example:
+
+    Examples:
+    ```python
+    # Importing function
+    from sparksnake.tester import generate_dataframes_dict
+
+    # Generating a dictionary with Spark DataFrames
+    dataframes_dict = generate_dataframes_dict(
+        definition_dict=SOURCE_DATAFRAMES_DEFINITION,
+        spark_session=spark
+    )
+
+    # Indexing the dictionary to get individual objects
+    df_mocked = dataframes_dict["df_mocked"]
+    ```
+
+    Args:
+        definition_dict (dict):
+            A Python dictionary built with predefined layout that handles all
+            the elements needed to create DataFrame objects that can simulate
+            all source data and intermediate stepts for users to improve their
+            unit test construction. Check the docs aboce for more details.
+
+        spark_session (SparkSession):
+            A SparkSession object used to create Spark DataFrames.
+
+    Returns:
+        A Python dictionary made by Spark DataFrame objects created using the\
+        definition_dict dictionary.
+    """
+
     # Defining a dictionary to hold all DataFrame objects
     dfs_dict = {}
 
