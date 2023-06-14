@@ -471,11 +471,16 @@ def compare_schemas(
     from two DataFrames, maybe we are interested only on column names and data
     types, and not if an attribute is nullable or not.
 
-    This function uses a flag in order to provide two ways to compare Spark
-    DataFrame schemas:
+    This function enables users to compare their Spark DataFrame schemas in
+    two different approaches.
 
-        1. Removing the "nullable" info from schema
-        2. Comparing native DataFrame.schema attributes without any changes
+    1. Comparing the DataFrame.schema object attribute and returning true if
+    two DataFrames have the same column names and if all column data types
+    matches against each other (this happens when `compare_nullable_info` is
+    False)
+    2. Comparing the DataFrame.schema object attribute and returning true if
+    all the column names and the its data types are the same, including the
+    nullable information (this happens when `compare_nullable_info` is True)
 
     Examples:
         ```python
@@ -484,11 +489,12 @@ def compare_schemas(
         ```
 
     Args:
-        df1 (pyspark.sql.DataFrame): the first Spark DataFrame to be compared
-        df2 (pyspark.sql.DataFrame): the second Spark DataFrame to be compared
+        df1 (pyspark.sql.DataFrame): The first Spark DataFrame to be compared
+        df2 (pyspark.sql.DataFrame): The second Spark DataFrame to be compared
         compare_nullable_info (bool):
-            a boolean flag that leads to compare the schemas including the
-            nullable information or not.
+            A boolean flag that enables to compare not only the column names
+            and its data types, but also if the columns accepts nullable data
+            or not.
 
     Returns:
         The function returns True if both DataFrame schemas are equal or\
