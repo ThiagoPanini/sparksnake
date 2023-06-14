@@ -159,14 +159,14 @@ class SparkETLManager(ManagerClass):
             try:
                 ManagerClass.__init__(self, argv_list=argv_list,
                                       data_dict=data_dict)
-            except TypeError as te:
-                logger.error("Error on inherting class GlueJobManager. Check "
-                             "if your environment has the awsglue libraries "
-                             "and try again. If you don't have awsglue libs "
-                             "available, you probably want to run sparksnake "
-                             "in a local operation mode. If this is the case, "
-                             "change the mode attribute to 'local'")
-                raise te
+            except TypeError:
+                raise TypeError("Error on inherting class GlueJobManager. "
+                                "Check if your environment has the awsglue "
+                                "libraries and try again. If you don't have "
+                                "awsglue libs available, you probably want to "
+                                "run sparksnake in a local operation mode. "
+                                "If this is the case, change the mode "
+                                "attribute to 'local'")
 
             # Logging initialization message
             logger.info("The class was succesfully initialized with Glue "
