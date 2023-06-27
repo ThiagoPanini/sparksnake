@@ -270,35 +270,96 @@ class GlueJobManager():
         try:
             dynamic_frames = []
             for t in self.data_dict.keys():
-                # Getting some required args: database, table_name, ctx
-                database = self.data_dict[t]["database"]
-                table_name = self.data_dict[t]["table_name"]
-                transformation_ctx = self.data_dict[t]["transformation_ctx"]
+                # Defining the source method to be called to read the dyf
+                source_method = self.data_dict[t]["source"].lower().strip() \
+                    if "source" in self.data_dict[t].keys()\
+                    else "from_catalog"
 
-                # Getting non required args: push_down_predicate
-                push_down_predicate = self.data_dict[t]["push_down_predicate"]\
-                    if "push_down_predicate" in self.data_dict[t].keys()\
-                    else ""
+                # Entering a condition where the data is read from catalog
+                if source_method == "from_catalog":
+                    # Getting some required args: database and table_name
+                    database = self.data_dict[t]["database"]
+                    table_name = self.data_dict[t]["table_name"]
 
-                # Getting non required args: additional_options
-                additional_options = self.data_dict[t]["additional_options"] \
-                    if "additional_options" in self.data_dict[t].keys()\
-                    else {}
+                    # Getting non required args: redshift_tmp_dir
+                    redshift_tmp_dir = self.data_dict[t]["redshift_tmp_dir"]\
+                        if "redshift_tmp_dir" in self.data_dict[t].keys()\
+                        else ""
 
-                # Getting non required args: catalog_id
-                catalog_id = self.data_dict[t]["catalog_id"] \
-                    if "catalog_id" in self.data_dict[t].keys()\
-                    else None
+                    # Getting non required args: transformation_ctx
+                    transformation_ctx = \
+                        self.data_dict[t]["transformation_ctx"]\
+                        if "transformation_ctx" in self.data_dict[t].keys()\
+                        else ""
 
-                # Reading the DynamicFrame
-                dyf = self.glueContext.create_dynamic_frame.from_catalog(
-                    database=database,
-                    table_name=table_name,
-                    transformation_ctx=transformation_ctx,
-                    push_down_predicate=push_down_predicate,
-                    additional_options=additional_options,
-                    catalog_id=catalog_id
-                )
+                    # Getting non required args: push_down_predicate
+                    push_down_predicate = \
+                        self.data_dict[t]["push_down_predicate"]\
+                        if "push_down_predicate" in self.data_dict[t].keys()\
+                        else ""
+
+                    # Getting non required args: additional_options
+                    additional_options = \
+                        self.data_dict[t]["additional_options"] \
+                        if "additional_options" in self.data_dict[t].keys()\
+                        else {}
+
+                    # Getting non required args: catalog_id
+                    catalog_id = self.data_dict[t]["catalog_id"] \
+                        if "catalog_id" in self.data_dict[t].keys()\
+                        else None
+
+                    # Reads a DynamicFrame from catalog
+                    dyf = self.glueContext.create_dynamic_frame.from_catalog(
+                        database=database,
+                        table_name=table_name,
+                        redshift_tmp_dir=redshift_tmp_dir,
+                        transformation_ctx=transformation_ctx,
+                        push_down_predicate=push_down_predicate,
+                        additional_options=additional_options,
+                        catalog_id=catalog_id
+                    )
+
+                # Entering a condition where the data is read from other option
+                elif source_method == "from_options":
+                    # Getting some required args: connection_type
+                    connection_type = self.data_dict[t]["connection_type"]
+
+                    # Getting non required args: connection_options
+                    conn_options = self.data_dict[t]["connection_options"] \
+                        if "connection_options" in self.data_dict[t].keys()\
+                        else {}
+
+                    # Getting non required args: catalog_id
+                    format = self.data_dict[t]["format"] \
+                        if "format" in self.data_dict[t].keys()\
+                        else None
+
+                    # Getting non required args: format_options
+                    format_options = self.data_dict[t]["format_options"] \
+                        if "format_options" in self.data_dict[t].keys()\
+                        else {}
+
+                    # Getting non required args: format_options
+                    format_options = self.data_dict[t]["format_options"] \
+                        if "format_options" in self.data_dict[t].keys()\
+                        else {}
+
+                    # Reads a DynamicFrame from options
+                    dyf = self.glueContext.create_dynamic_frame.from_options(
+                        connection_type=connection_type,
+                        connection_options=conn_options,
+                        format=format,
+                        format_options=format_options,
+                        transformation_ctx=transformation_ctx
+                    )
+
+                else:
+                    # Raising an error if source_method is not expected
+                    raise TypeError("Invalid value for 'source_method' on the "
+                                    f"DATA_DICT dictionary ({source_method}). "
+                                    "Acceptable values are 'from_catalog' or "
+                                    "'from_options'.")
 
                 # Appending the DynamicFrame obnject to DynamicFrames list
                 dynamic_frames.append(dyf)
