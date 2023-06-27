@@ -247,6 +247,13 @@ class GlueJobManager():
             additional keys can be defined by the user for some special
             purposes, such as:
 
+            - "source_method": str -> Defines if users want to read data
+            from catalog ('from_catalog') or from other options
+            ('from_options'). Under the hood, the 'source_method' dictionary
+            key defines which method will be used along the
+            `glueContext.create_dynamic_frame` method. The default value is
+            'from_catalog'.
+
             - "create_temp_view": bool -> Sets the creation of a Spark
                 temporary table (view) after reading the data source as a
                 DynamicFrame
