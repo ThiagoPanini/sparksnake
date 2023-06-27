@@ -13,12 +13,13 @@ with open("README.md", "r", encoding='utf-8') as f:
 # Setting up package information
 setup(
     name='sparksnake',
-    version='0.1.18',
+    version='0.1.19',
     author='Thiago Panini',
     author_email='panini.development@gmail.com',
     packages=find_packages(),
     install_requires=[
-        "pyspark"
+        "pyspark",
+        "Faker"
     ],
     license='MIT',
     description="Improving the development of Spark applications deployed as "
