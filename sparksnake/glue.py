@@ -653,7 +653,7 @@ class GlueJobManager():
                 raise e
         else:
             dyf = df
-        
+
         # Handling partition information
         if isinstance(partition_name, str):
             partition_keys = [partition_name]
