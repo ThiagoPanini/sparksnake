@@ -556,7 +556,7 @@ class GlueJobManager():
             s3_table_uri: str,
             output_database_name: str,
             output_table_name: str,
-            partition_name: str = None,
+            partition_name: str or list = None,
             connection_type: str = "s3",
             update_behavior: str = "UPDATE_IN_DATABASE",
             compression: str = "snappy",
@@ -579,7 +579,7 @@ class GlueJobManager():
         Examples:
             ```python
             # Writing and cataloging data
-            spark_manager.write_data(
+            spark_manager.write_and_catalog_data(
                 df=df_orders,
                 s3_table_uri="s3://some-bucket/some-table",
                 output_database_name="db_corp_business_inteligence",
@@ -611,10 +611,11 @@ class GlueJobManager():
                 information is used on parameter "catalogTableName"
                 from `glueContext.getSink().setCatalogInfo()` method.
 
-            partition_name (str or None):
+            partition_name (str or list or None):
                 Partition coumn name chosen for the table. This information is
                 used on parameter "partitionKeys" from `glueContext.getSink()`
-                method.
+                method. In case of partitioning by multiple columns, users can
+                pass a list with partition names.
 
             connection_type (str):
                 Connection type used in storage. This information is used on
@@ -652,6 +653,15 @@ class GlueJobManager():
                 raise e
         else:
             dyf = df
+        
+        # Handling partition information
+        if isinstance(partition_name, str):
+            partition_keys = [partition_name]
+        elif isinstance(partition_name, list):
+            partition_keys = partition_name
+        else:
+            raise ValueError("Invalid type for argument partition_name. "
+                             "Acceptable values are str or list")
 
         # Creating a sink with S3
         logger.info("Creating a sink with all configurations provided")
@@ -661,7 +671,7 @@ class GlueJobManager():
                 path=s3_table_uri,
                 connection_type=connection_type,
                 updateBehavior=update_behavior,
-                partitionKeys=[partition_name],
+                partitionKeys=partition_keys,
                 compression=compression,
                 enableUpdateCatalog=enable_update_catalog,
                 transformation_ctx="data_sink",
