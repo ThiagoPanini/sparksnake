@@ -76,8 +76,9 @@ class SparkETLManager(ManagerClass):
 
     Example: A basic usage example of class `SparkETLManager` with mode="glue"
         ```python
-        # Importing class
+        # Importing packages
         from sparksnake.manager import SparkETLManager
+        from datetime import datetime
 
         # Defining job arguments
         ARGV_LIST = ["JOB_NAME", "S3_OUTPUT_PATH"]
@@ -124,7 +125,7 @@ class SparkETLManager(ManagerClass):
         # Adding a partition column into the DataFrame
         df_orders_partitioned = spark_manager.add_partition_column(
             partition_name="anomesdia",
-            partition_value="20230101"
+            partition_value=int(datetime.now().strftime("%Y%m%d"))
         )
 
         # Applying a repartition method for storage optimization
@@ -146,7 +147,7 @@ class SparkETLManager(ManagerClass):
             classes based on this library so the `SparkETLManager` class can
             expand its features for a Spark application development in
             specific scenarios.
-            Acceptable values are: "glue", "emr", "local".
+            Acceptable values are: "local", "glue".
 
     Tip: The "mode" attribute may not be the only one.
         As stated before, the `SparkETLManager` class provides a "mode"
@@ -174,9 +175,9 @@ class SparkETLManager(ManagerClass):
         source code of the class to be inherited. The table below provides
         information about all operation modes and the inherited classes:
 
-        | Operation Mode | sparksnake inherited Class |
+        | Operation Mode | Inherited Class |
         | :-- | :-- |
-        | local | No one |
+        | local | None |
         | glue | GlueJobManager |
     """
 
@@ -373,14 +374,15 @@ class SparkETLManager(ManagerClass):
         This method makes it possible to run complex aggregations using a
         single method call. To use this feature, users can follow the steps
         below:
-            1. Provide a numeric column (numeric_col argument)
-            2. Provide a single column reference or a list of columns to be
-            grouped by (group_by argument)
-            3. Choose the aggregation functions on **kwargs
+
+        1. Provide a numeric column (numeric_col argument)
+        2. Provide a single column reference or a list of columns to be
+        grouped by (group_by argument)
+        3. Provide the aggregation functions on **kwargs
 
         The aggregation functions mentioned on the third step are represented
-        by almost any avaiable pyspark function such as sum(), mean(), max(),
-        min() and many others.
+        by almost any avaiable pyspark function, such as `sum()`, `mean()`,
+        `max()`, `min()` and many others.
 
         Examples:
             ```python
@@ -396,7 +398,7 @@ class SparkETLManager(ManagerClass):
                 min=True
             )
 
-            # In the above example, the method will return a new DataFrame with
+            # In the example above, the method will return a new DataFrame with
             # the following columns:
             # order_id e order_year (group by)
             # sum_order_value (sum of order_value column)
@@ -529,7 +531,7 @@ class SparkETLManager(ManagerClass):
             ```python
             # Defining partition information
             partition_name = "anomesdia"
-            partition_value = int(datetime.strftime('%Y%m%d'))
+            partition_value = int(datetime.now().strftime('%Y%m%d'))
 
             # Adding a partition column to the DataFrame
             df_partitioned = spark_manager.add_partition_column(

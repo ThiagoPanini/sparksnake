@@ -25,15 +25,20 @@ logger = log_config(logger_name=__file__)
 
 
 class GlueJobManager():
-    """Management of elements and operations commonly used in Glue jobs.
+    """Enables users to use AWS Glue features in their Spark applications.
 
-    This class is responsible for managing and providing all necessary inputs
-    for launching and developing Glue jobs in AWS. All attributes and methods
-    declared in this class are *inherited* by `SparkETLManager`class in the
-    `manager` module.
+    This class provides an enhanced experience on developing Glue jobs using
+    Apache Spark. The core idea behind it is related complex code encapsulation
+    that is mandatory to build and run Glue jobs. By that, it's possible to
+    say that this `GlueJobManager` class has attributes and methods that uses
+    the `awsglue` library to handle almost everything that would be handled
+    individually by users if they are not using sparksnake.
 
-    To see a end to end usage example, check the docs for the `SparkETLManager`
-    class.
+    By the end, it's important to mention that all attributes and methods of
+    this class are inherited by `SparkETLManager` class in the `manager` module
+    when users initialize it with `mode="glue"`. So, when doing that, users
+    need to pass some additional arguments in order to make things work
+    properly in the Glue specific world.
 
     Args:
         argv_list (list):
@@ -62,39 +67,79 @@ class GlueJobManager():
 
     Tip: About setting up the data_dict class attribute
         The data_dict dictionary passed as a required attribute for the
-        `GlueJobManager` class must be defined following some rules.
+        `GlueJobManager` class must be defined following some rules. Then main
+        purpose of such attribute is to provide a single variable to handle
+        all data sources to be read by the Glue job application.
 
-        Your main purpose is to provide a single point for controlling all
-        data sources used in the job. So, your composition is something really
-        important for ensuring that reading process can be executed in an
-        expected way.
+        With that in mind, it's important to say that the data_dict attribute
+        can be defined using everything that is available and acceptable in
+        the Glue DynamicFrameReader class. Users can take a look at the AWS
+        official docs about the DynamicFrameReader class to see more details
+        about reading DynamicFrame objects in Glue jobs.
 
-        With that in mind, it's crucial to say that the data_dict dictionary
-        can be defined with all parameters found in
-        `glueContext.create_dynamic_frame.from_catalog` Glue method. In other
-        words, all keys of data_dict dictionary can be assume any valid
-        parameter of the Glue method mentioned above. Of course the values
-        of those keys defined in data_dict depends on the job rules.
+        On this class scope, the data_dict dictionary can also have additional
+        keys that can used to guide reading proccesses and apply some special
+        conditions. The additional keys that can be put on data_dict class
+        attribute are:
 
-        :star: It means that if the user wants to read a data source from the
-        catalog using the push down predicate Glue feature, it's only necessary
-        to define a key called "push_down_predicate" (the same way as found in
-        `glueContext.create_dynamic_frame.from_catalog` method) with the value
-        to be filtered. This is the same rule for all other parameters, such as
-        additional_options, catalog_id, transformation_ctx, and others. If the
-        user wants to read some data source with a special parameter, just take
-        a look at the mentioned Glue method above and input a key on the
-        data_dict to set up the data source reading process.
+        - "source_method": str -> Defines if users want to read data
+        from catalog ('from_catalog') or from other options ('from_options').
+        Under the hood, the 'source_method' dictionary key defines which method
+        will be used along the `glueContext.create_dynamic_frame` method.
+        The default value is 'from_catalog'.
 
-        By the other hand, it's also important to mention that the user is not
-        forced to define the data_dict dictionary with all parameters found in
-        `glueContext.create_dynamic_frame.from_catalog` method. If the
-        data_dict attribute doesn't have a key for a specific parameter on the
-        Glue method mentioned abouve, so its default value will be considered.
-        For example, that if data_dict doesn't have a push_down_predicate key
-        for a data source, the value "None" will be considered as it's the
-        default value for this key on the
-        `glueContext.create_dynamic_frame.from_catalog` method.
+        - "create_temp_view": bool -> Sets the creation of a Spark temporary
+        table (view) after reading the data source as a DynamicFrame. If this
+        additional key is set as True, then the `DataFrame.createTempView()`
+        method is executed in order to create temporary tables using the
+        table name as the main reference for the temp view.
+
+        By the end, an example on how to define the data_dict class attribute
+        dictionary can be find right below:
+
+        ```python
+        # Defining elements of all data sources used on the job
+        ```python
+        {
+            "orders": {
+                "database": "ra8",
+                "table_name": "orders",
+                "transformation_ctx": "dyf_orders"
+            },
+            "customers": {
+                "database": "ra8",
+                "table_name": "customers",
+                "transformation_ctx": "dyf_customers",
+                "push_down_predicate": "anomesdia=20221201",
+                "create_temp_view": True,
+                "additional_options": {
+                    "compressionType": "lzo"
+                }
+            },
+            "payments": {
+                "source_method": "from_options",
+                "connection_type": "s3",
+                "connection_options": {
+                    "paths": [
+                        "s3://some-bucket-name/some-prefix/file.csv"
+                    ],
+                    "recurse": True
+                },
+                "format": "csv",
+                "format_options": {
+                    "withHeader": True,
+                    "separator": ",",
+                    "quoteChar": '"'
+                },
+                "transformation_ctx": "dyf_payments"
+            }
+        }
+        ```
+
+        As you can see, the DATA_DICT variable defined in the example above
+        uses mixed data sources, each one with special configurations
+        accepted by the DynamicFrameReader Glue methods. But don't worry,
+        you will find more examples along this documentation page.
     """
 
     def __init__(self, argv_list: list, data_dict: dict) -> None:
@@ -105,18 +150,18 @@ class GlueJobManager():
         self.args = getResolvedOptions(sys.argv, self.argv_list)
 
     def job_initial_log_message(self) -> None:
-        """Preparation of a detailed log message for job initialization.
+        """Preparing a detailed log message for job start up.
 
         This method is responsible for composing an initial log message to be
-        shown in CloudWatch after the user initializes a Glue Job. The message
-        aim to clarify some job details, such as all the data sources mapped
-        and its push down predicate values (if used). This can be a good
-        practice for making Glue jobs cleaner and more organized.
+        logged in CloudWatch after the user starts a Glue Job. The message aims
+        to clarify some job details, such as the data sources mapped and its
+        push down predicate values (if used). This can be a good practice in
+        order to develop more organized Glue jobs.
         """
 
         # Defining a initial string for composing the message
-        welcome_msg = f"Initializing the execution of {self.args['JOB_NAME']}"\
-                      " job. Data sources used in this ETL process:\n\n"
+        welcome_msg = f"Successfully started Glue job {self.args['JOB_NAME']}"\
+                      ". Data sources in this ETL process:\n\n"
         initial_msg = ""
 
         # Iterating over the data_dict dicionary for extracting some info
@@ -164,7 +209,7 @@ class GlueJobManager():
         self.spark = self.glueContext.spark_session
 
     def init_job(self):
-        """Initializing a Glue job.
+        """Starting a Glue job.
 
         This method consolidates all the necessary steps required for a Glue
         job initialization process. In its definition, it calls the following
@@ -241,11 +286,10 @@ class GlueJobManager():
             }
             ```
 
-            As stated before, all
-            `glueContext.create_dynamic_frame.from_catalog()` can be used as
-            dictionary keys on `self.data_dict` definition. Moreover, some
-            additional keys can be defined by the user for some special
-            purposes, such as:
+            As stated before, all elements on Glue DynamicFrameReader class
+            methods can be used as dictionary keys on `self.data_dict`
+            definition. Moreover, some additional keys can be defined by the
+            user for some special purposes, such as:
 
             - "source_method": str -> Defines if users want to read data
             from catalog ('from_catalog') or from other options
@@ -272,8 +316,7 @@ class GlueJobManager():
             read for each data source.
         """
 
-        logger.info("Iterating over data_dict dictionary for reading data "
-                    "sources as Glue DynamicFrame objects")
+        logger.info("Reading all data sources as Glue DynamicFrame objects")
         try:
             dynamic_frames = []
             for t in self.data_dict.keys():
@@ -347,11 +390,6 @@ class GlueJobManager():
                         if "format_options" in self.data_dict[t].keys()\
                         else {}
 
-                    # Getting non required args: format_options
-                    format_options = self.data_dict[t]["format_options"] \
-                        if "format_options" in self.data_dict[t].keys()\
-                        else {}
-
                     # Reads a DynamicFrame from options
                     dyf = self.glueContext.create_dynamic_frame.from_options(
                         connection_type=connection_type,
@@ -363,7 +401,7 @@ class GlueJobManager():
 
                 else:
                     # Raising an error if source_method is not expected
-                    raise TypeError("Invalid value for 'source_method' on the "
+                    raise TypeError("Invalid value for 'source_method' in "
                                     f"DATA_DICT dictionary ({source_method}). "
                                     "Acceptable values are 'from_catalog' or "
                                     "'from_options'.")
@@ -372,18 +410,21 @@ class GlueJobManager():
                 dynamic_frames.append(dyf)
 
         except Exception as e:
-            logger.error("Error on generating a list of DynamicFrames list. "
-                         f"Exception: {e}")
+            logger.error("Failed to read data sources mapped on DATA_DICT "
+                         f"dictionary as Glue DynamicFrames. Exception: {e}")
             raise e
 
-        logger.info("Mapping DynamicFrames objects to a dictionary key")
-        sleep(0.01)
-
         # Creating a DynamicFrames dictionary
-        dynamic_dict = {k: dyf for k, dyf
-                        in zip(self.data_dict.keys(), dynamic_frames)}
-        logger.info("Success on reading data. There are "
-                    f"{len(dynamic_dict.values())} DynamicFrames available.")
+        dynamic_dict = {
+            k: dyf for k, dyf in zip(self.data_dict.keys(), dynamic_frames)
+        }
+
+        # Preparing a final message with all data sources read
+        print_dict = {k: type(v) for k, v in dynamic_dict.items()}
+        logger.info("Sucessfully read all data sources. There are "
+                    f"{len(dynamic_dict.values())} DynamicFrames available "
+                    "in a Python dictionary presented as following: \n"
+                    f"{print_dict}")
 
         # Returning the dictionary
         sleep(0.01)
@@ -476,12 +517,20 @@ class GlueJobManager():
         logger.info(f"Transforming {len(dyf_dict.keys())} "
                     "Glue DynamicFrames into Spark DataFrames")
         try:
+            # Transforming objects and mapping the result into a python dict
             df_dict = {k: dyf.toDF() for k, dyf in dyf_dict.items()}
-            logger.info("Success on generating all Spark DataFrames")
+
+            # Preparing a log message
+            print_dict = {k: type(v) for k, v in df_dict.items()}
+            logger.info("Sucessfully generated Spark DataFrames from Glue "
+                        "DynamicFrames previously read. There are "
+                        f"{len(df_dict.values())} Spark DataFrames available "
+                        "in a Python dictionary presented as following: "
+                        f"{print_dict}")
             sleep(0.01)
 
         except Exception as e:
-            logger.error("Error on transforming Glue DataFrames into Spark "
+            logger.error("Failed to transform Glue DynamicFrames into Spark "
                          f"DataFrames. Exception: {e}")
             raise e
 
@@ -497,12 +546,12 @@ class GlueJobManager():
                         and bool(params["create_temp_view"]):
                     df.createOrReplaceTempView(table_name)
 
-                    logger.info(f"Spark temporary table (view) {table_name} "
-                                "was successfully created.")
+                    logger.info("Successfully created a Spark temporary table "
+                                f"(view) named {table_name}")
 
             except Exception as e:
-                logger.error("Error on creating Spark temporary table "
-                             f"{table_name}. Exception: {e}")
+                logger.error("Failed to create a Spark temporary table for "
+                             f"data source {table_name}. Exception: {e}")
                 raise e
 
         # Returning the DataFrames dict
@@ -538,7 +587,7 @@ class GlueJobManager():
             executing the `glueContext.purge_s3_path()` method.
         """
 
-        logger.info(f"Searching for the partition {s3_partition_uri} and "
+        logger.info(f"Searching for partition {s3_partition_uri} and "
                     "dropping it (if exists)")
         try:
             self.glueContext.purge_s3_path(
@@ -546,7 +595,7 @@ class GlueJobManager():
                 options={"retentionPeriod": retention_period}
             )
         except Exception as e:
-            logger.error(f"Error on purging partition {s3_partition_uri}. "
+            logger.error(f"Failed to purge partition {s3_partition_uri}. "
                          f"Exception: {e}")
             raise e
 
@@ -648,8 +697,8 @@ class GlueJobManager():
             try:
                 dyf = DynamicFrame.fromDF(df, self.glueContext, "dyf")
             except Exception as e:
-                logger.error("Error on converting the DataFrame object as "
-                             f"DynamicFrame. Exception: {e}")
+                logger.error("Failed to transform the Spark DataFrame object "
+                             f"in a Glue DynamicFrame object. Exception: {e}")
                 raise e
         else:
             dyf = df
@@ -677,7 +726,7 @@ class GlueJobManager():
                 transformation_ctx="data_sink",
             )
         except Exception as e:
-            logger.error("Error on creating a sink for the output table. "
+            logger.error("Failed to create a sink for the output table. "
                          f"Exception: {e}")
             raise e
 
@@ -692,11 +741,12 @@ class GlueJobManager():
                                 useGlueParquetWriter=True)
             data_sink.writeFrame(dyf)
 
-            logger.info(f"Table {output_database_name}."
-                        f"{output_table_name} "
-                        "successfully update on Data Catalog. Its data are "
-                        f"stored in the following path: {s3_table_uri}")
+            logger.info(f"Successfully updated table {output_database_name}"
+                        f".{output_table_name} in Glue Data Catalog. The "
+                        "table data are stored in the following S3 path: "
+                        f"{s3_table_uri}")
         except Exception as e:
-            logger.error("Error on trying to write data for the given table "
-                         f". Exception: {e}")
+            logger.error("Failed to write and catalog data for table  "
+                         f"{output_database_name}.{output_table_name}. "
+                         f"Exception: {e}")
             raise e
