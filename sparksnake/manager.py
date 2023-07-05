@@ -15,37 +15,71 @@ from pyspark.sql import SparkSession, DataFrame
 from pyspark.sql.functions import expr, lit
 from pyspark.sql.utils import AnalysisException
 
+# Trying to inherit features from GlueJobManager class
 try:
     from sparksnake.glue import GlueJobManager as ManagerClass
 except ImportError:
+    # Providing an empty class with a common alias name in case of ImportError
     class ManagerClass:
         pass
+
 
 # Setting up a logger object
 logger = log_config(logger_name=__file__)
 
 
 class SparkETLManager(ManagerClass):
-    """Puts together all Spark features used in ETL jobs in AWS.
+    """Puts together all Spark features provided by sparksnake library.
 
-    This class provides an easy and fast way for users to improve and
-    enhance the development of their Spark applications. The class makes it
-    possible through a series of features (attributes and methods) specially
-    coded for making the development journey something really simple and fun.
+    This class provides an easy and fast way for users to improve and enhance
+    the development of their Apache Spark applications. This class can be
+    considered a central point of contact for users who whant to use all
+    features (attributes and methods) provided by sparksnake whenever the
+    Spark application is running locally or in any supported AWS services
+    such as AWS Glue.
 
-    According to the AWS service to be used by the user to run their Spark
-    application, this class can be configured through its "mode" attribute.
-    Technically, it means that the "mode" attribute literally handles all
-    class inheritance processes based on target AWS service to be used.
+    To configure this class and start using all its features, users just need
+    to set up an "operation mode" represented by the "mode" class attribute.
+    The operation mode can be chosen based on where the Spark application will
+    run. Currently there are two available options:
 
-    So, users can have available special attributes and methods for improving
-    their development process wherever they are creating a Spark application
-    for running on AWS Glue, Amazon EMR or even locally.
+    - `mode="default"` enables features do enhance the development of Spark
+        applications anywhere
+    - `mode="glue"` enables features to enhance the development of Spark
+        applications deployed as Glue jobs in AWS. In this case, a class
+        inheritance process is applied in order to enable users to use
+        `awsglue` modules in a Glue environment.
+
+    Example: "Setting up the operation mode within `SparkETLManager` class"
+        ```python
+        # Importing the class
+        from sparksnake.manager import SparkETLManager
+
+        # Creating a spark manager object to develop Spark apps anywhere
+        spark_manager = SparkETLManager(
+            mode="default"
+        )
+
+        # Creating a spark manager object to develop Spark apps on AWS Glue
+        spark_manager = SparkETLManager(
+            mode="glue",
+            argv_list=[]  # A list of Glue job arguments
+            data_dict={}  # A dictionary with all data sources for the job
+        )
+        ```
+
+    A special note about the sparksnake's operation mode takes place on
+    different behaviors the deployment environment demands in order to work
+    properly. In other words, when choosing "glue" as the operation mode while
+    creating a `SparkETLManager` object, users need to check what additional
+    attributes must be passed to the class so the Glue custom features can
+    available to be applied in their Spark application.
 
     Example: A basic usage example of class `SparkETLManager` with mode="glue"
         ```python
-        # Importing class
+        # Importing packages
         from sparksnake.manager import SparkETLManager
+        from datetime import datetime
 
         # Defining job arguments
         ARGV_LIST = ["JOB_NAME", "S3_OUTPUT_PATH"]
@@ -92,7 +126,7 @@ class SparkETLManager(ManagerClass):
         # Adding a partition column into the DataFrame
         df_orders_partitioned = spark_manager.add_partition_column(
             partition_name="anomesdia",
-            partition_value="20230101"
+            partition_value=int(datetime.now().strftime("%Y%m%d"))
         )
 
         # Applying a repartition method for storage optimization
@@ -102,7 +136,7 @@ class SparkETLManager(ManagerClass):
         )
 
         # Writing data on S3 and cataloging it on Data Catalog
-        spark_manager.write_data_to_catalog(df=df_orders_repartitioned)
+        spark_manager.write_and_catalog_data(df=df_orders_repartitioned)
 
         # Job commit
         spark_manager.job.commit()
@@ -114,42 +148,54 @@ class SparkETLManager(ManagerClass):
             classes based on this library so the `SparkETLManager` class can
             expand its features for a Spark application development in
             specific scenarios.
-            Acceptable values are: "glue", "emr", "local".
+            Acceptable values are: "default", "glue".
 
-    Tip: The "mode" attribute may not be the only one
-        By its own construction, the class `SparkETLManager`inherits attributes
-        and methods from other classes in the library. It means that these
-        other classes may have its own attributes to be passed on class
-        construction.
+    Tip: The "mode" attribute may not be the only one.
+        As stated before, the `SparkETLManager` class provides a "mode"
+        attribute that can be used to set special class configuration
+        according to where users pretend to develop their Spark applications.
+        Technically, it happens by class inheritance.
 
-        For example, when users choose to set the Glue operation mode
-        (`mode="glue"`) on starting up the class `SparkETLManager`, a class
-        inheritance from `GlueJobManager` is set under the hood. Because of
-        that, attributes like `argv_list` and `data_dict` must be passed
-        together with `mode` as they are mandatory on `GlueJobManager` class
-        construction.
+        In other words, when users set `mode="glue"` in order to develop their
+        Spark applications as Glue jobs on AWS, all Glue features that is
+        needed to provide such environment is inherited by another class inside
+        the sparksnake library. This class is the `GlueJobManager` and its
+        source code is available on the `glue.py` library module.
 
-        For a special tip, check the construction of the class to be inherited
-        based on mode operation to see which attributes are necessary to pass
-        at `SparkETLManager` class start up.
+        By saying that the "mode" attribute may not be the only one, it is said
+        that those class inheritance processes may demands the input of some
+        other attributes. For example, to initialize an object from the
+        `GlueJobManager` class, users need to pass two more attributes named
+        `argv_list` and `data_dict`, each one with their special purposes. So,
+        in this situation, anyone who needs to use sparksnake in the Glue ops
+        mode may pass those two mode class attributes in the `SparkETLManager`
+        class.
+
+        To be awared of which additional attributes is needed to start the
+        `SparkETLManager` class in any available mode, you can always check the
+        source code of the class to be inherited. The table below provides
+        information about all operation modes and the inherited classes:
+
+        | Operation Mode | Inherited Class |
+        | :-- | :-- |
+        | default | None |
+        | glue | GlueJobManager |
     """
 
     def __init__(self, mode: str, **kwargs) -> None:
+        # Cleaning up the mode string attribute to apply validations
         self.mode = mode.strip().lower()
 
-        # Checking if the operation mode value was passed as expected
-        if self.mode not in ("local", "glue", "emr"):
-            raise ValueError(f"The attribute mode was set as {self.mode} "
-                             "but acceptable values are 'local', 'glue' and "
-                             'emr')
-
-        # Looking out for glue operation mode
+        # Glue operation mode: applying validations and obtaining Glue features
         if self.mode == "glue":
             # Checking if required args for GlueJobManager were passed
             if "argv_list" not in kwargs or "data_dict" not in kwargs:
                 raise TypeError("The operation mode was set as 'glue' but "
                                 "'argv_list' and/or 'data_dict' required "
-                                "arguments weren't set properly.")
+                                "attributes weren't set properly. Please "
+                                "provide both attributes during class "
+                                "start up in order to use sparksnake with "
+                                "glue operation mode.")
 
             # Collecting required args for mode="glue"
             argv_list = kwargs["argv_list"]
@@ -164,25 +210,31 @@ class SparkETLManager(ManagerClass):
                                 "Check if your environment has the awsglue "
                                 "libraries and try again. If you don't have "
                                 "awsglue libs available, you probably want to "
-                                "run sparksnake in a local operation mode. "
+                                "run sparksnake in a default operation mode. "
                                 "If this is the case, change the mode "
-                                "attribute to 'local'")
+                                "attribute to 'default'")
 
             # Logging initialization message
-            logger.info("The class was succesfully initialized with Glue "
-                        "operation mode and all Glue sparksnake features were "
-                        "inherited and are now available")
+            logger.info("Sucessfully initialized sparksnake with Glue "
+                        "operation mode. You know have some special AWS Glue "
+                        "features to improve your Glue job.")
 
-        # Looking out for local mode
-        elif self.mode == "local":
+        # Default operation mode:
+        elif self.mode == "default":
             # Getting or creating a SparkSession object as a class attribute
-            logger.info("Getting or creating a SparkSession object to be used "
-                        "in the local environment")
+            logger.info("Creating a SparkSession object (or getting one if it "
+                        "already exists)")
             self.spark = SparkSession.builder.getOrCreate()
 
             # Logging initialization message
-            logger.info("The class was succesfully initialized with 'local' "
-                        "operation mode")
+            logger.info("Successfully initialized sparksnake with default "
+                        "operation mode. You can know use the sparksnake "
+                        "features to improve your Spark application.")
+
+        # None of acceptable operation modes
+        else:
+            raise ValueError(f"Invalid value for operation mode (mode={mode})."
+                             "Acceptable values are 'default' and 'glue'.")
 
     @staticmethod
     def date_transform(df: DataFrame,
@@ -194,18 +246,20 @@ class SparkETLManager(ManagerClass):
         """Extracting date attributes from a Spark DataFrame date column.
 
         This method makes it possible to extract multiple date attributes from
-        a column in a Spark DataFrame that represents a date or timestamp
-        information. To do that, the given date column in the DataFrame should
-        be of types DATE, TIMESTAMP. There is a special case where the target
-        date column is of STRING data type. In that situtation, the column
-        must be parseable as a date so the date attributes can be extracted
-        from it.
+        a Spark DataFrame column that represents a date or timestamp value.
+        The date attributes are extracted using all available Apache Spark date
+        functions such as year(), month(), dayofmonth() and many others that
+        can be found on the official pyspark documentation page.
 
-        The method logic is made for a initial field casting validation
-        followed by the extraction of all date attributes according to the user
-        input on the method call. The big idea behing this features is the
-        ability to provide users a huge DataFrame enrichment with a single
-        method call to improve their analytics processes.
+        So, the given date column (date_col argument) should has a DATE or
+        a TIMESTAMP data type. If this can be achieved, the date column should
+        then be a string that can be parseable to a date type object. This is
+        the condition to extract date attributes using pyspark date functions.
+
+        The main idea behind this method is to provide users an easy way to
+        enhance their data analysis by extracting multiple date attributes
+        from a date column. This can be a huge improvement on analytics
+        processes and DataFrames enrichment.
 
         Examples:
             ```python
@@ -272,9 +326,9 @@ class SparkETLManager(ManagerClass):
                     casting_expr = f"to_timestamp({date_col},\
                         '{date_format}') AS {date_col}_{date_col_type}"
                 else:
-                    raise ValueError("The data type of date_col_type parameter"
-                                     " is invalid. Acceptable values are "
-                                     "'date' or 'timestamp'")
+                    raise ValueError("Invalid data type of date_col_type "
+                                     "argument. Acceptable values are 'date' "
+                                     "or 'timestamp'")
 
                 # Applying a select expression for casting data if applicable
                 df = df.selectExpr(
@@ -291,7 +345,7 @@ class SparkETLManager(ManagerClass):
             logger.error("Analysis error on trying to cast the column "
                          f"{date_col} using the expression {casting_expr}. "
                          "Maybe this column doesn't exist on the DataFrame. "
-                         f"Check the error treceback for more details: {ae}")
+                         f"Check the error traceback for more details: {ae}")
             raise ae
 
         # Creating a list of all possible date attributes to be extracted
@@ -316,12 +370,20 @@ class SparkETLManager(ManagerClass):
                  round_result: bool = False,
                  n_round: int = 2,
                  **kwargs) -> DataFrame:
-        """Extracts statistical attributes based on a group by operation.
+        """Extracting statistical attributes based on a group by operation.
 
-        This method makes it possible to extract multiple statistical
-        aggregations based in a numerical column and a set of columns to be
-        grouped by. With this feature, users can configure complex aggregations
-        in a single method call in order to enhance their analysis.
+        This method makes it possible to run complex aggregations using a
+        single method call. To use this feature, users can follow the steps
+        below:
+
+        1. Provide a numeric column (numeric_col argument)
+        2. Provide a single column reference or a list of columns to be
+        grouped by (group_by argument)
+        3. Provide the aggregation functions on **kwargs
+
+        The aggregation functions mentioned on the third step are represented
+        by almost any avaiable pyspark function, such as `sum()`, `mean()`,
+        `max()`, `min()` and many others.
 
         Examples:
             ```python
@@ -337,7 +399,7 @@ class SparkETLManager(ManagerClass):
                 min=True
             )
 
-            # In the above example, the method will return a new DataFrame with
+            # In the example above, the method will return a new DataFrame with
             # the following columns:
             # order_id e order_year (group by)
             # sum_order_value (sum of order_value column)
@@ -446,8 +508,8 @@ class SparkETLManager(ManagerClass):
             logger.error("Error on trying to aggregate data from DataFrame "
                          f"using the following query:\n {final_query}. "
                          "Possible reasons are: missing to pass group_by "
-                         "parameter or numeric_col argument doesn't exists "
-                         f"on the DataFrame. Exception: {ae}")
+                         "parameter or the numeric_col argument doesn't exists"
+                         f" on the DataFrame. Exception: {ae}")
             raise ae
 
     @staticmethod
@@ -459,14 +521,18 @@ class SparkETLManager(ManagerClass):
         This method is responsible for adding a new column on a target Spark
         DataFrame to be considered as a table partition. In essence, this
         method uses the native pyspark `.withColumn()` method for adding a
-        new column to the DataFrame using a name for the partition column
-        (partition_name) and its value (partition_value).
+        new column to the DataFrame using a name (partition_name) and a value
+        (partition_value).
+
+        The idea behind this method is to provide users a more clear way to
+        add a partition column in their Spark DataFrames and make it very
+        explicity to whoever is reading the code.
 
         Examples
             ```python
             # Defining partition information
             partition_name = "anomesdia"
-            partition_value = int(datetime.strftime('%Y%m%d'))
+            partition_value = int(datetime.now().strftime('%Y%m%d'))
 
             # Adding a partition column to the DataFrame
             df_partitioned = spark_manager.add_partition_column(
@@ -507,7 +573,7 @@ class SparkETLManager(ManagerClass):
 
     @staticmethod
     def repartition_dataframe(df: DataFrame, num_partitions: int) -> DataFrame:
-        """Repartitioning a Spark DataFrame for optimizing storage.
+        """Repartitioning a Spark DataFrame in order to optimize storage.
 
         This method applies the repartition process in a Spark DataFrame in
         order to optimize its storage on S3. The method has some important
@@ -558,15 +624,15 @@ class SparkETLManager(ManagerClass):
             current_partitions = df.rdd.getNumPartitions()
 
         except Exception as e:
-            logger.error("Error on collecting the current number of "
-                         "using df.rdd.getNumPartitions method. "
+            logger.error("Failed to collect the current number of partitions"
+                         "using the df.rdd.getNumPartitions method. "
                          f"Exception: {e}")
             raise e
 
         # If the desired partition number if equal to the current number, skip
         if num_partitions == current_partitions:
             logger.warning(f"The current number of partitions "
-                           f"({current_partitions}) is equal to the desired "
+                           f"({current_partitions}) is equal to the target "
                            f"number ({num_partitions}). There is no need to "
                            "run any Spark repartition method")
             sleep(0.01)
@@ -582,7 +648,7 @@ class SparkETLManager(ManagerClass):
                 df_repartitioned = df.coalesce(num_partitions)
 
             except Exception as e:
-                logger.warning("Error on repartitioning using coalesce(). "
+                logger.warning("Failed to repartition using coalesce(). "
                                "The repartition process won't be executed and "
                                "the target DataFrame will be returned without "
                                f"any changes. Exception: {e}")
@@ -590,7 +656,7 @@ class SparkETLManager(ManagerClass):
 
         # If the desired number is GREATER THAN the current, use repartition()
         elif num_partitions > current_partitions:
-            logger.warning(f"The desired partition number ({num_partitions}) "
+            logger.warning(f"The target partition number ({num_partitions}) "
                            f"is greater than the current one "
                            f"({current_partitions}) and, because of that, "
                            "the repartitioning operation will be executed "
@@ -602,7 +668,7 @@ class SparkETLManager(ManagerClass):
                 df_repartitioned = df.repartition(num_partitions)
 
             except Exception as e:
-                logger.warning("Error on repartitioning using repartition(). "
+                logger.warning("Failed to repartition using repartition(). "
                                "The repartition process won't be executed and "
                                "the target DataFrame will be returned without "
                                f"any changes. Exception: {e}")

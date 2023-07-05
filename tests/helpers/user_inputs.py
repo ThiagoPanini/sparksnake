@@ -33,6 +33,13 @@ FAKE_DATA_DICT = {
     }
 }
 
+# Expected initial message after job start
+EXPECTED_START_JOB_MSG = "Successfully started Glue job a-fake-arg-value. "\
+    "Data sources in this ETL process:\n\n"\
+    "Table some-fake-database.orders-fake-table without push down predicate\n"\
+    "Table some-fake-database.customers-fake-table with the following push "\
+    "down predicate info: anomesdia=20221201\n"
+
 # A fake DataFrame schema object to create Spark DataFrames for test purposes
 FAKE_SCHEMA_INFO = [
     {

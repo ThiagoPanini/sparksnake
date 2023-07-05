@@ -52,7 +52,7 @@ ___
 ## Features
 
 - 🤖 Apply common Spark operations using few lines of code
-- 💻 Start developing your Spark applications locally using the "local" mode or in any AWS services that uses Spark
+- 💻 Start developing your Spark applications anywhere using the "default" mode or in any AWS services that uses Spark
 - ⏳ Stop spending time setting up the boring stuff of your Spark applications
 - 💡 Apply the best practices on your application by structuring your code following the best practices
 - 👁️‍🗨️ Improve your aplication's observability by using detailed log messages on CloudWatch and exception handlers

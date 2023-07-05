@@ -21,6 +21,8 @@ from pyspark.sql import SparkSession
 from awsglue.context import GlueContext
 from awsglue.job import Job
 
+from tests.helpers.user_inputs import EXPECTED_START_JOB_MSG
+
 
 @pytest.mark.spark_manager_glue
 @pytest.mark.constructor
@@ -83,19 +85,11 @@ def test_content_of_initial_log_message_match_the_expected(
     T: Then the log message captured must match a expected value
     """
 
-    # Defining the expected log message based on data_dict_dictionary used
-    expected_log_msg = "Initializing the execution of a-fake-arg-value job. "\
-        "Data sources used in this ETL process:\n\n"\
-        "Table some-fake-database.orders-fake-table without push down "\
-        "predicate\n"\
-        "Table some-fake-database.customers-fake-table with the following "\
-        "push down predicate info: anomesdia=20221201\n"
-
     # Calling the method for logging the initial message
     with caplog.at_level(logging.INFO):
         spark_manager_glue.job_initial_log_message()
 
-    assert caplog.records[-1].message == expected_log_msg
+    assert caplog.records[-1].message == EXPECTED_START_JOB_MSG
 
 
 @pytest.mark.spark_manager_glue
