@@ -32,10 +32,10 @@ def spark_session(spark: SparkSession = spark) -> SparkSession:
     return spark
 
 
-# A SparkETLManager class object with mode="local"
+# A SparkETLManager class object with mode="default"
 @pytest.fixture()
-def spark_manager_local() -> SparkETLManager:
-    return SparkETLManager(mode="local")
+def spark_manager_default() -> SparkETLManager:
+    return SparkETLManager(mode="default")
 
 
 # A GlueJobManager class object

@@ -3,8 +3,7 @@
 This file handles the definition of all test cases for testing SparkETLManager
 class and its features. The idea is to isolate a test script for testing
 sparksnake features delivered for users who want to develop Spark applications
-in their local environment through a SparkETLManager class object with
-mode="local".
+in any environment through a SparkETLManager class object with mode="default".
 
 ___
 """
@@ -19,7 +18,7 @@ from pyspark.sql.utils import AnalysisException
 from sparksnake.manager import SparkETLManager
 
 
-@pytest.mark.spark_manager_local
+@pytest.mark.spark_manager_default
 @pytest.mark.constructor
 def test_error_on_initializing_class_with_invalid_mode():
     """
@@ -34,7 +33,7 @@ def test_error_on_initializing_class_with_invalid_mode():
         _ = SparkETLManager(mode="invalid_mode")
 
 
-@pytest.mark.spark_manager_local
+@pytest.mark.spark_manager_default
 @pytest.mark.constructor
 def test_error_with_glue_mode_without_argvlist_or_datadict_attributes():
     """
@@ -49,11 +48,11 @@ def test_error_with_glue_mode_without_argvlist_or_datadict_attributes():
         _ = SparkETLManager(mode="glue")
 
 
-@pytest.mark.spark_manager_local
+@pytest.mark.spark_manager_default
 @pytest.mark.date_transform
 def test_casting_date_column_with_date_transform_method(
     df_fake,
-    spark_manager_local,
+    spark_manager_default,
     date_col="date_string_field",
     date_col_type="date",
     date_format="yyyy-MM-dd"
@@ -77,7 +76,7 @@ def test_casting_date_column_with_date_transform_method(
     )
 
     # Calling the method for casting a string field to date
-    df_fake_prep = spark_manager_local.date_transform(
+    df_fake_prep = spark_manager_default.date_transform(
         df=df_fake_tmp,
         date_col=date_col,
         date_col_type=date_col_type,
@@ -96,11 +95,11 @@ def test_casting_date_column_with_date_transform_method(
     assert dtype_pos_casting == DateType()
 
 
-@pytest.mark.spark_manager_local
+@pytest.mark.spark_manager_default
 @pytest.mark.date_transform
 def test_casting_timestamp_column_with_date_transform_method(
     df_fake,
-    spark_manager_local,
+    spark_manager_default,
     date_col="timestamp_string_field",
     date_col_type="timestamp",
     date_format="yyyy-MM-dd HH:mm:ss"
@@ -124,7 +123,7 @@ def test_casting_timestamp_column_with_date_transform_method(
     )
 
     # Calling the method for casting a string field to date
-    df_fake_prep = spark_manager_local.date_transform(
+    df_fake_prep = spark_manager_default.date_transform(
         df=df_fake_tmp,
         date_col=date_col,
         date_col_type=date_col_type,
@@ -143,11 +142,11 @@ def test_casting_timestamp_column_with_date_transform_method(
     assert dtype_pos_casting == TimestampType()
 
 
-@pytest.mark.spark_manager_local
+@pytest.mark.spark_manager_default
 @pytest.mark.date_transform
 def test_error_on_casting_date_column_with_invalid_date_col_type(
     df_fake,
-    spark_manager_local,
+    spark_manager_default,
     date_col="date_field",
     date_col_type="invalid_type",
     date_format="yyyy-MM-dd"
@@ -162,7 +161,7 @@ def test_error_on_casting_date_column_with_invalid_date_col_type(
 
     # Asserting execption raising
     with pytest.raises(ValueError):
-        _ = spark_manager_local.date_transform(
+        _ = spark_manager_default.date_transform(
             df=df_fake,
             date_col=date_col,
             date_col_type=date_col_type,
@@ -171,11 +170,11 @@ def test_error_on_casting_date_column_with_invalid_date_col_type(
         )
 
 
-@pytest.mark.spark_manager_local
+@pytest.mark.spark_manager_default
 @pytest.mark.date_transform
 def test_error_on_casting_date_column_with_invalid_column_name(
     df_fake,
-    spark_manager_local,
+    spark_manager_default,
     date_col="invalid_column_name",
     date_col_type="date",
     date_format="yyyy-MM-dd HH:mm:ss"
@@ -190,7 +189,7 @@ def test_error_on_casting_date_column_with_invalid_column_name(
 
     # Asserting execption raising
     with pytest.raises(AnalysisException):
-        _ = spark_manager_local.date_transform(
+        _ = spark_manager_default.date_transform(
             df=df_fake,
             date_col=date_col,
             date_col_type=date_col_type,
@@ -199,10 +198,10 @@ def test_error_on_casting_date_column_with_invalid_column_name(
         )
 
 
-@pytest.mark.spark_manager_local
+@pytest.mark.spark_manager_default
 @pytest.mark.date_transform
 def test_correct_col_name_after_extracting_year_info_from_date(
-    spark_manager_local,
+    spark_manager_default,
     df_fake,
     date_col="date_field"
 ):
@@ -216,7 +215,7 @@ def test_correct_col_name_after_extracting_year_info_from_date(
     """
 
     # Calling the date_transform() method to extract year info from a date
-    df_fake_year = spark_manager_local.date_transform(
+    df_fake_year = spark_manager_default.date_transform(
         df=df_fake,
         date_col=date_col,
         year=True
@@ -227,7 +226,7 @@ def test_correct_col_name_after_extracting_year_info_from_date(
 
 @pytest.mark.date_transform
 def test_correct_col_value_after_extracting_year_info_from_date(
-    spark_manager_local,
+    spark_manager_default,
     df_fake,
     date_col="date_field"
 ):
@@ -240,7 +239,7 @@ def test_correct_col_value_after_extracting_year_info_from_date(
     """
 
     # Calling the date_transform() method to extract year info from a date
-    df_fake_year = spark_manager_local.date_transform(
+    df_fake_year = spark_manager_default.date_transform(
         df=df_fake,
         date_col=date_col,
         year=True
@@ -255,10 +254,10 @@ def test_correct_col_value_after_extracting_year_info_from_date(
     assert current_value == expected_value
 
 
-@pytest.mark.spark_manager_local
+@pytest.mark.spark_manager_default
 @pytest.mark.date_transform
 def test_correct_col_names_after_extracting_all_date_information(
-    spark_manager_local,
+    spark_manager_default,
     df_fake,
     date_col="date_field"
 ):
@@ -274,7 +273,7 @@ def test_correct_col_names_after_extracting_all_date_information(
     """
 
     # Calling the date_transform() method to extract year info from a date
-    df_fake_date = spark_manager_local.date_transform(
+    df_fake_date = spark_manager_default.date_transform(
         df=df_fake,
         date_col=date_col,
         year=True,
@@ -297,10 +296,10 @@ def test_correct_col_names_after_extracting_all_date_information(
     assert all(d in new_field_names for d in expected_field_names)
 
 
-@pytest.mark.spark_manager_local
+@pytest.mark.spark_manager_default
 @pytest.mark.agg_data
 def test_correct_col_names_after_aggregating_data_with_all_possible_functions(
-    spark_manager_local,
+    spark_manager_default,
     df_fake,
     spark_session,
     numeric_col="integer_field",
@@ -322,7 +321,7 @@ def test_correct_col_names_after_aggregating_data_with_all_possible_functions(
     kwargs_dict = {f: True for f in agg_functions}
 
     # Aggregating data
-    df_agg = spark_manager_local.agg_data(
+    df_agg = spark_manager_default.agg_data(
         spark_session=spark_session,
         df=df_fake,
         numeric_col=numeric_col,
@@ -338,10 +337,10 @@ def test_correct_col_names_after_aggregating_data_with_all_possible_functions(
     assert all(c in df_agg.schema.fieldNames() for c in expected_columns)
 
 
-@pytest.mark.spark_manager_local
+@pytest.mark.spark_manager_default
 @pytest.mark.agg_data
 def test_columns_on_groupby_list_are_part_of_schema_after_aggregating_data(
-    spark_manager_local,
+    spark_manager_default,
     df_fake,
     spark_session,
     numeric_col="integer_field",
@@ -355,7 +354,7 @@ def test_columns_on_groupby_list_are_part_of_schema_after_aggregating_data(
     """
 
     # Aggregating data
-    df_agg = spark_manager_local.agg_data(
+    df_agg = spark_manager_default.agg_data(
         spark_session=spark_session,
         df=df_fake,
         numeric_col=numeric_col,
@@ -367,10 +366,10 @@ def test_columns_on_groupby_list_are_part_of_schema_after_aggregating_data(
     assert all(c in df_agg.schema.fieldNames() for c in group_by)
 
 
-@pytest.mark.spark_manager_local
+@pytest.mark.spark_manager_default
 @pytest.mark.agg_data
 def test_aggregating_data_with_sum_function_returns_expected_value(
-    spark_manager_local,
+    spark_manager_default,
     df_fake,
     spark_session,
     numeric_col="integer_field",
@@ -383,7 +382,7 @@ def test_aggregating_data_with_sum_function_returns_expected_value(
     """
 
     # Aggregating data
-    df_agg = spark_manager_local.agg_data(
+    df_agg = spark_manager_default.agg_data(
         spark_session=spark_session,
         df=df_fake,
         numeric_col=numeric_col,
@@ -405,10 +404,10 @@ def test_aggregating_data_with_sum_function_returns_expected_value(
     assert agg_result == expected_result
 
 
-@pytest.mark.spark_manager_local
+@pytest.mark.spark_manager_default
 @pytest.mark.agg_data
 def test_error_on_calling_agg_data_method_with_invalid_numeric_col_reference(
-    spark_manager_local,
+    spark_manager_default,
     df_fake,
     spark_session,
     numeric_col="invalid_col",
@@ -423,7 +422,7 @@ def test_error_on_calling_agg_data_method_with_invalid_numeric_col_reference(
 
     # Trying to aggregate with invalid numeric_col argument
     with pytest.raises(AnalysisException):
-        _ = spark_manager_local.agg_data(
+        _ = spark_manager_default.agg_data(
             spark_session=spark_session,
             df=df_fake,
             numeric_col=numeric_col,
@@ -431,10 +430,10 @@ def test_error_on_calling_agg_data_method_with_invalid_numeric_col_reference(
         )
 
 
-@pytest.mark.spark_manager_local
+@pytest.mark.spark_manager_default
 @pytest.mark.agg_data
 def test_error_on_calling_agg_data_method_with_invalid_group_by_reference(
-    spark_manager_local,
+    spark_manager_default,
     df_fake,
     spark_session,
     numeric_col="integer_field",
@@ -449,7 +448,7 @@ def test_error_on_calling_agg_data_method_with_invalid_group_by_reference(
 
     # Trying to aggregate with invalid numeric_col argument
     with pytest.raises(AnalysisException):
-        _ = spark_manager_local.agg_data(
+        _ = spark_manager_default.agg_data(
             spark_session=spark_session,
             df=df_fake,
             numeric_col=numeric_col,
@@ -457,10 +456,10 @@ def test_error_on_calling_agg_data_method_with_invalid_group_by_reference(
         )
 
 
-@pytest.mark.spark_manager_local
+@pytest.mark.spark_manager_default
 @pytest.mark.add_partition_column
 def test_correct_col_name_after_adding_partition_with_add_partition_method(
-    spark_manager_local,
+    spark_manager_default,
     df_fake,
     partition_name="execution_date",
     partition_value=0
@@ -472,7 +471,7 @@ def test_correct_col_name_after_adding_partition_with_add_partition_method(
     """
 
     # Adding a partition column
-    df_fake_partitioned = spark_manager_local.add_partition_column(
+    df_fake_partitioned = spark_manager_default.add_partition_column(
         df=df_fake,
         partition_name=partition_name,
         partition_value=partition_value
@@ -481,10 +480,10 @@ def test_correct_col_name_after_adding_partition_with_add_partition_method(
     assert partition_name in df_fake_partitioned.schema.fieldNames()
 
 
-@pytest.mark.spark_manager_local
+@pytest.mark.spark_manager_default
 @pytest.mark.add_partition_column
 def test_correct_col_value_after_adding_partition_with_add_partition_method(
-    spark_manager_local,
+    spark_manager_default,
     df_fake,
     partition_name="execution_date",
     partition_value=0
@@ -496,7 +495,7 @@ def test_correct_col_value_after_adding_partition_with_add_partition_method(
     """
 
     # Adding a partition column
-    df_fake_partitioned = spark_manager_local.add_partition_column(
+    df_fake_partitioned = spark_manager_default.add_partition_column(
         df=df_fake,
         partition_name=partition_name,
         partition_value=partition_value
@@ -505,10 +504,10 @@ def test_correct_col_value_after_adding_partition_with_add_partition_method(
     assert df_fake_partitioned.select(partition_name).take(1)[0][0] == 0
 
 
-@pytest.mark.spark_manager_local
+@pytest.mark.spark_manager_default
 @pytest.mark.add_partition_column
 def test_error_on_calling_add_partition_method_with_invalid_partition_name(
-    spark_manager_local,
+    spark_manager_default,
     df_fake,
     partition_name=0,
     partition_value=0
@@ -523,17 +522,17 @@ def test_error_on_calling_add_partition_method_with_invalid_partition_name(
 
     # Trying to execute the method and caughting exception
     with pytest.raises(Exception):
-        _ = spark_manager_local.add_partition_column(
+        _ = spark_manager_default.add_partition_column(
             df=df_fake,
             partition_name=partition_name,
             partition_value=partition_value
         )
 
 
-@pytest.mark.spark_manager_local
+@pytest.mark.spark_manager_default
 @pytest.mark.repartition_dataframe
 def test_decreasing_dataframe_partitions_with_repartition_method(
-    spark_manager_local,
+    spark_manager_default,
     df_fake
 ):
     """
@@ -550,7 +549,7 @@ def test_decreasing_dataframe_partitions_with_repartition_method(
     partitions_to_set = current_partitions // 2
 
     # Calling the repartition method
-    df_repartitioned = spark_manager_local.repartition_dataframe(
+    df_repartitioned = spark_manager_default.repartition_dataframe(
         df=df_fake,
         num_partitions=partitions_to_set
     )
@@ -558,10 +557,10 @@ def test_decreasing_dataframe_partitions_with_repartition_method(
     assert df_repartitioned.rdd.getNumPartitions() == partitions_to_set
 
 
-@pytest.mark.spark_manager_local
+@pytest.mark.spark_manager_default
 @pytest.mark.repartition_dataframe
 def test_increasing_dataframe_partitions_with_repartition_method(
-    spark_manager_local,
+    spark_manager_default,
     df_fake
 ):
     """
@@ -578,7 +577,7 @@ def test_increasing_dataframe_partitions_with_repartition_method(
     partitions_to_set = current_partitions * 2
 
     # Calling the repartition method
-    df_repartitioned = spark_manager_local.repartition_dataframe(
+    df_repartitioned = spark_manager_default.repartition_dataframe(
         df=df_fake,
         num_partitions=partitions_to_set
     )
@@ -586,10 +585,10 @@ def test_increasing_dataframe_partitions_with_repartition_method(
     assert df_repartitioned.rdd.getNumPartitions() == partitions_to_set
 
 
-@pytest.mark.spark_manager_local
+@pytest.mark.spark_manager_default
 @pytest.mark.repartition_dataframe
 def test_trying_to_repartition_dataframe_with_current_number_of_partitions(
-    spark_manager_local,
+    spark_manager_default,
     df_fake
 ):
     """
@@ -607,7 +606,7 @@ def test_trying_to_repartition_dataframe_with_current_number_of_partitions(
     partitions_to_set = current_partitions
 
     # Calling the repartition method
-    df_repartitioned = spark_manager_local.repartition_dataframe(
+    df_repartitioned = spark_manager_default.repartition_dataframe(
         df=df_fake,
         num_partitions=partitions_to_set
     )
@@ -615,10 +614,10 @@ def test_trying_to_repartition_dataframe_with_current_number_of_partitions(
     assert df_repartitioned.rdd.getNumPartitions() == partitions_to_set
 
 
-@pytest.mark.spark_manager_local
+@pytest.mark.spark_manager_default
 @pytest.mark.repartition_dataframe
 def test_trying_to_repartition_dataframe_with_negative_number_of_partitions(
-    spark_manager_local,
+    spark_manager_default,
     df_fake
 ):
     """
@@ -635,7 +634,7 @@ def test_trying_to_repartition_dataframe_with_negative_number_of_partitions(
     partitions_to_set = -1
 
     # Calling the repartition method
-    df_repartitioned = spark_manager_local.repartition_dataframe(
+    df_repartitioned = spark_manager_default.repartition_dataframe(
         df=df_fake,
         num_partitions=partitions_to_set
     )
