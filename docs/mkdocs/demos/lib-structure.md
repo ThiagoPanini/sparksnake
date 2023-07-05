@@ -1,10 +1,10 @@
 # Library Structure
 
-To understand a little more about *sparksnake* under the hood and all its advantages, this section will cover details about the library construction and the relationship between its modules and classes.
+To understand a little more about *sparksnake* and all its advantages, this section will cover details about the library construction and the relationship between its modules and classes.
 
 ## A Special Way to Enhance ETL Jobs
 
-At first, it is important to mention that the main point of interaction between users and the *sparksnake* library takes place through the class `SparkETLManager` set in the `manager` module.
+At first, it is important to mention that the main point of interaction between users and *sparksnake* library takes place through the class `SparkETLManager` set in the `manager` module.
 
 This means that it's through this class that users will be able to acquire a series of already coded Spark features and specific methods that are intended to help to reduce the "hard part" of using AWS services like Glue and EMR.
 
@@ -27,14 +27,11 @@ To illustrate all this with practical coding (I know you like it), the snippet b
     # Importing libraries
     from sparksnake.manager import SparkETLManager
 
-    # Initializing class for building Spark applications on Glue
+    # Initializing class to enable the development of Spark apps anywhere
+    spark_manager = SparkETLManager(mode="default")
+
+    # OR using Spark as Glue jobs in AWS
     spark_manager = SparkETLManager(mode="glue", **kwargs)
-
-    # OR on EMR
-    spark_manager = SparkETLManager(mode="emr", **kwargs)
-
-    # OR even locally
-    spark_manager = SparkETLManager(mode="local")
     ```
 
     Here, `**kwargs` argument represents addicional arguments that will be eventually needed according to each class service inherited.
