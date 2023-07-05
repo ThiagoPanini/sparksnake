@@ -66,9 +66,12 @@ nav:
     - Project Story: story.md
   - Quickstart:
     - Getting Started: quickstart/gettingstarted.md
-  - Features:
-    - Library Structure: features/lib-structure.md
-    - Developing Glue Jobs: features/demo-glue.md
+  - Demos:
+    - Library Structure: demos/lib-structure.md
+    - Features:
+      - Extracting Date Attributes: demos/features/date-transform.md
+    - End to End Examples:
+      - Developing Glue Jobs: demos/end-to-end/demo-glue.md
   - Official Docs:
     - SparkETLManager class: mkdocstrings/sparketlmanager.md
     - GlueJobManager class: mkdocstrings/gluejobmanager.md
