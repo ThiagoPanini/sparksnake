@@ -46,7 +46,7 @@ class SparkETLManager(ManagerClass):
     - `mode="default"` enables features do enhance the development of Spark
         applications anywhere
     - `mode="glue"` enables features to enhance the development of Spark
-        applications deployed as Glue jobs in AWS. In this case, a class 
+        applications deployed as Glue jobs in AWS. In this case, a class
         inheritance process is applied in order to enable users to use
         `awsglue` modules in a Glue environment.
 
