@@ -53,7 +53,7 @@ Let's see the `date_transform()` method in action!
 
 ## SparkETLManager class setup
 
-Before we move to the method demonstration, let's import and initialize the `SparkETLManager` class from `sparksnake.manager` module. As this feature is presented in the sparksnake's local mode (and so any operation mode can use it too), the class initialization is quite simple.
+Before we move to the method demonstration, let's import and initialize the `SparkETLManager` class from `sparksnake.manager` module. As this feature is presented in the sparksnake's default mode (and so any operation mode can use it too), the class initialization is quite simple.
 
 ??? example "Importing and initializing the SparkETLManager class"
     🎬 **Demonstration:**
@@ -66,7 +66,7 @@ Before we move to the method demonstration, let's import and initialize the `Spa
 
     # Starting the class
     spark_manager = SparkETLManager(
-        mode="local"
+        mode="default"
     )
     ```
 
