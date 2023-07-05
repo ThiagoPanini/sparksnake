@@ -82,12 +82,12 @@ If you haven't already taken a look at the [method's documentation](../../mkdocs
 
 - `spark_session` to run a SparkSQL statement to aggregate the data following all user inputs
 - `df` to serve as a target DataFrame to be transfomed (grouped / aggregated)
-- `numeric_col` to set up a target numeric column to be aggregated
+- `agg_col` to set up a target column to be aggregated
 - `group_by` to set up a target column (or a list of columns) to be used in the group by clause
 - `round_result` to optionally round the aggregation results
 - `n_round` to optionally configure the rounding on the aggregation results
 
-We also have the `**kwargs` parameter that works similar to the `**kwargs` in the [`date_transform()`]() method. Here we have the chance to pass any supported pyspark aggregation function to be applied on method call. Let's say, for instance, that we want to get the max value of a given `numeric_col` grouped by a `group_by` column. For that, users just need to pass the `max=True` as a method keyword argument.
+We also have the `**kwargs` parameter that works similar to the `**kwargs` in the [date_transform()](../../mkdocstrings/sparketlmanager.md#sparksnake.manager.SparkETLManager.date_transform) method. Here we have the chance to pass any supported pyspark aggregation function to be applied on method call. Let's say, for instance, that we want to get the max value of a given `agg_col` grouped by a `group_by` column. For that, users just need to pass the `max=True` as a method keyword argument.
 
 But don't worry! The idea is to clarify all the doubts in the following demo sections. Let's go ahead!
 
@@ -108,7 +108,7 @@ Well, let's think on the simplest thing that can be done in a group by operation
     df_payments_sum = spark_manager.agg_data(
         spark_session=spark_manager.spark,
         df=df_payments,
-        numeric_col="payment_value",
+        agg_col="payment_value",
         group_by="payment_type",
         sum=True
     )
@@ -159,7 +159,7 @@ Nice! With the `agg_data()` method, we could apply a simple aggregation step to 
     df_payments_sum = spark_manager.agg_data(
         spark_session=spark_manager.spark,
         df=df_payments,
-        numeric_col="payment_value",
+        agg_col="payment_value",
         group_by="payment_type",
         round_result=True,
         n_round=2,
@@ -206,7 +206,7 @@ Well, the good news is that we can achieve that just by adding new keyword argum
     df_payments_statistics = spark_manager.agg_data(
         spark_session=spark_manager.spark,
         df=df_payments,
-        numeric_col="payment_value",
+        agg_col="payment_value",
         group_by="payment_type",
         round_result=True,
         n_round=2,
@@ -286,7 +286,7 @@ What if we want to apply some group by operation grouping by multiple columns (a
     df_payments_installments = spark_manager.agg_data(
         spark_session=spark_manager.spark,
         df=df_payments,
-        numeric_col="payment_installments",
+        agg_col="payment_installments",
         group_by=["order_id", "payment_type"],
         count=True
     )
