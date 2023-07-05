@@ -43,20 +43,21 @@ class SparkETLManager(ManagerClass):
     The operation mode can be chosen based on where the Spark application will
     run. Currently there are two available options:
 
-    - `mode="local"` specifies that the user is developing its Spark
-        application locally
-    - `mode="glue"` means that the user wants to use Spark with the AWS
-        Glue service. In this case, a class inheritance process is applied in
-        order to enable users to use `awsglue` modules in a Glue environment.
+    - `mode="default"` enables features do enhance the development of Spark
+        applications anywhere
+    - `mode="glue"` enables features to enhance the development of Spark
+        applications deployed as Glue jobs in AWS. In this case, a class 
+        inheritance process is applied in order to enable users to use
+        `awsglue` modules in a Glue environment.
 
     Example: "Setting up the operation mode within `SparkETLManager` class"
         ```python
         # Importing the class
         from sparksnake.manager import SparkETLManager
 
-        # Creating a spark manager object to develop Spark apps locally
+        # Creating a spark manager object to develop Spark apps anywhere
         spark_manager = SparkETLManager(
-            mode="local"
+            mode="default"
         )
 
         # Creating a spark manager object to develop Spark apps on AWS Glue
@@ -147,7 +148,7 @@ class SparkETLManager(ManagerClass):
             classes based on this library so the `SparkETLManager` class can
             expand its features for a Spark application development in
             specific scenarios.
-            Acceptable values are: "local", "glue".
+            Acceptable values are: "default", "glue".
 
     Tip: The "mode" attribute may not be the only one.
         As stated before, the `SparkETLManager` class provides a "mode"
@@ -177,7 +178,7 @@ class SparkETLManager(ManagerClass):
 
         | Operation Mode | Inherited Class |
         | :-- | :-- |
-        | local | None |
+        | default | None |
         | glue | GlueJobManager |
     """
 
@@ -209,31 +210,31 @@ class SparkETLManager(ManagerClass):
                                 "Check if your environment has the awsglue "
                                 "libraries and try again. If you don't have "
                                 "awsglue libs available, you probably want to "
-                                "run sparksnake in a local operation mode. "
+                                "run sparksnake in a default operation mode. "
                                 "If this is the case, change the mode "
-                                "attribute to 'local'")
+                                "attribute to 'default'")
 
             # Logging initialization message
             logger.info("Sucessfully initialized sparksnake with Glue "
                         "operation mode. You know have some special AWS Glue "
                         "features to improve your Glue job.")
 
-        # Local operation mode:
-        elif self.mode == "local":
+        # Default operation mode:
+        elif self.mode == "default":
             # Getting or creating a SparkSession object as a class attribute
-            logger.info("Getting or creating a SparkSession object to be used "
-                        "in the local environment")
+            logger.info("Creating a SparkSession object (or getting one if it "
+                        "already exists)")
             self.spark = SparkSession.builder.getOrCreate()
 
             # Logging initialization message
-            logger.info("Successfulyy initialized sparksnake with Local "
+            logger.info("Successfully initialized sparksnake with default "
                         "operation mode. You can know use the sparksnake "
                         "features to improve your Spark application.")
 
         # None of acceptable operation modes
         else:
             raise ValueError(f"Invalid value for operation mode (mode={mode})."
-                             "Acceptable values are 'local' and 'glue'.")
+                             "Acceptable values are 'default' and 'glue'.")
 
     @staticmethod
     def date_transform(df: DataFrame,
