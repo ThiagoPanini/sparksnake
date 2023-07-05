@@ -56,7 +56,10 @@ Let's see the `date_transform()` method in action!
 Before we move to the method demonstration, let's import and initialize the `SparkETLManager` class from `sparksnake.manager` module. As this feature is presented in the sparksnake's default mode (and so any operation mode can use it too), the class initialization is quite simple.
 
 ??? example "Importing and initializing the SparkETLManager class"
+    
     🎬 **Demonstration:**
+
+    ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/main/docs/assets/gifs/date_transform_01.gif)
 
     🐍 **Code:**
 
@@ -93,6 +96,8 @@ Let's see this in action.
 ??? example "Casting a string column into a date or timestamp column"
 
     🎬 **Demonstration:**
+
+    ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/main/docs/assets/gifs/date_transform_02.gif)
 
     🐍 **Code:**
 
@@ -147,6 +152,8 @@ Let's see, for instance, an usage example that shows the creation of a new colum
 
     🎬 **Demonstration:**
 
+    ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/main/docs/assets/gifs/date_transform_03.gif)
+
     🐍 **Code:**
 
     ```python
@@ -197,10 +204,12 @@ Well, let's now suppose we have the need to extract not only the year of a order
 
     🎬 **Demonstration:**
 
+    ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/main/docs/assets/gifs/date_transform_04.gif)
+
     🐍 **Code:**
 
     ```python
-    # Extracting the year from order purchase timestamp
+    # Extracting more date epochs from order purchase timestamp
     df_orders_purchase_date_epochs = spark_manager.date_transform(
         df=df_orders,
         date_col="order_purchase_ts",
