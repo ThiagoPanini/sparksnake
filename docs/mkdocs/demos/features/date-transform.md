@@ -59,7 +59,7 @@ Before we move to the method demonstration, let's import and initialize the `Spa
     
     🎬 **Demonstration:**
 
-    ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/main/docs/assets/gifs/date_transform_01.gif)
+    ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/0.1.x/docs/assets/gifs/date_transform_01.gif)
 
     🐍 **Code:**
 
@@ -97,7 +97,7 @@ Let's see this in action.
 
     🎬 **Demonstration:**
 
-    ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/main/docs/assets/gifs/date_transform_02.gif)
+    ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/0.1.x/docs/assets/gifs/date_transform_02.gif)
 
     🐍 **Code:**
 
@@ -152,7 +152,7 @@ Let's see, for instance, an usage example that shows the creation of a new colum
 
     🎬 **Demonstration:**
 
-    ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/main/docs/assets/gifs/date_transform_03.gif)
+    ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/0.1.x/docs/assets/gifs/date_transform_03.gif)
 
     🐍 **Code:**
 
@@ -204,7 +204,7 @@ Well, let's now suppose we have the need to extract not only the year of a order
 
     🎬 **Demonstration:**
 
-    ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/main/docs/assets/gifs/date_transform_04.gif)
+    ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/0.1.x/docs/assets/gifs/date_transform_04.gif)
 
     🐍 **Code:**
 
