@@ -1,4 +1,4 @@
-# Feature Example: Extracting Date Attributes
+# Feature Demo: Extracting Date Attributes
 
 Welcome to this demo where we will go through a special *sparksnake* feature: the possibility to extract multiple date attributes from a Spark DataFrame date column.
 
@@ -7,7 +7,7 @@ In order to provide an overview for what we will show in this demo, let's consid
 | | |
 | :-- | :-- |
 | 🚀 **Feature** | Extraction of multiple date attributes from a date column |
-| 💻 **Method** | [SparkETLManager.date_transform()](../../../mkdocstrings/sparketlmanager.md#sparksnake.manager.SparkETLManager.date_transform) |
+| 💻 **Method** | [SparkETLManager.date_transform()](../../mkdocstrings/sparketlmanager.md#sparksnake.manager.SparkETLManager.date_transform) |
 | ⚙️ **Operation Mode** | Available in all operation modes |
 
 ___
@@ -56,7 +56,10 @@ Let's see the `date_transform()` method in action!
 Before we move to the method demonstration, let's import and initialize the `SparkETLManager` class from `sparksnake.manager` module. As this feature is presented in the sparksnake's default mode (and so any operation mode can use it too), the class initialization is quite simple.
 
 ??? example "Importing and initializing the SparkETLManager class"
+    
     🎬 **Demonstration:**
+
+    ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/main/docs/assets/gifs/date_transform_01.gif)
 
     🐍 **Code:**
 
@@ -80,7 +83,7 @@ From now on, we will deep dive into the possibilities delivered by the `date_tra
 
 The first application example of the `date_transform()` method takes place on casting a string attribute that has date or timestamp information into date or timestamp types.
 
-If you haven't already taken a look at the [method's documentation](../../../mkdocstrings/sparketlmanager.md#sparksnake.manager.SparkETLManager.date_transform), take your chance to understand how we will configure its parameters in order to achieve our goal. Speaking of them, in this application example, we will use the following method parameters:
+If you haven't already taken a look at the [method's documentation](../../mkdocstrings/sparketlmanager.md#sparksnake.manager.SparkETLManager.date_transform), take your chance to understand how we will configure its parameters in order to achieve our goal. Speaking of them, in this application example, we will use the following method parameters:
 
 - `df` to pass a target Spark DataFrame to transform
 - `date_col` to point the name of our date column (even if it's yet a string)
@@ -93,6 +96,8 @@ Let's see this in action.
 ??? example "Casting a string column into a date or timestamp column"
 
     🎬 **Demonstration:**
+
+    ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/main/docs/assets/gifs/date_transform_02.gif)
 
     🐍 **Code:**
 
@@ -147,6 +152,8 @@ Let's see, for instance, an usage example that shows the creation of a new colum
 
     🎬 **Demonstration:**
 
+    ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/main/docs/assets/gifs/date_transform_03.gif)
+
     🐍 **Code:**
 
     ```python
@@ -197,10 +204,12 @@ Well, let's now suppose we have the need to extract not only the year of a order
 
     🎬 **Demonstration:**
 
+    ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/main/docs/assets/gifs/date_transform_04.gif)
+
     🐍 **Code:**
 
     ```python
-    # Extracting the year from order purchase timestamp
+    # Extracting more date epochs from order purchase timestamp
     df_orders_purchase_date_epochs = spark_manager.date_transform(
         df=df_orders,
         date_col="order_purchase_ts",
@@ -246,5 +255,7 @@ Sample of the new DataFrame
 +--------------------+-------------------+----------------------+-------------------------+-----------------------+----------------------------+
 only showing top 5 rows
 ```
+
+___
 
 And that's it for the `date_transform()` method demo! I hope this one can be a good way to enrich your Spark applications that uses DataFrames with date information!

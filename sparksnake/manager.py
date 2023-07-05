@@ -365,7 +365,7 @@ class SparkETLManager(ManagerClass):
     @staticmethod
     def agg_data(spark_session: SparkSession,
                  df: DataFrame,
-                 numeric_col: str,
+                 agg_col: str,
                  group_by: str or list,
                  round_result: bool = False,
                  n_round: int = 2,
@@ -376,7 +376,7 @@ class SparkETLManager(ManagerClass):
         single method call. To use this feature, users can follow the steps
         below:
 
-        1. Provide a numeric column (numeric_col argument)
+        1. Provide a aggregation column (agg_col argument)
         2. Provide a single column reference or a list of columns to be
         grouped by (group_by argument)
         3. Provide the aggregation functions on **kwargs
@@ -391,7 +391,7 @@ class SparkETLManager(ManagerClass):
             df_stats = spark_manager.agg_data(
                 spark_session=spark,
                 df=df_orders,
-                numeric_col="order_value",
+                agg_col="order_value",
                 group_by=["order_id", "order_year"],
                 sum=True,
                 mean=True,
@@ -416,8 +416,8 @@ class SparkETLManager(ManagerClass):
             df (pyspark.sql.DataFrame):
                 A target Spark DataFrame for applying the transformation
 
-            numeric_col (str):
-                A numeric column name on the target DataFrame to be used as
+            agg_col (str):
+                A column reference on the target DataFrame to be used as
                 target of aggregation process
 
             group_by (str or list):
@@ -483,11 +483,11 @@ class SparkETLManager(ManagerClass):
             for f in possible_functions:
                 if f in kwargs and bool(kwargs[f]):
                     if round_result:
-                        agg_function = f"round({f}({numeric_col}), {n_round})"
+                        agg_function = f"round({f}({agg_col}), {n_round})"
                     else:
-                        agg_function = f"{f}({numeric_col})"
+                        agg_function = f"{f}({agg_col})"
 
-                    agg_query += f"{agg_function} AS {f}_{numeric_col},"
+                    agg_query += f"{agg_function} AS {f}_{agg_col},"
 
             # Dropping the last comma on the expression
             agg_query = agg_query[:-1]
@@ -508,7 +508,7 @@ class SparkETLManager(ManagerClass):
             logger.error("Error on trying to aggregate data from DataFrame "
                          f"using the following query:\n {final_query}. "
                          "Possible reasons are: missing to pass group_by "
-                         "parameter or the numeric_col argument doesn't exists"
+                         "parameter or the agg_col argument doesn't exists"
                          f" on the DataFrame. Exception: {ae}")
             raise ae
 
