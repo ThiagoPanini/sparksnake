@@ -53,4 +53,4 @@ Well, once you have *sparksnake* installed in your environment, you can use it w
 ???+ question "What? What is an operation mode in sparksnake? Which modes are available?"
     No worries at this time, Spark developer! I prepared a really detailed demo section explaining all this for you.
     
-    :material-alert-decagram:{ .mdx-pulse .warning }  Check the [Library Structure](../features/lib-structure.md) page to start getting your hands dirty with *sparksnake*. I must advise you that this is a one-way street and you probably won't never want to develop Spark applications as you did until now.
+    :material-alert-decagram:{ .mdx-pulse .warning }  Check the [Library Structure](../demos/lib-structure.md) page to start getting your hands dirty with *sparksnake*. I must advise you that this is a one-way street and you probably won't never want to develop Spark applications as you did until now.
