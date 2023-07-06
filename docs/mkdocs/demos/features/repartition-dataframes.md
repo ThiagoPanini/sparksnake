@@ -18,7 +18,7 @@ Before we move to the method demonstration, let's import and initialize the `Spa
     
     🎬 **Demonstration:**
 
-    ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/0.1.x/docs/assets/gifs/date_transform_01.gif)
+    ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/main/docs/assets/gifs/date_transform_01.gif)
 
     🐍 **Code:**
 
@@ -71,7 +71,7 @@ The first try we will do is to increase the number of partitions of our sample D
     
     🎬 **Demonstration:**
 
-    ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/0.1.x/docs/assets/gifs/repartition_dataframe_01.gif)
+    ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/main/docs/assets/gifs/repartition_dataframe_01.gif)
 
     🐍 **Code:**
 
@@ -97,7 +97,7 @@ Well, let's now see an example of decreasing the number of partitions in a Spark
     
     🎬 **Demonstration:**
 
-    ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/0.1.x/docs/assets/gifs/repartition_dataframe_02.gif)
+    ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/main/docs/assets/gifs/repartition_dataframe_02.gif)
 
     🐍 **Code:**
 
@@ -125,7 +125,7 @@ In fact, the `repatition_method()` is prepared to check this condition and simpl
     
     🎬 **Demonstration:**
 
-    ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/0.1.x/docs/assets/gifs/repartition_dataframe_03.gif)
+    ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/main/docs/assets/gifs/repartition_dataframe_03.gif)
 
     🐍 **Code:**
 
