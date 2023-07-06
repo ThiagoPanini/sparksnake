@@ -1,6 +1,6 @@
 # Feature Demo: Aggregating Data
 
-Welcome to this demo where one more special *sparksnake* feature will be shown: the usage of a method to apply multiple aggregation functions in a Spark DataFrame.
+Welcome to this demo page where one more special *sparksnake* feature will be shown: the usage of a method to apply multiple aggregation functions in a Spark DataFrame.
 
 Let's see a summary of what we will be talking about:
 
@@ -76,7 +76,7 @@ So, assuming we already have a Spark DataFrame object `df_payemnts` with the att
 
 ## The `agg_data()` method
 
-From now on, we will deep dive into the possibilities delivered by the `agg_data()` method. For each new subsection, a differente application of the method will be shown so users can take a look at everything that can be done with it.
+From now on, we will deep dive into the possibilities delivered by the `agg_data()` method. For each new subsection, a different application of the method will be shown so users can take a look at everything that can be done with it.
 
 If you haven't already taken a look at the [method's documentation](../../mkdocstrings/sparketlmanager.md#sparksnake.manager.SparkETLManager.agg_data), take your chance to understand how we will configure its parameters in order to achieve all of our goals. Just to summarize it, when calling the `agg_data()` method we have the following parameters to configure:
 
@@ -317,4 +317,4 @@ only showing top 5 rows
 
 ___
 
-And that's it for the `agg_data()` method demo! I hope this one can be a good way to enrich your Spark applications that uses DataFrames with date information!
+And that's it for the `agg_data()` method demo! I hope this one can be a good way to enrich your Spark applications that uses aggregations and group by operations!

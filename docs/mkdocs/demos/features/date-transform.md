@@ -79,10 +79,6 @@ So, assuming we already have a Spark DataFrame object `df_orders` with the attri
 
 From now on, we will deep dive into the possibilities delivered by the `date_transform()` method. For each new subsection, a differente application of the method will be shown so users can take a look at everything that can be done with it.
 
-### Casting a string column as date or timestamp
-
-The first application example of the `date_transform()` method takes place on casting a string attribute that has date or timestamp information into date or timestamp types.
-
 If you haven't already taken a look at the [method's documentation](../../mkdocstrings/sparketlmanager.md#sparksnake.manager.SparkETLManager.date_transform), take your chance to understand how we will configure its parameters in order to achieve our goal. Speaking of them, in this application example, we will use the following method parameters:
 
 - `df` to pass a target Spark DataFrame to transform
@@ -91,7 +87,9 @@ If you haven't already taken a look at the [method's documentation](../../mkdocs
 - `date_format` to configure the date or timestamp format for the result attribute
 - `cast_string_to_date` to explicit say that we want to cast the string column into a date or timestamp column
 
-Let's see this in action.
+### Casting a string column as date or timestamp
+
+The first application example of the `date_transform()` method takes place on casting a string attribute that has date or timestamp information into date or timestamp types.
 
 ??? example "Casting a string column into a date or timestamp column"
 
