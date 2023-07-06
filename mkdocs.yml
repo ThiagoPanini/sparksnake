@@ -71,6 +71,7 @@ nav:
     - Features:
       - Extracting Date Attributes: demos/features/date-transform.md
       - Aggregating Data: demos/features/agg-data.md
+      - Repartition DataFrames: demos/features/repartition-dataframes.md
     - End to End Examples:
       - Developing Glue Jobs: demos/end-to-end/demo-glue.md
   - Official Docs:

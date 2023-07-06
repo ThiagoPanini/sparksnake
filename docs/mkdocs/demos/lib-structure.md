@@ -1,12 +1,12 @@
 # Library Structure
 
-To understand a little more about *sparksnake* and all its advantages, this section will cover details about the library construction and the relationship between its modules and classes.
+To understand more about *sparksnake* and all its advantages, this section will cover details about the library construction and the relationship between its modules and classes. At the end, you will find updates about usage demos recorded to provide a clear view of some of library features.
 
-## A Special Way to Enhance ETL Jobs
+## A special way to enhance ETL jobs
 
-At first, it is important to mention that the main point of interaction between users and *sparksnake* library takes place through the class `SparkETLManager` set in the `manager` module.
+At first, it is important to mention that the main point of interaction between users and *sparksnake* library takes place through the class `SparkETLManager` from `manager` module.
 
-This means that it's through this class that users will be able to acquire a series of already coded Spark features and specific methods that are intended to help to reduce the "hard part" of using AWS services like Glue and EMR.
+In other words, it means that any Spark application that wants to be built using *sparksnake* need to have the `SparkETLManager` class as a way to obtain all the library features, regardless on where the application will be deployed (locally or in AWS using Glue or EMR, for example).
 
 ???+ question "But how does this happen in practice?"
     Essentially, when users initialize an object of `SparkETLManager` class, they must pass an attributed called `mode`. Such attribute has the responsibility to "configure" the class according to the target service claimed to be used in the definition of their Spark application to be deployed.
@@ -15,13 +15,13 @@ This means that it's through this class that users will be able to acquire a ser
 
     In technical terms, it is through the "operation mode" passed by the user on `mode` attribute that the class can inherit functionality from other classes in the library. For example, if the user creates an object of the class `SparkETLManager` with `mode="glue"`, then all attributes and methods of `GlueJobManager` class on `glue` module will be inherited to provide a custom Spark usage experience within the specifics of the Glue service.
 
-In visual terms, the library usage journey can be simplified by the three steps below:
+Just to summarize, consider the following diagram that shows how *sparksnake* can be used to improve users experience on developing Spark applications.
 
 ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/main/docs/assets/imgs/sparksnake-draw.png)
 
-To illustrate all this with practical coding (I know you like it), the snippet below shows how the `SparkETLManager` class can be used to centralize the use of Spark across different AWS services:
+And now, bringing some code snippets into the game, let's see some examples of starting up the `SparkETLManager` in different operation modes. The block code below shows one simple cases when users needs to use sparksnake's features in any environment (**default** operation mode) and another one where users needs to use the package's features to deploy Spark applications as Glue jobs in AWS (**glue** operation mode).
 
-???+ example "Using SparkETLManager class as central point of Spark application development"
+???+ example "Using SparkETLManager class as central point of Spark applications development"
 
     ```python
     # Importing libraries
@@ -38,7 +38,7 @@ To illustrate all this with practical coding (I know you like it), the snippet b
 
 If anything still seems complex up here, no worries! There will be a special section full of practical examples and video demonstrations to make everything as clear as possible!
 
-## Library Modules and Classes
+## Library modules and classes
 
 Now that you have a basic knowledge about the features of *sparksnake* library, the table below will help you even more to clarify all classes and modules available up to now.
 
@@ -46,10 +46,18 @@ Now that you have a basic knowledge about the features of *sparksnake* library, 
 | :-- | :-- | :-- |
 | `SparkETLManager` | `manager` | Central point of interaction with users. Inherits attributes and features from other classes according to the configured mode of operation |
 | `GlueJobManager` | `glue` | 	Centralizes specific attributes and methods to be used within AWS Glue |
-| `EMRJobManager` | `emr` | :hammer_and_wrench: *Work in progress* |
 
-## Usage Demos
+## Hands on demos
 
-Examples and demos will be divided in different sections according to the AWS service chosen for *sparksnake* usage. Up to now, the following scenarios are available:
+By the end, there is nothing more illustrativo that a hands on section with real examples and day to day scenarios. So, let's deep dive into those demos to know more about all the features that are available to users in order to take the Spark application development to another level!
 
-- :material-alert-decagram:{ .mdx-pulse .warning } [Enhancing and optimizing the development of Glue jobs](demo-glue.md)
+**Feature demos**
+
+- :material-alert-decagram:{ .mdx-pulse .warning } [Extracting date attributes using the `date_transform()`](features/date-transform.md)
+- :material-alert-decagram:{ .mdx-pulse .warning } [Aggregating data using `agg_data()`](features/agg-data.md)
+- :material-alert-decagram:{ .mdx-pulse .warning } [Repartitioning DataFrames to improve storage with `repartition_dataframe()`](features/repartition-dataframes.md)
+
+
+**End to end examples**
+
+- [Enhancing and optimizing the development of Glue jobs](demo-glue.md)
