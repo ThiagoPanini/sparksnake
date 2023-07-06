@@ -604,7 +604,7 @@ class SparkETLManager(ManagerClass):
 
         Args:
             df (pyspark.sql.DataFrame): A target Spark Dataframe.
-            num_partitions (int): Desider number of partitions.
+            num_partitions (int): Desired number of partitions.
 
         Returns:
             A new Spark DataFrame gotten after the repartition process.
