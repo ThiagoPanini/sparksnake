@@ -241,3 +241,7 @@ And that's what happened after the method call:
 - It was applied a sort operation on the `spark_sql_pipeline` list to consolidate the order of the queries to be executed based on the step index provided
 - Each query was executed and a temporary view with results of each step was created
 - The last query was executed and a final DataFrame object was returned
+
+___
+
+And that's it for the `run_spark_sql_pipeline()` method demo! I hope this one can be a good way to enrich your Spark applications that needs to run multiple SparkSQL queries sequentially!
