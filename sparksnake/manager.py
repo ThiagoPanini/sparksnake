@@ -237,12 +237,14 @@ class SparkETLManager(ManagerClass):
                              "Acceptable values are 'default' and 'glue'.")
 
     @staticmethod
-    def date_transform(df: DataFrame,
-                       date_col: str,
-                       date_col_type: str = "date",
-                       date_format: str = "yyyy-MM-dd",
-                       cast_string_to_date: bool = True,
-                       **kwargs) -> DataFrame:
+    def date_transform(
+        df: DataFrame,
+        date_col: str,
+        date_col_type: str = "date",
+        date_format: str = "yyyy-MM-dd",
+        cast_string_to_date: bool = True,
+        **kwargs
+    ) -> DataFrame:
         """Extracting date attributes from a Spark DataFrame date column.
 
         This method makes it possible to extract multiple date attributes from
@@ -363,13 +365,15 @@ class SparkETLManager(ManagerClass):
         return df
 
     @staticmethod
-    def agg_data(spark_session: SparkSession,
-                 df: DataFrame,
-                 agg_col: str,
-                 group_by: str or list,
-                 round_result: bool = False,
-                 n_round: int = 2,
-                 **kwargs) -> DataFrame:
+    def agg_data(
+        spark_session: SparkSession,
+        df: DataFrame,
+        agg_col: str,
+        group_by: str or list,
+        round_result: bool = False,
+        n_round: int = 2,
+        **kwargs
+    ) -> DataFrame:
         """Extracting statistical attributes based on a group by operation.
 
         This method makes it possible to run complex aggregations using a
@@ -513,9 +517,11 @@ class SparkETLManager(ManagerClass):
             raise ae
 
     @staticmethod
-    def add_partition_column(df: DataFrame,
-                             partition_name: str,
-                             partition_value) -> DataFrame:
+    def add_partition_column(
+        df: DataFrame,
+        partition_name: str,
+        partition_value
+    ) -> DataFrame:
         """Adding a "partition" column on a Spark DataFrame.
 
         This method is responsible for adding a new column on a target Spark
@@ -675,3 +681,206 @@ class SparkETLManager(ManagerClass):
                 return df
 
         return df_repartitioned
+
+    @staticmethod
+    def run_spark_sql_pipeline(
+        spark_session: SparkSession,
+        spark_sql_pipeline: list
+    ) -> DataFrame:
+        """Providing a way to run multiple SparkSQL queries in sequence.
+
+        This method allows users to define a sequence of SparkSQL queries to
+        built transformation DAGs in order to transform DataFrames in a Spark
+        application using only SQL. The core idea behind this method is that
+        users can define a sequence of SparkSQL statements using a predefined
+        list of dictionaries (`spark_sql_pipeline` argument) that will be
+        handled by the method as the main piece for sequentially running
+        the queries and providing the desired result as a Spark DataFrame.
+
+        As said before, everything around this method takes place
+        `spark_sql_pipeline` argument definition. In essence, this argument
+        can be defined as a list with multiple dictionaries, where each
+        inner dictionary in this list can have elements that describe the
+        execution of a SparkSQL query (including the query itself).
+
+        Examples:
+        ```python
+        # Defining a list with all SparkSQL steps to be executed
+        spark_sql_pipeline = [
+            {
+                "step": 1,
+                "query": '''
+                    SELECT
+                        order_id,
+                        order_status,
+                        order_purchase_ts
+
+                    FROM tbl_orders
+                '''
+                "create_temp_view": True,
+                "temp_view_name": "auto"
+            },
+            {
+                "step": 2,
+                "query": '''
+                    SELECT
+                        order_id,
+                        sum(payment_value) AS sum_payment_value
+
+                    FROM tbl_payments
+
+                    GROUP BY order_id
+                '''
+                "create_temp_view": True,
+                "temp_view_name": "auto"
+            },
+            {
+                "step": 3,
+                "query": '''
+                    SELECT
+                        step_1.order_id,
+                        step_1.order_status,
+                        step_1.order_purchase_ts,
+                        step_2.sum_payment_value
+
+                    FROM step_1
+
+                    LEFT JOIN step_2
+                        ON step_1.order_id = step_2.order_id
+                '''
+                "create_temp_view": True,
+                "temp_view_name": "auto"
+            }
+        ]
+
+        # Running the SparkSQL pipeline
+        df_prep = run_spark_sql_pipeline(
+            spark_session=spark_manager.spark,
+            spark_sql_pipeline=spark_sql_pipeline
+        )
+        ```
+
+        Tip: About the spark_sql_pipeline definition
+            As stated before, the `spark_sql_pipeline` method argument can be
+            defined as a Python list where each element is a Python dictionary
+            with all information needed to run SparkSQL statements in sequence.
+
+            First of all, it's important to say that the inner dictionaries
+            must be defined with some acceptable keys:
+
+            - `"step"` (required): defines an integer number to inform the
+                method in which order the query in the given dictionary should
+                be executed. The value passed on the "step" inner dictionary
+                key is used in a sorting proccess that defines the execution
+                order of the SparkSQL statements.
+
+            - `"query"` (required): well, this is the SparkSQL query itself
+                that will be executed by the method. This could be defines as a
+                Python string directly on the dictionary or even by reading
+                some external JSON or SQL file in the project directory.
+
+            - `"create_temp_view"` (optional, default=True): defines a boolean
+                flag that handles the creation of a new temporary view for
+                each executed step. By the default, it's set as True, meaning
+                that after each execution, a new temporary view will be
+                available for further SparkSQL statements.
+
+            - `"temp_view_name"` (optional, default="auto"): defines the name
+                of the temporary view created after executing the SparkSQL
+                query in a given step. It's applicable only if
+                "create_temp_view" is True for the step. By default, it's value
+                is set as "auto", meaning that the name of the intermediate
+                temporary view will be set as "step_N", where N is the integer
+                that defines the step. For example, in the first inner
+                dictionary of the `spark_sql_pipeline` list (for instance,
+                "step": 1), a query will be executed and, if there is no an
+                explicit "create_temp_view": False in the dictionary, then a
+                new temporary view with query result will be created and named
+                as "step_1". So, any further SparkSQL statements that selects
+                data from any "step_1" table will be pointing to the
+                intermediate results of the first step of the pipeline. By the
+                other hand, users can define a specific name for the step
+                temporary view by filling this key with any desired string.
+
+            If users don't explicit define the keys "create_temp_view" and
+            "temp_view_name", the method will consider its default values. In
+            other words, if the a inner dictionary of the `spark_sql_pipeline`
+            list doesn't have any of the mentioned keys, it means that a
+            temporary view will be created after running the step's query and
+            it will be named as "step_N", where N is the integer that identify
+            the step.
+
+        Args:
+            spark_session (pyspark.sql.SparkSession):
+                A SparkSession object to be used to run SparkSQL query for
+                grouping data
+
+            spark_sql_pipeline (list):
+                A list made by dictionaries that defines details of the steps
+                to be executed using SparkSQL queries. Check the tip above for
+                more details on how passing this argument
+
+        Returns:
+            A Spark DataFrame that is the result of the execution of the last\
+            step (query) defined in the spark_sql_pipeline list.
+
+        Raises:
+            ValueError: An exception raises in two different situations:\
+            first, if the user defines any dictionary in `spark_sql_pipeline`\
+            list doesn't have the required keys ("step" and "query"). Second,\
+            if any dictionary in the `spark_sql_pipeline` list has any value\
+            for the "step" key that isn't an integer. Those validations are\
+            important to ensure that users are correctly defining the\
+            arguments for the method .
+        """
+
+        # Applying some validations on the sql pipeline argument
+        required_keys = ["step", "query"]
+
+        # Getting a list with keys of all inner dicts from sql pipeline list
+        inner_pipe_keys = [list(pipe.keys()) for pipe in spark_sql_pipeline]
+
+        # Checking if the required arguments are in all inner dict keys
+        for inner_key in inner_pipe_keys:
+            if not all(key in inner_key for key in required_keys):
+                raise ValueError("The sql_pipeline argument doesn't have the "
+                                 "required keys for all its elements. Check "
+                                 "if all inner dictionaries on the "
+                                 "spark_sql_pipeline list have at least the "
+                                 "'step' and the 'query' keys")
+
+        # Checking if all step keys are integers
+        step_types_validation = list(set(
+            [isinstance(pipe["step"], int) for pipe in spark_sql_pipeline]
+        ))[0]
+        if not step_types_validation:
+            raise ValueError("The steps in the sql_pipeline argument must be "
+                             "integers. Check if all the 'step' keys in the "
+                             "inner dictionaries are integers.")
+
+        # Going to the method: sorting the steps in an ascending order
+        sorted_spark_sql_pipeline = sorted(
+            spark_sql_pipeline,
+            key=lambda x: x["step"]
+        )
+
+        # Iterating over the pipeline elements to execute the statements
+        for pipe in sorted_spark_sql_pipeline:
+            # Executing the queries in sequence
+            df_step = spark_session.sql(pipe["query"])
+
+            # Creating a temporary view with the step result (if applicable)
+            if "create_temp_view" not in pipe\
+                    or bool(pipe["create_temp_view"]):
+                # Assigning a name for result temporary view
+                if "temp_view_name" not in pipe\
+                        or pipe["temp_view_name"].strip().lower() == "auto":
+                    temp_view_name = "step_" + str(pipe["step"])
+                else:
+                    temp_view_name = pipe["temp_view_name"]
+
+                # Creating the temporary view
+                df_step.createOrReplaceTempView(temp_view_name)
+
+        # Returning the DataFrame from the last step
+        return df_step
