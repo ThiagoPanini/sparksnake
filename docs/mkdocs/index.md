@@ -76,7 +76,7 @@ The *sparksnake* Python package isn't alone. There are other complementary open 
 
 - How about the [story](story.md) about the library creation? I think you will like it!
 - Check the [Quickstart](./quickstart/basic-tutorial.md) section to start using *sparsnake*
-- In the [Features](./features/demo-glue.md) page you will find usage demos to help you to extract the full power of *sparksnake*
+- In the [Demos](./demos/lib-structure.md) page you will find usage demos to help you to extract the full power of *sparksnake*
 - The [Official Docs](./mkdocstrings/gluejobmanager.md) page brings all modules, classes and methods documentation in details
 
 ## Contact Me
