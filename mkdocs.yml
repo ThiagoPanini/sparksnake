@@ -69,9 +69,11 @@ nav:
   - Demos:
     - Library Structure: demos/lib-structure.md
     - Features:
-      - Extracting Date Attributes: demos/features/date-transform.md
-      - Aggregating Data: demos/features/agg-data.md
-      - Repartition DataFrames: demos/features/repartition-dataframes.md
+      - Extracting Date Attributes: demos/features/date_transform.md
+      - Aggregating Data: demos/features/agg_data.md
+      - Repartitioning DataFrames: demos/features/repartition_dataframes.md
+      - Running SparkSQL Queries in Sequence: demos/features/run_spark_sql_pipeline.md
+
     - End to End Examples:
       - Developing Glue Jobs: demos/end-to-end/demo-glue.md
   - Official Docs:
