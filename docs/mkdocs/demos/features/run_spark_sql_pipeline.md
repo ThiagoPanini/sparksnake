@@ -242,6 +242,130 @@ And that's what happened after the method call:
 - Each query was executed and a temporary view with results of each step was created
 - The last query was executed and a final DataFrame object was returned
 
+### Running queries from .sql files stored in project directory
+
+Well, in this bonus section, we will show roughly the same application of the `run_spark_sql_pipeline()` method but changing things a little bit: this time, rather than putting all the SparkSQL queries directly in the `spark_sql_pipeline` argument, we will store a different `.sql` file in our project directory to improve the organization of our Spark application.
+
+With this approach, users can have different sql files for different queries, allowing them to improve the code maintenance, to change business rules faster and to have a more organized structure in application scripts.
+
+So, let's leverage the same use case where we have a transformation query for orders dataset, another one for payments dataset and a third one joining the results of the previous two. We will put all .sql files in a `sql/` folder.
+
+??? example "Preparing .sql files with SparkSQL queries"
+
+    🎬 **Demonstration:**
+
+    ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/main/docs/assets/gifs/run_spark_sql_pipeline_03.gif)
+
+    🐍 **Code:**
+
+    *step_1_query_orders.sql*:
+    ```sql
+    SELECT
+        order_id,
+        order_status,
+        order_purchase_ts
+
+    FROM tbl_orders
+    ```
+
+    *step_2_query_payments.sql*:
+    ```sql
+    SELECT
+        order_id,
+        sum(payment_value) AS sum_payment_value
+
+    FROM tbl_payments
+
+    GROUP BY order_id
+    ```
+
+    *step_3_query_join.sql*:
+    ```sql
+    SELECT
+        step_1.order_id,
+        step_1.order_status,
+        step_1.order_purchase_ts,
+        step_2.sum_payment_value
+
+    FROM step_1
+
+    LEFT JOIN step_2
+        ON step_1.order_id = step_2.order_id
+    ```
+
+So, after putting all the queries in different files in a single folder, we can now define our `spark_sql_pipeline` variable where the inner dictionaries won't have the query string in the "query" key anymore. Now, we will read the respective .sql file using any file read method available in Python. Let's see how it goes.
+
+??? example "Defining the `spark_sql_pipeline` list argument reading queries from external .sql files"
+
+    🎬 **Demonstration:**
+
+    ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/main/docs/assets/gifs/run_spark_sql_pipeline_04.gif)
+
+    🐍 **Code:**
+
+    ```python
+    # Importing auxiliar libraries
+    from pathlib import Path
+
+    # Defining a list with all SparkSQL steps to be executed
+    spark_sql_pipeline = [
+        {
+            "step": 1,
+            "query": Path("../../../sql/step_1_query_orders.sql").read_text()
+        },
+        {
+            "step": 2,
+            "query": Path("../../../sql/step_2_query_payments.sql").read_text()
+        },
+        {
+            "step": 3,
+            "query": Path("../../../sql/step_3_query_join.sql").read_text()
+        }
+    ]
+    ```
+
+Well, it is much more consise, isn't? With this approach, the `spark_sql_pipeline` list doesn't need to have a bunch of complex and long-text SQL queries. It's easier to take query of queries in separate files.
+
+And finally, we just need to execute our `run_spark_sql_pipeline()` method and see if we get the same result as before.
+
+??? example "Running the pipeline with this different query organization approach"
+
+    🎬 **Demonstration:**
+
+    ![](https://raw.githubusercontent.com/ThiagoPanini/sparksnake/main/docs/assets/gifs/run_spark_sql_pipeline_05.gif)
+
+    🐍 **Code:**
+
+    ```python
+    # Importing auxiliar libraries
+    from pathlib import Path
+
+    # Defining a list with all SparkSQL steps to be executed
+    spark_sql_pipeline = [
+        {
+            "step": 1,
+            "query": Path("../../../sql/step_1_query_orders.sql").read_text()
+        },
+        {
+            "step": 2,
+            "query": Path("../../../sql/step_2_query_payments.sql").read_text()
+        },
+        {
+            "step": 3,
+            "query": Path("../../../sql/step_3_query_join.sql").read_text()
+        }
+    ]
+
+    # Running the pipeline
+    df_prep = spark_manager.run_spark_sql_pipeline(
+        spark_session=spark_manager.spark,
+        spark_sql_pipeline=spark_sql_pipeline
+    )
+
+    # Showing a sample
+    df_prep.show(5, truncate=False)
+    ```
+
 ___
 
 And that's it for the `run_spark_sql_pipeline()` method demo! I hope this one can be a good way to enrich your Spark applications that needs to run multiple SparkSQL queries sequentially!
