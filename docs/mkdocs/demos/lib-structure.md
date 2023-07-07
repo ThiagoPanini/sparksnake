@@ -53,11 +53,11 @@ By the end, there is nothing more illustrativo that a hands on section with real
 
 **Feature demos**
 
-- :material-alert-decagram:{ .mdx-pulse .warning } [Extracting date attributes using the `date_transform()`](features/date-transform.md)
-- :material-alert-decagram:{ .mdx-pulse .warning } [Aggregating data using `agg_data()`](features/agg-data.md)
-- :material-alert-decagram:{ .mdx-pulse .warning } [Repartitioning DataFrames to improve storage with `repartition_dataframe()`](features/repartition-dataframes.md)
+- :material-alert-decagram:{ .mdx-pulse .warning } [Extracting date attributes using the `date_transform()`](features/date_transform.md)
+- :material-alert-decagram:{ .mdx-pulse .warning } [Aggregating data using `agg_data()`](features/agg_data.md)
+- :material-alert-decagram:{ .mdx-pulse .warning } [Repartitioning DataFrames to improve storage with `repartition_dataframe()`](features/repartition_dataframes.md)
 
 
 **End to end examples**
 
-- [Enhancing and optimizing the development of Glue jobs](demo-glue.md)
+- [Enhancing and optimizing the development of Glue jobs](end-to-end/demo-glue.md)
