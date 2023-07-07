@@ -821,7 +821,7 @@ class SparkETLManager(ManagerClass):
                 more details on how passing this argument
 
         Returns:
-            A Spark DataFrame that is the result of the execution of the last
+            A Spark DataFrame that is the result of the execution of the last\
             step (query) defined in the spark_sql_pipeline list.
 
         Raises:
