@@ -56,7 +56,7 @@ By the end, there is nothing more illustrativo that a hands on section with real
 - :material-alert-decagram:{ .mdx-pulse .warning } [Extracting date attributes using the `date_transform()`](features/date_transform.md)
 - :material-alert-decagram:{ .mdx-pulse .warning } [Aggregating data using `agg_data()`](features/agg_data.md)
 - :material-alert-decagram:{ .mdx-pulse .warning } [Repartitioning DataFrames to improve storage with `repartition_dataframe()`](features/repartition_dataframes.md)
-
+- :material-alert-decagram:{ .mdx-pulse .warning } [Running SparkSQL queries in sequence with `run_spark_sql_pipeline()`](feature/run_spark_sql_pipeline.md)
 
 **End to end examples**
 
