@@ -69,7 +69,7 @@ Before we move to the method demonstration, let's import and initialize the `Spa
 
     # Starting the class
     spark_manager = SparkETLManager(
-        mode="default"
+        mode="default"  # or any other operation mode
     )
     ```
 
@@ -77,7 +77,7 @@ So, assuming we already have a Spark DataFrame object `df_orders` with the attri
 
 ## The `date_transform()` method
 
-From now on, we will deep dive into the possibilities delivered by the `date_transform()` method. For each new subsection, a differente application of the method will be shown so users can take a look at everything that can be done with it.
+From now on, we will deep dive into the possibilities delivered by the `date_transform()` method. For each new subsection of this page, a different application of the method will be shown with a hands on demo. The idea is to provide a clear view of all possibilities available in the method and to show everything that can be done with it.
 
 If you haven't already taken a look at the [method's documentation](../../mkdocstrings/sparketlmanager.md#sparksnake.manager.SparkETLManager.date_transform), take your chance to understand how we will configure its parameters in order to achieve our goal. Speaking of them, in this application example, we will use the following method parameters:
 
