@@ -21,31 +21,29 @@
 - [Table of content](#table-of-content)
 - [What is the sparksnake library?](#what-is-the-sparksnake-library)
 - [Features](#features)
-- [Contacts](#contacts)
+- [Contact me](#contact-me)
 - [References](#references)
 
 
 ## What is the sparksnake library?
 
-The *sparksnake* library provides an easy, fast, and efficient way to use Spark features inside analytics services on AWS. With *sparksnake*, it is possible to use classes, methods and functions developed in pyspark to simplify, as much as possible, the journey of building Spark applications along all the particularities found in AWS services, such as Glue and EMR, for example.
-
-Do you want to take your job Glue or your EMR cluster to the next level? Take a look at *sparksnake*!
+The *sparksnake* library provides an easy, fast, and efficient way to use Spark features inside analytics services on AWS. With *sparksnake*, it is possible to use classes, methods and functions developed in pyspark to simplify, as much as possible, the journey of building Spark applications anywhere!
 
 > **Note**
->  Now the *sparksnake* library has an official documentation in readthedocs! Visit the [following link](https://sparksnake.readthedocs.io/en/latest/) and check out usability technical details, practical examples and more!
+>  Now the *sparksnake* library has an official documentation in readthedocs! Visit the [following link](https://sparksnake.readthedocs.io/en/latest/) and check out usability technical details, hands on demos and more!
 
 
 ## Features
 
-- 🤖 Enhanced development experience of Spark Applications to be deployed as jobs in AWS services like Glue and EMR
-- 🌟 Possibility to use common Spark operations for improving ETL steps using custom classes and methods
-- ⚙️ No need to think too much into the hard and complex service setup (e.g. with *sparksnake* you can have all elements for a Glue Job on AWS with a single line of code)
-- 👁️‍🗨️ Application observability improvement with detailed log messages in CloudWatch
-- 🛠️ Exception handling already embedded in library methods
+- 🤖 Apply common Spark operations using few lines of code
+- 💻 Start developing your Spark applications anywhere using the "default" mode or in any AWS services that uses Spark
+- ⏳ Stop spending time setting up the boring stuff of your Spark applications
+- 💡 Apply the best practices on your application by structuring your code following the best practices
+- 👁️‍🗨️ Improve your aplication's observability by using detailed log messages on CloudWatch and exception handlers
 
 ___
 
-## Contacts
+## Contact me
 
 - [Thiago Panini - LinkedIn](https://www.linkedin.com/in/thiago-panini/)
 - [paninitechlab @ hashnode](https://panini.hashnode.dev/)
