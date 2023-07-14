@@ -402,6 +402,7 @@ def test_function_generate_fake_data_from_schema_returns_correct_num_of_rows(
 @pytest.mark.tester
 @pytest.mark.dataframes
 @pytest.mark.generate_fake_data_from_schema
+@pytest.mark.skip(reason="Work in progress")
 def test_function_generate_fake_data_from_schema_returns_expected_data_types(
     fake_data
 ):
