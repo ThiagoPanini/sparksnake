@@ -86,6 +86,11 @@ FAKE_SCHEMA_INFO = [
         "Name": "timestamp_field",
         "Type": "timestamp",
         "nullable": False
+    },
+    {
+        "Name": "array_field",
+        "Type": "array<string>",
+        "nullable": True
     }
 ]
 
