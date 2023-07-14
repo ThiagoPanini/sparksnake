@@ -15,13 +15,13 @@ from sparksnake.tester.dataframes import (
     parse_string_to_spark_dtype,
     compare_schemas,
     generate_fake_dataframe
-) 
+)
 
 from tests.helpers.user_inputs import (
     FAKE_SCHEMA_INFO,
     FAKE_DATAFRAMES_DEFINITION
 )
-    
+
 from pyspark.sql import DataFrame
 from pyspark.sql.types import (
     StringType,
