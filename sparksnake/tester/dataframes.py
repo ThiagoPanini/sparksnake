@@ -13,7 +13,7 @@ ___
 from pyspark.sql import SparkSession, DataFrame
 from pyspark.sql.types import StructType, StructField, StringType,\
     IntegerType, LongType, DecimalType, FloatType, DoubleType, BooleanType,\
-    DateType, TimestampType
+    DateType, TimestampType, ArrayType
 
 from faker import Faker
 from decimal import Decimal
@@ -70,8 +70,28 @@ def parse_string_to_spark_dtype(dtype: str):
         return BooleanType
     elif dtype_prep == "date":
         return DateType
-    elif dtype == "timestamp":
+    elif dtype_prep == "timestamp":
         return TimestampType
+    elif dtype_prep[:5] == "array":
+        # Checking if there is an inner array type
+        if "<" not in dtype and ">" not in dtype:
+            raise TypeError("Invalid entry for array type in schema "
+                            f"(dtype={dtype}). When providing an array type "
+                            "for a field in this definition schema, please "
+                            "use the following approach: 'array<inner_type>' "
+                            "where the tag 'inner_type' represents a valid "
+                            "data type reference (such as 'string', 'int'). "
+                            "It's also important not to forget to put this "
+                            "inner data type between symbols < and >")
+        else:
+            # Extracting the array inner type and parsing it into a Spark dtype
+            array_inner_dtype_str = dtype_prep.split("<")[-1].split(">")[0]
+            array_inner_dtype = parse_string_to_spark_dtype(
+                dtype=array_inner_dtype_str
+            )
+
+            # Returning the array data type with its inner type
+            return ArrayType(array_inner_dtype())
     else:
         raise TypeError(f"Data type {dtype} is not valid or currently "
                         "parseable into a native Spark dtype")
@@ -133,17 +153,39 @@ def generate_dataframe_schema(
         create a Spark DataFrame with a predefined schema.
     """
 
-    # Extracing the schema based on the preconfigured dict info
-    schema = StructType([
-        StructField(
-            field_info[attribute_name_key],
-            parse_string_to_spark_dtype(field_info[dtype_key])(),
-            nullable=field_info[nullable_key]
-            if nullable_key in field_info.keys() else True
-        ) for field_info in schema_info
-    ])
+    # Creating a list of Spark data types
+    dtype_list = []
+    for field_info in schema_info:
+        # Removing noise for data type info
+        dtype_prep = field_info[dtype_key].strip().lower()
 
-    return schema
+        # Checking a special condition when dtype is an array
+        if dtype_prep[:5] == "array":
+            dtype = parse_string_to_spark_dtype(dtype=dtype_prep)
+        else:
+            # If it's not an array, we need to call the Spark type class
+            dtype = parse_string_to_spark_dtype(dtype=dtype_prep)()
+
+        # Appending the data type into a common list
+        dtype_list.append(dtype)
+
+    # Creating a list of attribute names
+    field_names = [
+        field_info[attribute_name_key] for field_info in schema_info
+    ]
+
+    # Creating a list of nullable information
+    nullable_list = [
+        field_info[nullable_key] if nullable_key in field_info else True
+        for field_info in schema_info
+    ]
+
+    # Extracting the schema based on the preconfigured lists
+    schema_zip_elements = zip(field_names, dtype_list, nullable_list)
+    return StructType([
+        StructField(field_name, dtype, nullable)
+        for field_name, dtype, nullable in schema_zip_elements
+    ])
 
 
 # Generating fake data based on native Spark data types and the Faker library
@@ -217,6 +259,24 @@ def generate_fake_data_from_schema(
                 fake_row.append(faker.date_this_year())
             elif dtype == "timestamp":
                 fake_row.append(faker.date_time_this_year())
+            elif dtype == "array":
+                # Extracting inner array data type
+                inner_array_dtype = field.dataType.json()\
+                    .split("elementType")[-1]\
+                    .split(",")[0]\
+                    .split(":")[-1]\
+                    .replace('"', "")\
+                    .strip()\
+                    .lower()
+
+                # Generating fake data according to array inner type
+                if inner_array_dtype == "string":
+                    array_fake_data = faker.word()
+                elif inner_array_dtype in ("int", "integer", "bigint", "long"):
+                    array_fake_data = fake_row.append(randrange(-10000, 10000))
+
+                # Transforming fake data into a list and appending to the row
+                fake_row.append([array_fake_data])
 
         # Appending the row to the data list
         fake_data_list.append(fake_row)
