@@ -23,7 +23,11 @@ from pyspark.sql import (
     SparkSession
 )
 
-from tests.helpers.user_inputs import FAKE_SPARK_SQL_PIPELINE
+from tests.helpers.user_inputs import (
+    FAKE_SPARK_SQL_PIPELINE,
+    FAKE_SPARK_SQL_PIPELINE_WITH_STEP_ERRORS,
+    FAKE_SPARK_SQL_PIPELINE_WITH_MISSING_KEYS
+)
 
 from sparksnake.manager import SparkETLManager
 
@@ -708,3 +712,57 @@ def test_run_spark_sql_pipeline_method_returns_a_dataframe_with_expected_cols(
     expected_columns = ["idx", "double_idx", "quadruple_idx", "category"]
 
     assert df_final_step.columns == expected_columns
+
+
+@pytest.mark.spark_manager_default
+@pytest.mark.run_spark_sql_pipeline
+def test_error_when_trying_to_execute_sql_pipeline_with_invalid_step_key_value(
+    spark_manager_default: SparkETLManager,
+    dataframes_dict: dict,
+    spark_sql_pipeline: list = FAKE_SPARK_SQL_PIPELINE_WITH_STEP_ERRORS
+):
+    """
+    G: Given that users want to run SparkSQL queries in sequence
+    W: When the method run_spark_sql_pipeline() is called with a predefined
+       list of steps to be executed but with the 'step' key incorrectly defined
+       (i.e. not an integer number)
+    T: Then a ValueError exception must be raised
+    """
+
+    # Creating a Spark temp view for a given fake DataFrame
+    df_sample = dataframes_dict["df_with_predefined_data"]
+    df_sample.createOrReplaceTempView("tbl_with_predefined_data")
+
+    # Calling the method
+    with pytest.raises(ValueError):
+        _ = spark_manager_default.run_spark_sql_pipeline(
+            spark_session=spark_manager_default.spark,
+            spark_sql_pipeline=spark_sql_pipeline
+        )
+
+
+@pytest.mark.spark_manager_default
+@pytest.mark.run_spark_sql_pipeline
+def test_error_when_trying_to_execute_sql_pipeline_without_required_keys(
+    spark_manager_default: SparkETLManager,
+    dataframes_dict: dict,
+    spark_sql_pipeline: list = FAKE_SPARK_SQL_PIPELINE_WITH_MISSING_KEYS
+):
+    """
+    G: Given that users want to run SparkSQL queries in sequence
+    W: When the method run_spark_sql_pipeline() is called with a predefined
+       list of steps to be executed but missing some of required keys ('step'
+       or 'query' keys)
+    T: Then a ValueError exception must be raised
+    """
+
+    # Creating a Spark temp view for a given fake DataFrame
+    df_sample = dataframes_dict["df_with_predefined_data"]
+    df_sample.createOrReplaceTempView("tbl_with_predefined_data")
+
+    # Calling the method
+    with pytest.raises(ValueError):
+        _ = spark_manager_default.run_spark_sql_pipeline(
+            spark_session=spark_manager_default.spark,
+            spark_sql_pipeline=spark_sql_pipeline
+        )
