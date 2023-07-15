@@ -323,7 +323,6 @@ def test_schema_object_generated_contains_all_predefined_field_names(
 @pytest.mark.tester
 @pytest.mark.dataframes
 @pytest.mark.generate_dataframe_schema
-@pytest.mark.skip(reason="Work in progress")
 def test_schema_object_generated_contains_all_predefined_data_types(
     fake_schema
 ):
@@ -340,15 +339,18 @@ def test_schema_object_generated_contains_all_predefined_data_types(
         parse_string_to_spark_dtype(f["Type"]) for f in FAKE_SCHEMA_INFO
     ]
 
-    # Extracting the data types on the returned schema
-    schema_dtypes = [
-        type(field.dataType) for field in fake_schema
+    # Considering a special condition with array data types
+    expected_dtypes_prep = [
+        dtype() if dtype.typeName() != "array" else dtype
+        for dtype in expected_dtypes
     ]
 
-    print(expected_dtypes)
-    print(schema_dtypes)
+    # Extracting the data types on the returned schema
+    schema_dtypes = [
+        field.dataType for field in fake_schema
+    ]
 
-    assert schema_dtypes == expected_dtypes
+    assert schema_dtypes == expected_dtypes_prep
 
 
 @pytest.mark.tester
@@ -402,7 +404,6 @@ def test_function_generate_fake_data_from_schema_returns_correct_num_of_rows(
 @pytest.mark.tester
 @pytest.mark.dataframes
 @pytest.mark.generate_fake_data_from_schema
-@pytest.mark.skip(reason="Work in progress")
 def test_function_generate_fake_data_from_schema_returns_expected_data_types(
     fake_data
 ):
@@ -421,9 +422,11 @@ def test_function_generate_fake_data_from_schema_returns_expected_data_types(
     row_data_types = fake_data_types[0]
 
     # Creating an expected list of data types
-    expec_types = [str, int, int, Decimal, float, float, bool, date, datetime]
+    expected_python_types = [
+        str, int, int, Decimal, float, float, bool, date, datetime, list
+    ]
 
-    assert row_data_types == expec_types
+    assert row_data_types == expected_python_types
 
 
 @pytest.mark.tester
