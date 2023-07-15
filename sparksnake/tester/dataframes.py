@@ -261,19 +261,13 @@ def generate_fake_data_from_schema(
                 fake_row.append(faker.date_time_this_year())
             elif dtype == "array":
                 # Extracting inner array data type
-                inner_array_dtype = field.dataType.json()\
-                    .split("elementType")[-1]\
-                    .split(",")[0]\
-                    .split(":")[-1]\
-                    .replace('"', "")\
-                    .strip()\
-                    .lower()
+                inner_array_dtype = field.dataType.jsonValue()["elementType"]
 
                 # Generating fake data according to array inner type
                 if inner_array_dtype == "string":
                     array_fake_data = faker.word()
                 elif inner_array_dtype in ("int", "integer", "bigint", "long"):
-                    array_fake_data = fake_row.append(randrange(-10000, 10000))
+                    array_fake_data = randrange(-10000, 10000)
 
                 # Transforming fake data into a list and appending to the row
                 fake_row.append([array_fake_data])

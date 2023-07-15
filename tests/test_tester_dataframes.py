@@ -11,15 +11,31 @@ import pytest
 from decimal import Decimal
 from datetime import date, datetime
 
-from sparksnake.tester.dataframes import parse_string_to_spark_dtype,\
-    compare_schemas, generate_fake_dataframe
+from sparksnake.tester.dataframes import (
+    parse_string_to_spark_dtype,
+    compare_schemas,
+    generate_fake_dataframe
+)
 
-from tests.helpers.user_inputs import FAKE_SCHEMA_INFO,\
+from tests.helpers.user_inputs import (
+    FAKE_SCHEMA_INFO,
     FAKE_DATAFRAMES_DEFINITION
+)
 
-from pyspark.sql.types import StringType, IntegerType, LongType, DecimalType,\
-    FloatType, DoubleType, BooleanType, DateType, TimestampType, StructType
 from pyspark.sql import DataFrame
+from pyspark.sql.types import (
+    StringType,
+    IntegerType,
+    LongType,
+    DecimalType,
+    FloatType,
+    DoubleType,
+    BooleanType,
+    DateType,
+    TimestampType,
+    StructType,
+    ArrayType
+)
 
 
 @pytest.mark.tester
@@ -190,6 +206,70 @@ def test_timestamp_reference_correctly_parsed_as_spark_timestamp_dype_object():
 @pytest.mark.tester
 @pytest.mark.dataframes
 @pytest.mark.parse_string_to_spark_dtype
+def test_array_str_reference_correctly_parsed_as_spark_timestamp_dype_object():
+    """
+    G: Given that users want to get a valid Spark dtype object based on a
+       python string reference
+    W: When the function parse_string_to_spark_dtype() is called with dtype
+       argument equals to "array<string>"
+    T: Then the return must be a ArrayType(StringType()) object
+    """
+
+    dtype = parse_string_to_spark_dtype(dtype="array<string>")
+    assert dtype == ArrayType(StringType())
+
+
+@pytest.mark.tester
+@pytest.mark.dataframes
+@pytest.mark.parse_string_to_spark_dtype
+def test_array_int_reference_correctly_parsed_as_spark_timestamp_dype_object():
+    """
+    G: Given that users want to get a valid Spark dtype object based on a
+       python string reference
+    W: When the function parse_string_to_spark_dtype() is called with dtype
+       argument equals to "array<int>"
+    T: Then the return must be a ArrayType(IntegerType()) object
+    """
+
+    dtype = parse_string_to_spark_dtype(dtype="array<int>")
+    assert dtype == ArrayType(IntegerType())
+
+
+@pytest.mark.tester
+@pytest.mark.dataframes
+@pytest.mark.parse_string_to_spark_dtype
+def test_error_on_try_to_parse_an_array_type_with_a_not_supported_inner_type():
+    """
+    G: Given that users want to get a valid Spark dtype object based on a
+       python string reference
+    W: When the function parse_string_to_spark_dtype() is called with dtype
+       argument equals to "array<foo>"
+    T: Then a TypeError must be raised
+    """
+
+    with pytest.raises(TypeError):
+        _ = parse_string_to_spark_dtype(dtype="array<foo>")
+
+
+@pytest.mark.tester
+@pytest.mark.dataframes
+@pytest.mark.parse_string_to_spark_dtype
+def test_error_on_try_to_parse_an_array_type_with_an_invalid_string_type_ref():
+    """
+    G: Given that users want to get a valid Spark dtype object based on a
+       python string reference
+    W: When the function parse_string_to_spark_dtype() is called with dtype
+       argument equals to "array(string)"
+    T: Then a TypeError must be raised
+    """
+
+    with pytest.raises(TypeError):
+        _ = parse_string_to_spark_dtype(dtype="array(string)")
+
+
+@pytest.mark.tester
+@pytest.mark.dataframes
+@pytest.mark.parse_string_to_spark_dtype
 def test_error_when_trying_to_parse_an_invalid_string_to_spark_dtype():
     """
     G: Given that users want to get a valid Spark dtype object based on a
@@ -259,10 +339,18 @@ def test_schema_object_generated_contains_all_predefined_data_types(
         parse_string_to_spark_dtype(f["Type"]) for f in FAKE_SCHEMA_INFO
     ]
 
-    # Extracting the data types on the returned schema
-    schema_dtypes = [type(field.dataType) for field in fake_schema]
+    # Considering a special condition with array data types
+    expected_dtypes_prep = [
+        dtype() if dtype.typeName() != "array" else dtype
+        for dtype in expected_dtypes
+    ]
 
-    assert schema_dtypes == expected_dtypes
+    # Extracting the data types on the returned schema
+    schema_dtypes = [
+        field.dataType for field in fake_schema
+    ]
+
+    assert schema_dtypes == expected_dtypes_prep
 
 
 @pytest.mark.tester
@@ -334,9 +422,11 @@ def test_function_generate_fake_data_from_schema_returns_expected_data_types(
     row_data_types = fake_data_types[0]
 
     # Creating an expected list of data types
-    expec_types = [str, int, int, Decimal, float, float, bool, date, datetime]
+    expected_python_types = [
+        str, int, int, Decimal, float, float, bool, date, datetime, list, list
+    ]
 
-    assert row_data_types == expec_types
+    assert row_data_types == expected_python_types
 
 
 @pytest.mark.tester
