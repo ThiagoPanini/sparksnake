@@ -843,20 +843,28 @@ class SparkETLManager(ManagerClass):
         # Checking if the required arguments are in all inner dict keys
         for inner_key in inner_pipe_keys:
             if not all(key in inner_key for key in required_keys):
-                raise ValueError("The sql_pipeline argument doesn't have the "
-                                 "required keys for all its elements. Check "
-                                 "if all inner dictionaries on the "
-                                 "spark_sql_pipeline list have at least the "
-                                 "'step' and the 'query' keys")
+                raise ValueError("Invalid value for spark_sql_pipeline "
+                                 "argument. Please, check if all inner "
+                                 "dictionaries have the 'step' and the "
+                                 "'query' required keys defined accordingly. "
+                                 "The main reason of this validation is "
+                                 "that without the 'step' key, the method "
+                                 "won't be able to sort and set the execution "
+                                 "order. Without the 'query' key, the method "
+                                 "won't be able to run any SparkSQL query")
 
         # Checking if all step keys are integers
         step_types_validation = list(set(
             [isinstance(pipe["step"], int) for pipe in spark_sql_pipeline]
         ))[0]
         if not step_types_validation:
-            raise ValueError("The steps in the sql_pipeline argument must be "
-                             "integers. Check if all the 'step' keys in the "
-                             "inner dictionaries are integers.")
+            raise ValueError("Invalid value for spark_sql_pipeline "
+                             "argument. Please check if all inner "
+                             "dictionaries have the 'step' key defined as "
+                             "integer values. If any 'step' key for a given "
+                             "step is defined with a non integer number, the "
+                             "method won't be able to sort the steps and set "
+                             "the execution order accordingly")
 
         # Going to the method: sorting the steps in an ascending order
         sorted_spark_sql_pipeline = sorted(

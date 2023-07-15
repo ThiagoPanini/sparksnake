@@ -160,3 +160,87 @@ FAKE_DATAFRAMES_DEFINITION = {
         ]
     },
 }
+
+# A SparkSQL pipeline list to run_spark_sql_pipeline method
+FAKE_SPARK_SQL_PIPELINE = [
+    {
+        "step": 1,
+        "query": """
+            SELECT
+                idx,
+                2 * idx AS double_idx,
+                category
+
+            FROM tbl_with_predefined_data
+        """
+    },
+    {
+        "step": 2,
+        "query": """
+            SELECT
+                idx,
+                double_idx,
+                2 * double_idx AS quadruple_idx,
+                category
+
+            FROM step_1
+        """,
+        "create_temp_view": True,
+        "temp_view_name": "final_table"
+    }
+]
+
+
+# A SparkSQL pipeline list to test expections in run_spark_sql_pipeline method
+FAKE_SPARK_SQL_PIPELINE_WITH_STEP_ERRORS = [
+    {
+        "step": "not-an-integer",
+        "query": """
+            SELECT
+                idx,
+                2 * idx AS double_idx,
+                category
+
+            FROM tbl_with_predefined_data
+        """
+    },
+    {
+        "step": 2,
+        "query": """
+            SELECT
+                idx,
+                double_idx,
+                2 * double_idx AS quadruple_idx,
+                category
+
+            FROM step_1
+        """
+    }
+]
+
+# A SparkSQL pipeline list to test expections in run_spark_sql_pipeline method
+FAKE_SPARK_SQL_PIPELINE_WITH_MISSING_KEYS = [
+    {
+        # Missing the 'step' required key
+        "query": """
+            SELECT
+                idx,
+                2 * idx AS double_idx,
+                category
+
+            FROM tbl_with_predefined_data
+        """
+    },
+    {
+        "step": 2,
+        "query": """
+            SELECT
+                idx,
+                double_idx,
+                2 * double_idx AS quadruple_idx,
+                category
+
+            FROM step_1
+        """
+    }
+]
