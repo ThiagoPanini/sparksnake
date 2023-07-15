@@ -423,7 +423,7 @@ def test_function_generate_fake_data_from_schema_returns_expected_data_types(
 
     # Creating an expected list of data types
     expected_python_types = [
-        str, int, int, Decimal, float, float, bool, date, datetime, list
+        str, int, int, Decimal, float, float, bool, date, datetime, list, list
     ]
 
     assert row_data_types == expected_python_types

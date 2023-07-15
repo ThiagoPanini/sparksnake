@@ -88,8 +88,13 @@ FAKE_SCHEMA_INFO = [
         "nullable": False
     },
     {
-        "Name": "array_field",
+        "Name": "array_string_field",
         "Type": "array<string>",
+        "nullable": True
+    },
+    {
+        "Name": "array_int_field",
+        "Type": "array<int>",
         "nullable": True
     }
 ]
