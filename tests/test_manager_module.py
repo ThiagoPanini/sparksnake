@@ -11,9 +11,19 @@ ___
 # Importing libraries
 import pytest
 
-from pyspark.sql.functions import expr
-from pyspark.sql.types import StringType, DateType, TimestampType
 from pyspark.sql.utils import AnalysisException
+from pyspark.sql.functions import expr
+from pyspark.sql.types import (
+    StringType,
+    DateType,
+    TimestampType
+)
+from pyspark.sql import (
+    DataFrame,
+    SparkSession
+)
+
+from tests.helpers.user_inputs import FAKE_SPARK_SQL_PIPELINE
 
 from sparksnake.manager import SparkETLManager
 
@@ -51,11 +61,11 @@ def test_error_with_glue_mode_without_argvlist_or_datadict_attributes():
 @pytest.mark.spark_manager_default
 @pytest.mark.date_transform
 def test_casting_date_column_with_date_transform_method(
-    df_fake,
-    spark_manager_default,
-    date_col="date_string_field",
-    date_col_type="date",
-    date_format="yyyy-MM-dd"
+    df_fake: DataFrame,
+    spark_manager_default: SparkETLManager,
+    date_col: str = "date_string_field",
+    date_col_type: str = "date",
+    date_format: str = "yyyy-MM-dd"
 ):
     """
     G: Given that an user has a string column in a DataFrame that has date
@@ -98,11 +108,11 @@ def test_casting_date_column_with_date_transform_method(
 @pytest.mark.spark_manager_default
 @pytest.mark.date_transform
 def test_casting_timestamp_column_with_date_transform_method(
-    df_fake,
-    spark_manager_default,
-    date_col="timestamp_string_field",
-    date_col_type="timestamp",
-    date_format="yyyy-MM-dd HH:mm:ss"
+    df_fake: DataFrame,
+    spark_manager_default: SparkETLManager,
+    date_col: str = "timestamp_string_field",
+    date_col_type: str = "timestamp",
+    date_format: str = "yyyy-MM-dd HH:mm:ss"
 ):
     """
     G: Given that an user has a string column in a DataFrame that has timestamp
@@ -145,11 +155,11 @@ def test_casting_timestamp_column_with_date_transform_method(
 @pytest.mark.spark_manager_default
 @pytest.mark.date_transform
 def test_error_on_casting_date_column_with_invalid_date_col_type(
-    df_fake,
-    spark_manager_default,
-    date_col="date_field",
-    date_col_type="invalid_type",
-    date_format="yyyy-MM-dd"
+    df_fake: DataFrame,
+    spark_manager_default: SparkETLManager,
+    date_col: str = "date_field",
+    date_col_type: str = "invalid_type",
+    date_format: str = "yyyy-MM-dd"
 ):
     """
     G: Given that an user has a string column in a DataFrame that has date
@@ -173,11 +183,11 @@ def test_error_on_casting_date_column_with_invalid_date_col_type(
 @pytest.mark.spark_manager_default
 @pytest.mark.date_transform
 def test_error_on_casting_date_column_with_invalid_column_name(
-    df_fake,
-    spark_manager_default,
-    date_col="invalid_column_name",
-    date_col_type="date",
-    date_format="yyyy-MM-dd HH:mm:ss"
+    df_fake: DataFrame,
+    spark_manager_default: SparkETLManager,
+    date_col: str = "invalid_column_name",
+    date_col_type: str = "date",
+    date_format: str = "yyyy-MM-dd HH:mm:ss"
 ):
     """
     G: Given that an user has a string column in a DataFrame that has date
@@ -201,9 +211,9 @@ def test_error_on_casting_date_column_with_invalid_column_name(
 @pytest.mark.spark_manager_default
 @pytest.mark.date_transform
 def test_correct_col_name_after_extracting_year_info_from_date(
-    spark_manager_default,
-    df_fake,
-    date_col="date_field"
+    spark_manager_default: SparkETLManager,
+    df_fake: DataFrame,
+    date_col: str = "date_field"
 ):
     """
     G: Given that an user wants to add a new column to an existing DataFrame
@@ -226,9 +236,9 @@ def test_correct_col_name_after_extracting_year_info_from_date(
 
 @pytest.mark.date_transform
 def test_correct_col_value_after_extracting_year_info_from_date(
-    spark_manager_default,
-    df_fake,
-    date_col="date_field"
+    spark_manager_default: SparkETLManager,
+    df_fake: DataFrame,
+    date_col: str = "date_field"
 ):
     """
     G: Given that an user wants to add a new column to an existing DataFrame
@@ -257,9 +267,9 @@ def test_correct_col_value_after_extracting_year_info_from_date(
 @pytest.mark.spark_manager_default
 @pytest.mark.date_transform
 def test_correct_col_names_after_extracting_all_date_information(
-    spark_manager_default,
-    df_fake,
-    date_col="date_field"
+    spark_manager_default: SparkETLManager,
+    df_fake: DataFrame,
+    date_col: str = "date_field"
 ):
     """
     G: Given that an user wants to add a new column to an existing DataFrame
@@ -299,11 +309,11 @@ def test_correct_col_names_after_extracting_all_date_information(
 @pytest.mark.spark_manager_default
 @pytest.mark.agg_data
 def test_correct_col_names_after_aggregating_data_with_all_possible_functions(
-    spark_manager_default,
-    df_fake,
-    spark_session,
-    agg_col="integer_field",
-    group_by="boolean_field"
+    spark_manager_default: SparkETLManager,
+    df_fake: DataFrame,
+    spark_session: SparkSession,
+    agg_col: str = "integer_field",
+    group_by: str = "boolean_field"
 ):
     """
     G: Given that an user wants to aggregate data from a DataFrame
@@ -340,11 +350,11 @@ def test_correct_col_names_after_aggregating_data_with_all_possible_functions(
 @pytest.mark.spark_manager_default
 @pytest.mark.agg_data
 def test_columns_on_groupby_list_are_part_of_schema_after_aggregating_data(
-    spark_manager_default,
-    df_fake,
-    spark_session,
-    agg_col="integer_field",
-    group_by=["string_field", "boolean_field"]
+    spark_manager_default: SparkETLManager,
+    df_fake: DataFrame,
+    spark_session: SparkSession,
+    agg_col: str = "integer_field",
+    group_by: list = ["string_field", "boolean_field"]
 ):
     """
     G: Given that an user wants to aggregate data from a DataFrame
@@ -369,11 +379,11 @@ def test_columns_on_groupby_list_are_part_of_schema_after_aggregating_data(
 @pytest.mark.spark_manager_default
 @pytest.mark.agg_data
 def test_aggregating_data_with_sum_function_returns_expected_value(
-    spark_manager_default,
-    df_fake,
-    spark_session,
-    agg_col="integer_field",
-    group_by="boolean_field"
+    spark_manager_default: SparkETLManager,
+    df_fake: DataFrame,
+    spark_session: SparkSession,
+    agg_col: str = "integer_field",
+    group_by: str = "boolean_field"
 ):
     """
     G: Given that an user wants to aggregate data from a DataFrame
@@ -407,11 +417,11 @@ def test_aggregating_data_with_sum_function_returns_expected_value(
 @pytest.mark.spark_manager_default
 @pytest.mark.agg_data
 def test_error_on_calling_agg_data_method_with_invalid_agg_col_reference(
-    spark_manager_default,
-    df_fake,
-    spark_session,
-    agg_col="invalid_col",
-    group_by="boolean_field"
+    spark_manager_default: SparkETLManager,
+    df_fake: DataFrame,
+    spark_session: SparkSession,
+    agg_col: str = "invalid_col",
+    group_by: str = "boolean_field"
 ):
     """
     G: Given that an user wants to aggregate data from a DataFrame
@@ -433,11 +443,11 @@ def test_error_on_calling_agg_data_method_with_invalid_agg_col_reference(
 @pytest.mark.spark_manager_default
 @pytest.mark.agg_data
 def test_error_on_calling_agg_data_method_with_invalid_group_by_reference(
-    spark_manager_default,
-    df_fake,
-    spark_session,
-    agg_col="integer_field",
-    group_by="invalid_col"
+    spark_manager_default: SparkETLManager,
+    df_fake: DataFrame,
+    spark_session: SparkSession,
+    agg_col: str = "integer_field",
+    group_by: str = "invalid_col"
 ):
     """
     G: Given that an user wants to aggregate data from a DataFrame
@@ -459,10 +469,10 @@ def test_error_on_calling_agg_data_method_with_invalid_group_by_reference(
 @pytest.mark.spark_manager_default
 @pytest.mark.add_partition_column
 def test_correct_col_name_after_adding_partition_with_add_partition_method(
-    spark_manager_default,
-    df_fake,
-    partition_name="execution_date",
-    partition_value=0
+    spark_manager_default: SparkETLManager,
+    df_fake: DataFrame,
+    partition_name: str = "execution_date",
+    partition_value: int = 0
 ):
     """
     G: Given that an user wants to add a new partition column to a DataFrame
@@ -483,10 +493,10 @@ def test_correct_col_name_after_adding_partition_with_add_partition_method(
 @pytest.mark.spark_manager_default
 @pytest.mark.add_partition_column
 def test_correct_col_value_after_adding_partition_with_add_partition_method(
-    spark_manager_default,
-    df_fake,
-    partition_name="execution_date",
-    partition_value=0
+    spark_manager_default: SparkETLManager,
+    df_fake: DataFrame,
+    partition_name: str = "execution_date",
+    partition_value: int = 0
 ):
     """
     G: Given that an user wants to add a new partition column to a DataFrame
@@ -507,10 +517,10 @@ def test_correct_col_value_after_adding_partition_with_add_partition_method(
 @pytest.mark.spark_manager_default
 @pytest.mark.add_partition_column
 def test_error_on_calling_add_partition_method_with_invalid_partition_name(
-    spark_manager_default,
-    df_fake,
-    partition_name=0,
-    partition_value=0
+    spark_manager_default: SparkETLManager,
+    df_fake: DataFrame,
+    partition_name: int = 0,
+    partition_value: int = 0
 ):
     """
     G: Given that an user wants to add a new partition column to a DataFrame
@@ -532,8 +542,8 @@ def test_error_on_calling_add_partition_method_with_invalid_partition_name(
 @pytest.mark.spark_manager_default
 @pytest.mark.repartition_dataframe
 def test_decreasing_dataframe_partitions_with_repartition_method(
-    spark_manager_default,
-    df_fake
+    spark_manager_default: SparkETLManager,
+    df_fake: DataFrame
 ):
     """
     G: Given that an user wants to decrease the number of partitions in a
@@ -560,8 +570,8 @@ def test_decreasing_dataframe_partitions_with_repartition_method(
 @pytest.mark.spark_manager_default
 @pytest.mark.repartition_dataframe
 def test_increasing_dataframe_partitions_with_repartition_method(
-    spark_manager_default,
-    df_fake
+    spark_manager_default: SparkETLManager,
+    df_fake: DataFrame
 ):
     """
     G: Given that an user wants to increase the number of partitions in a
@@ -588,8 +598,8 @@ def test_increasing_dataframe_partitions_with_repartition_method(
 @pytest.mark.spark_manager_default
 @pytest.mark.repartition_dataframe
 def test_trying_to_repartition_dataframe_with_current_number_of_partitions(
-    spark_manager_default,
-    df_fake
+    spark_manager_default: SparkETLManager,
+    df_fake: DataFrame
 ):
     """
     G: Given that an user wants to change the number of partitions in a
@@ -617,8 +627,8 @@ def test_trying_to_repartition_dataframe_with_current_number_of_partitions(
 @pytest.mark.spark_manager_default
 @pytest.mark.repartition_dataframe
 def test_trying_to_repartition_dataframe_with_negative_number_of_partitions(
-    spark_manager_default,
-    df_fake
+    spark_manager_default: SparkETLManager,
+    df_fake: DataFrame
 ):
     """
     G: Given that an user wants to change the number of partitions in a
@@ -640,3 +650,61 @@ def test_trying_to_repartition_dataframe_with_negative_number_of_partitions(
     )
 
     assert df_repartitioned.rdd.getNumPartitions() == current_partitions
+
+
+@pytest.mark.spark_manager_default
+@pytest.mark.run_spark_sql_pipeline
+def test_run_spark_sql_pipeline_method_returns_a_spark_dataframe_object(
+    spark_manager_default: SparkETLManager,
+    dataframes_dict: dict,
+    spark_sql_pipeline: list = FAKE_SPARK_SQL_PIPELINE
+):
+    """
+    G: Given that users want to run SparkSQL queries in sequence
+    W: When the method run_spark_sql_pipeline() is called with a predefined
+       list of steps to be executed
+    T: Then the object returned by the method must be a Spark DataFrame
+    """
+
+    # Creating a Spark temp view for a given fake DataFrame
+    df_sample = dataframes_dict["df_with_predefined_data"]
+    df_sample.createOrReplaceTempView("tbl_with_predefined_data")
+
+    # Calling the method
+    df_final_step = spark_manager_default.run_spark_sql_pipeline(
+        spark_session=spark_manager_default.spark,
+        spark_sql_pipeline=spark_sql_pipeline
+    )
+
+    assert isinstance(df_final_step, DataFrame)
+
+
+@pytest.mark.spark_manager_default
+@pytest.mark.run_spark_sql_pipeline
+def test_run_spark_sql_pipeline_method_returns_a_dataframe_with_expected_cols(
+    spark_manager_default: SparkETLManager,
+    dataframes_dict: dict,
+    spark_sql_pipeline: list = FAKE_SPARK_SQL_PIPELINE
+):
+    """
+    G: Given that users want to run SparkSQL queries in sequence
+    W: When the method run_spark_sql_pipeline() is called with a predefined
+       list of steps to be executed
+    T: Then the final DataFrame returned must have a set of expected columns,
+       proving that the steps of the pipeline were succesfully executed
+    """
+
+    # Creating a Spark temp view for a given fake DataFrame
+    df_sample = dataframes_dict["df_with_predefined_data"]
+    df_sample.createOrReplaceTempView("tbl_with_predefined_data")
+
+    # Calling the method
+    df_final_step = spark_manager_default.run_spark_sql_pipeline(
+        spark_session=spark_manager_default.spark,
+        spark_sql_pipeline=spark_sql_pipeline
+    )
+
+    # Defining a list of expected columns for final step of the pipeline
+    expected_columns = ["idx", "double_idx", "quadruple_idx", "category"]
+
+    assert df_final_step.columns == expected_columns

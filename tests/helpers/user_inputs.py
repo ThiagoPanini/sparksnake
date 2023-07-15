@@ -160,3 +160,30 @@ FAKE_DATAFRAMES_DEFINITION = {
         ]
     },
 }
+
+# A SparkSQL pipeline list for run_spark_sql_pipeline method
+FAKE_SPARK_SQL_PIPELINE = [
+    {
+        "step": 1,
+        "query": """
+            SELECT
+                idx,
+                2 * idx AS double_idx,
+                category
+
+            FROM tbl_with_predefined_data
+        """
+    },
+    {
+        "step": 2,
+        "query": """
+            SELECT
+                idx,
+                double_idx,
+                2 * double_idx AS quadruple_idx,
+                category
+
+            FROM step_1
+        """
+    }
+]
