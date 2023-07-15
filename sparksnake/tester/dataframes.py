@@ -267,7 +267,7 @@ def generate_fake_data_from_schema(
                 if inner_array_dtype == "string":
                     array_fake_data = faker.word()
                 elif inner_array_dtype in ("int", "integer", "bigint", "long"):
-                    array_fake_data = fake_row.append(randrange(-10000, 10000))
+                    array_fake_data = randrange(-10000, 10000)
 
                 # Transforming fake data into a list and appending to the row
                 fake_row.append([array_fake_data])
